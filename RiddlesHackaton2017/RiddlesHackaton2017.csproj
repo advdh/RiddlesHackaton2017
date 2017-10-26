@@ -44,9 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotParser.cs" />
-    <Compile Include="Bots\Bot.cs" />
+    <Compile Include="Bots\AlphaBetaBot.cs" />
+    <Compile Include="Bots\BaseBot.cs" />
+    <Compile Include="Bots\MonteCarloBot.cs" />
+    <Compile Include="Bots\MonteCarloRestOfGameBot.cs" />
+    <Compile Include="Bots\MonteCarloStatistics.cs" />
     <Compile Include="Evaluation\BoardEvaluator.cs" />
     <Compile Include="Evaluation\AlphaBetaEvaluator.cs" />
+    <Compile Include="Guard.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\Node.cs" />
     <Compile Include="Models\Player.cs" />
@@ -58,6 +63,9 @@
     <Compile Include="Output\TheConsole.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomGeneration\FirstIndexGenerator.cs" />
+    <Compile Include="RandomGeneration\IRandomGenerator.cs" />
+    <Compile Include="RandomGeneration\RandomGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

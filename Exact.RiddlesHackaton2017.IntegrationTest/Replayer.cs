@@ -48,7 +48,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 		{
 			var board = new Board();
 			Player player = Player.Player1;
-			var bot = new Bot(console);
+			var bot = new AlphaBetaBot(console);
 			int round = 0;
 			int originalMove;
 			int newMove = -1;
@@ -72,7 +72,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 							if (action == null)
 							{
 								int timelimit = int.Parse(words[2]);
-								newMove = bot.Move(board, TimeSpan.FromMilliseconds(timelimit));
+								newMove = int.Parse(bot.GetMove(board, TimeSpan.FromMilliseconds(timelimit)));
 							}
 							else
 							{
@@ -99,17 +99,18 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 
 		private int ToMove(int position, string sMove)
 		{
-			switch (sMove)
-			{
-				case "up":
-					return position - Board.Size;
-				case "down":
-					return position + Board.Size;
-				case "left":
-					return position - 1;
-				case "right":
-					return position + 1;
-			}
+			//TODO
+			//switch (sMove)
+			//{
+			//	case "up":
+			//		return position - Board.Size;
+			//	case "down":
+			//		return position + Board.Size;
+			//	case "left":
+			//		return position - 1;
+			//	case "right":
+			//		return position + 1;
+			//}
 
 			//Example: invalid move
 			return 0;

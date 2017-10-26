@@ -12,7 +12,7 @@ namespace RiddlesHackaton2017
 		static Board Board;
 		static Player Player;
 		static int Round;
-		static Bot Bot = new Bot(new ConsoleError());
+		static AlphaBetaBot Bot = new AlphaBetaBot(new ConsoleError());
 
 		static void Main(string[] args)
 		{
