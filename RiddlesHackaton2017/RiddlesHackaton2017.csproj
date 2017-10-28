@@ -50,7 +50,6 @@
     <Compile Include="Bots\MonteCarloStatistics.cs" />
     <Compile Include="Bots\PassBot.cs" />
     <Compile Include="Evaluation\BoardEvaluator.cs" />
-    <Compile Include="Evaluation\AlphaBetaEvaluator.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="Moves\BirthMove.cs" />
