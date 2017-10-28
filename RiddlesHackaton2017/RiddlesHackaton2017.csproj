@@ -44,16 +44,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotParser.cs" />
-    <Compile Include="Bots\AlphaBetaBot.cs" />
     <Compile Include="Bots\BaseBot.cs" />
     <Compile Include="Bots\MonteCarloBot.cs" />
     <Compile Include="Bots\MonteCarloRestOfGameBot.cs" />
     <Compile Include="Bots\MonteCarloStatistics.cs" />
+    <Compile Include="Bots\PassBot.cs" />
     <Compile Include="Evaluation\BoardEvaluator.cs" />
     <Compile Include="Evaluation\AlphaBetaEvaluator.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="Moves\BirthMove.cs" />
     <Compile Include="Models\Board.cs" />
+    <Compile Include="Moves\KillMove.cs" />
+    <Compile Include="Moves\Move.cs" />
     <Compile Include="Models\Node.cs" />
+    <Compile Include="Moves\PassMove.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Output\ConsoleError.cs" />
@@ -70,7 +75,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Version.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

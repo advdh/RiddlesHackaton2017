@@ -3,6 +3,7 @@ using RiddlesHackaton2017;
 using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Output;
+using RiddlesHackaton2017.RandomGeneration;
 using System;
 using System.IO;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 			var filename = System.IO.Path.Combine(Folder, gameId + ".txt");
 			if (rounds == null)
 			{
-				rounds = Enumerable.Range(0, Board.Size2).ToArray();
+				rounds = Enumerable.Range(0, Board.Size).ToArray();
 			}
 			var lines = File.ReadAllLines(filename);
 			DoReplayLines(lines, differenceOnly, action, rounds);
@@ -48,7 +49,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 		{
 			var board = new Board();
 			Player player = Player.Player1;
-			var bot = new AlphaBetaBot(console);
+			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()));
 			int round = 0;
 			int originalMove;
 			int newMove = -1;
@@ -85,7 +86,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 						if (rounds.Contains(round))
 						{
 							string sMove = command.Split('"')[1];
-							originalMove = ToMove(board.MyPosition, sMove);
+							originalMove = 0;// ToMove(board.MyPosition, sMove);
 							if (!differenceOnly || newMove != originalMove)
 							{
 								console.WriteLine("Round {0}: original move: {1}, new move: {2}",

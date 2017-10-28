@@ -1,0 +1,2 @@
+﻿V0   28-10-2017, 14:52: PassBot
+V2   28-10-2017, 15:04: Fixed board parsing
