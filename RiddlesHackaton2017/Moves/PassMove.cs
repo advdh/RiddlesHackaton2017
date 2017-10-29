@@ -14,6 +14,17 @@ namespace RiddlesHackaton2017.Moves
 			return "pass";
 		}
 
+		public static bool TryParse(string s, out Move move)
+		{
+			if (s == "pass")
+			{
+				move = new PassMove();
+				return true;
+			}
+			move = new NullMove();
+			return false;
+		}
+
 		public override string ToString()
 		{
 			return "PassMove";

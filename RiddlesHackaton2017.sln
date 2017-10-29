@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiddlesHackaton2017", "Ridd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiddlesHackaton2017.Test", "RiddlesHackaton2017.Test\RiddlesHackaton2017.Test.csproj", "{CBEFAB1E-AEFC-4E7F-8FF3-3A02B2AA21C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exact.RiddlesHackaton2017.IntegrationTest", "Exact.RiddlesHackaton2017.IntegrationTest\Exact.RiddlesHackaton2017.IntegrationTest.csproj", "{C40C5FCB-533E-4F3C-BFB5-8C7C6699CE83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiddlesHackaton2017.IntegrationTest", "Exact.RiddlesHackaton2017.IntegrationTest\RiddlesHackaton2017.IntegrationTest.csproj", "{C40C5FCB-533E-4F3C-BFB5-8C7C6699CE83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,6 +4,7 @@ using RiddlesHackaton2017.RandomGeneration;
 using RiddlesHackaton2017.Models;
 using System.Linq;
 using RiddlesHackaton2017.Moves;
+using System.Diagnostics;
 
 namespace RiddlesHackaton2017.Bots
 {
@@ -19,27 +20,26 @@ namespace RiddlesHackaton2017.Bots
 		}
 
 		/// <summary>
-		/// Returns the maximum duration of one turn = max. 350 ms or 
-		/// timeLimit / 4, if we have limited time
+		/// Returns the maximum allowed duration for simulations 
+		/// = minimum of "according to parameter" and
+		/// timeLimit / 4
 		/// </summary>
 		private TimeSpan GetMaxDuration(TimeSpan timeLimit)
 		{
-			int ms = (int)timeLimit.TotalMilliseconds;
-			int maxMs = Math.Min(350, ms / 4);
-			return TimeSpan.FromMilliseconds(maxMs);
+			return new TimeSpan(Math.Min(timeLimit.Ticks / 4, Parameters.MaxDuration.Ticks));
 		}
 
 		public override Move GetMove()
 		{
 			int count = 0;
-
-			//var stopwatch = Stopwatch.StartNew();
-			//TimeSpan duration = GetMaxDuration(TimeLimit);
-			//while (stopwatch.Elapsed < duration)
-
 			double bestScore = double.MinValue;
 			Move bestMove = null;
-			while (count < Parameters.MoveCount)
+
+			var stopwatch = Stopwatch.StartNew();
+			TimeSpan duration = GetMaxDuration(TimeLimit);
+			bool goOn = true;
+
+			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
 				var move = GetRandomMove(Board, Board.MyPlayer);
@@ -56,10 +56,14 @@ namespace RiddlesHackaton2017.Bots
 				}
 
 				count++;
+
+				goOn = stopwatch.Elapsed < duration && count < Parameters.MoveCount;
 			}
 
 			//Log and return
-			LogMessage = string.Format("Move {0}: score {1:P0}", bestMove, bestScore);
+			LogMessage = string.Format("Move {0}: score = {1:P0}, evaluated moves = {2}", 
+				bestMove, bestScore, count);
+
 			return bestMove;
 		}
 
@@ -99,7 +103,7 @@ namespace RiddlesHackaton2017.Bots
 				bool anyHis = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
 				if (!anyHis) return true;
 				bool anyMine = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
-				if (anyMine) return false;
+				if (!anyMine) return false;
 
 				//Next player
 				player = player.Opponent();

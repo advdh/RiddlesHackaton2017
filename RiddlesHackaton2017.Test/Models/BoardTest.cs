@@ -134,33 +134,6 @@ namespace RiddlesHackaton2017.Test.Models
 		}
 
 		[TestMethod]
-		public void CopyAndPlay_Player1_Test()
-		{
-			var board = InitBoard();
-			var move = new PassMove();
-			var newBoard = Board.CopyAndPlay(board, Player.Player1, move);
-			Assert.AreEqual(board.MyPlayer, newBoard.MyPlayer, "MyPlayer");
-			Assert.AreEqual(3, newBoard.Round, "Round");
-			Assert.Fail();
-		}
-
-		[TestMethod]
-		public void CopyAndPlay_Player2_Test()
-		{
-			var board = new Board()
-			{
-				MyPlayer = Player.Player2,
-				Round = 3
-			};
-			var move = new PassMove();
-			var newBoard = Board.CopyAndPlay(board, Player.Player2, move);
-
-			Assert.AreEqual(board.MyPlayer, newBoard.MyPlayer, "MyPlayer");
-			Assert.AreEqual(4, newBoard.Round, "Round");
-			Assert.Fail();
-		}
-
-		[TestMethod]
 		public void BoardString_Test()
 		{
 			var board = InitBoard();

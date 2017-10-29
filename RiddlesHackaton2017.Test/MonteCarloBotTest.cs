@@ -9,6 +9,10 @@ namespace RiddlesHackaton2017.Test
 	[TestClass]
 	public class MonteCarloBotTest : TestBase
 	{
+		/// <summary>
+		/// Use board from game de4f1949-1c06-46b2-afb8-bfd25ff3fc40
+		/// https://starapple.riddles.io/competitions/game-of-life-and-death/matches/de4f1949-1c06-46b2-afb8-bfd25ff3fc40
+		/// </summary>
 		[TestMethod]
 		public void MonteCarlo_Test()
 		{

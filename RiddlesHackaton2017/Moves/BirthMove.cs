@@ -64,5 +64,37 @@ namespace RiddlesHackaton2017.Moves
 				SacrificePosition1.X, SacrificePosition1.Y,
 				SacrificePosition2.X, SacrificePosition2.Y);
 		}
+
+		public static bool TryParse(string moveString, out Move move)
+		{
+			if (moveString.StartsWith("birth", StringComparison.InvariantCulture)
+				&& moveString.Length > 6)
+			{
+				string[] ss = moveString.Substring(6).Split(' ');
+				bool valid = ss.Length == 3;
+				var positions = new Position[3];
+				if (valid)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						string[] s = ss[i].Split(',');
+						int x, y;
+						if (!int.TryParse(s[0], out x) || !int.TryParse(s[1], out y))
+						{
+							valid = false;
+							break;
+						}
+						positions[i] = new Position(x, y);
+					}
+				}
+				if (valid)
+				{
+					move = new BirthMove(positions[0], positions[1], positions[2]);
+					return true;
+				}
+			}
+			move = new NullMove();
+			return false;
+		}
 	}
 }

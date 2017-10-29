@@ -6,8 +6,8 @@
     <ProjectGuid>{C40C5FCB-533E-4F3C-BFB5-8C7C6699CE83}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Exact.RiddlesHackaton2017.IntegrationTest</RootNamespace>
-    <AssemblyName>Exact.RiddlesHackaton2017.IntegrationTest</AssemblyName>
+    <RootNamespace>RiddlesHackaton2017.IntegrationTest</RootNamespace>
+    <AssemblyName>RiddlesHackaton2017.IntegrationTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

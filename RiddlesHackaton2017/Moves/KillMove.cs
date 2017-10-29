@@ -1,4 +1,5 @@
 ﻿using RiddlesHackaton2017.Models;
+using System;
 
 namespace RiddlesHackaton2017.Moves
 {
@@ -23,6 +24,27 @@ namespace RiddlesHackaton2017.Moves
 		public override string ToOutputString()
 		{
 			return string.Format("kill {0},{1}", Position.X, Position.Y);
+		}
+
+		public static bool TryParse(string moveString, out Move move)
+		{
+			if (moveString.StartsWith("kill", StringComparison.InvariantCulture)
+				&& moveString.Length > 5)
+			{
+				string[] s = moveString.Substring(5).Split(',');
+				if (s.Length == 2)
+				{
+					int x, y;
+					if (int.TryParse(s[0], out x) 
+						&& int.TryParse(s[1], out y))
+					{
+						move = new KillMove(x, y);
+						return true;
+					}
+				}
+			}
+			move = new NullMove();
+			return false;
 		}
 
 		public override Board Apply(Board board, Player player)

@@ -59,6 +59,7 @@
     <Compile Include="Moves\KillMove.cs" />
     <Compile Include="Moves\Move.cs" />
     <Compile Include="Models\Node.cs" />
+    <Compile Include="Moves\NullMove.cs" />
     <Compile Include="Moves\PassMove.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
@@ -77,6 +78,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BackLog.txt" />
     <Content Include="Version.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

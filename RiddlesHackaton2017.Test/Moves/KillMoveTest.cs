@@ -53,7 +53,6 @@ namespace RiddlesHackaton2017.Test.Moves
 			move.Apply(board, Player.Player1);
 		}
 
-
 		[TestMethod]
 		public void OutputString_Test()
 		{
@@ -62,6 +61,62 @@ namespace RiddlesHackaton2017.Test.Moves
 			var move = new KillMove(killPosition);
 
 			Assert.AreEqual("kill 5,0", move.ToOutputString());
+		}
+
+		[TestMethod]
+		public void TryParse_Parsable_Test()
+		{
+			Move move;
+			Assert.IsTrue(KillMove.TryParse("kill 5,0", out move));
+			Assert.AreEqual(new KillMove(5, 0), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("foo", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable2_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("kill", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable3_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("kill ,", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable4_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("kill x,y", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable5_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("kill 1,", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable6_Test()
+		{
+			Move move;
+			Assert.IsFalse(KillMove.TryParse("kill 1,y", out move));
+			Assert.AreEqual(new NullMove(), move);
 		}
 	}
 }

@@ -1,24 +1,28 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RiddlesHackaton2017;
 using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace Exact.RiddlesHackaton2017.IntegrationTest
+namespace RiddlesHackaton2017.IntegrationTest
 {
 	[TestClass]
 	public class Replayer
 	{
-		public static string Folder { get { return @"C:\tmp\RiddlesHackaton2017\Games"; } }
+		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("617e3420-1302-42e4-a34e-c362763e319f");
+			DoReplay("640c2225-c01b-4740-af27-229881e724cf", 
+				parameters: new MonteCarloParameters() {
+					MaxDuration = TimeSpan.FromMinutes(1),
+					MoveCount = 500000,
+				});
 		}
 
 		/// <summary>
@@ -29,30 +33,34 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 		/// <param name="action">Optional: action to execute on action command</param>
 		private void DoReplay(string gameId, bool differenceOnly = true,
 			Action<Board> action = null,
-			int[] rounds = null)
+			int[] rounds = null,
+			MonteCarloParameters parameters = null)
 		{
-			var filename = System.IO.Path.Combine(Folder, gameId + ".txt");
+			var filename = Path.Combine(Folder, gameId + ".txt");
 			if (rounds == null)
 			{
 				rounds = Enumerable.Range(0, Board.Size).ToArray();
 			}
+			if (parameters == null)
+			{
+				parameters = MonteCarloParameters.Default;
+			}
 			var lines = File.ReadAllLines(filename);
-			DoReplayLines(lines, differenceOnly, action, rounds);
+			DoReplayLines(lines, differenceOnly, action, rounds, new TheConsole(), parameters);
 		}
 
-		private void DoReplayLines(string[] lines, bool differenceOnly, Action<Board> action, int[] rounds)
-		{
-			DoReplayLines(lines, differenceOnly, action, rounds, new TheConsole());
-		}
-
-		private void DoReplayLines(string[] lines, bool differenceOnly, Action<Board> action, int[] rounds, IConsole console)
+		private void DoReplayLines(string[] lines, bool differenceOnly, 
+			Action<Board> action, int[] rounds, IConsole console, MonteCarloParameters parameters)
 		{
 			var board = new Board();
 			Player player = Player.Player1;
-			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()));
+			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
+			{
+				Parameters = parameters
+			};
 			int round = 0;
-			int originalMove;
-			int newMove = -1;
+			Move originalMove;
+			Move newMove = new NullMove();
 
 			foreach (var command in lines)
 			{
@@ -73,7 +81,7 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 							if (action == null)
 							{
 								int timelimit = int.Parse(words[2]);
-								newMove = int.Parse(bot.GetMove(board, TimeSpan.FromMilliseconds(timelimit)));
+								newMove = Move.Parse(bot.GetMove(board, TimeSpan.FromMilliseconds(timelimit)));
 							}
 							else
 							{
@@ -86,35 +94,16 @@ namespace Exact.RiddlesHackaton2017.IntegrationTest
 						if (rounds.Contains(round))
 						{
 							string sMove = command.Split('"')[1];
-							originalMove = 0;// ToMove(board.MyPosition, sMove);
-							if (!differenceOnly || newMove != originalMove)
+							originalMove = Move.Parse(sMove);
+							if (!differenceOnly || !newMove.Equals(originalMove))
 							{
-								console.WriteLine("Round {0}: original move: {1}, new move: {2}",
-									round, new Position(originalMove), new Position(newMove));
+								Console.Error.WriteLine("Round {0}: original move: {1}, new move: {2}",
+									round, originalMove, newMove);
 							}
 						}
 						break;
 				}
 			}
-		}
-
-		private int ToMove(int position, string sMove)
-		{
-			//TODO
-			//switch (sMove)
-			//{
-			//	case "up":
-			//		return position - Board.Size;
-			//	case "down":
-			//		return position + Board.Size;
-			//	case "left":
-			//		return position - 1;
-			//	case "right":
-			//		return position + 1;
-			//}
-
-			//Example: invalid move
-			return 0;
 		}
 
 		private static void ParseBoard(string[] words, Player player, ref Board board, ref int round)

@@ -13,9 +13,14 @@ namespace RiddlesHackaton2017
 		static Board Board;
 		static Player Player;
 		static int Round;
-		static KillMoveBot Bot = new KillMoveBot(new ConsoleError());
+		//static KillMoveBot Bot = new KillMoveBot(new ConsoleError());
 		//static PassBot Bot = new PassBot(new ConsoleError());
-		//static MonteCarloBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()));
+
+		static MonteCarloParameters Parameters = MonteCarloParameters.Life;
+		static MonteCarloBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()))
+		{
+			Parameters = Parameters,
+		};
 
 		static void Main(string[] args)
 		{
@@ -23,6 +28,8 @@ namespace RiddlesHackaton2017
 			Console.Error.WriteLine("Version {0}, UTC: {1}",
 				Assembly.GetExecutingAssembly().GetName().Version,
 				DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+			Console.Error.WriteLine("Parameters:");
+			Console.Error.WriteLine(Parameters);
 
 			while (true)
 			{

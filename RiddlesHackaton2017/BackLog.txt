@@ -1,0 +1,18 @@
+﻿Fixed KillMove when we are about to win:
+- if opponent has exactly one cell
+- try all kill moves and pick best if he has only a few cells left
+
+Don't try Birthmoves, of which the new born cell has no neighbours at all: it will die immediately
+Note that it may be worth to select a new born cell with exactly one own neighbour: it will also die immediately,
+but it may keep the neighbour alive
+
+Select best moves, based on direct impact statistics
+	Improve calculation speed of direct impact statistics
+
+MonteCarlo with max. duration: increase count and simulation count at the same time
+while (!timeToStop)
+{
+	for all previous moves: add one more simulation
+	generate new move, and simulate it <count> times
+}
+pick one with best statistics

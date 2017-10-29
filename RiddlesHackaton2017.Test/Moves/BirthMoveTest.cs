@@ -64,7 +64,7 @@ namespace RiddlesHackaton2017.Test.Moves
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
-		public void Apply_DuplicateSacricePositions_Test()
+		public void Apply_DuplicateSacrificePositions_Test()
 		{
 			var board = InitBoard();
 			var birthPosition = new Position(0, 0);
@@ -86,6 +86,46 @@ namespace RiddlesHackaton2017.Test.Moves
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
 			Assert.AreEqual("birth 0,0 5,0 11,0", move.ToOutputString());
+		}
+
+		[TestMethod]
+		public void TryParse_Parsable_Test()
+		{
+			Move move;
+			Assert.IsTrue(BirthMove.TryParse("birth 1,0 5,1 11,12", out move));
+			Assert.AreEqual(new BirthMove(new Position(1, 0), new Position(5, 1), new Position(11, 12)), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable_Test()
+		{
+			Move move;
+			Assert.IsFalse(BirthMove.TryParse("foo", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable2_Test()
+		{
+			Move move;
+			Assert.IsFalse(BirthMove.TryParse("birth", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable3_Test()
+		{
+			Move move;
+			Assert.IsFalse(BirthMove.TryParse("birth x,y 5,0 6,0", out move));
+			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void TryParse_NotParsable4_Test()
+		{
+			Move move;
+			Assert.IsFalse(BirthMove.TryParse("birth 5,0 6,0", out move));
+			Assert.AreEqual(new NullMove(), move);
 		}
 	}
 }
