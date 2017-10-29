@@ -11,6 +11,7 @@ namespace RiddlesHackaton2017.Models
 		public const int Width = 18;
 		public const int Height = 16;
 		public const int Size = Width * Height;
+		public const int MaxRounds = 100;
 
 		#region Properties
 
@@ -26,7 +27,36 @@ namespace RiddlesHackaton2017.Models
 
 		public IEnumerable<Move> GetFeasibleMovesForPlayer(Player player)
 		{
-			throw new NotImplementedException();
+			var result = new List<Move>();
+
+			//Pass move
+			result.Add(new PassMove());
+
+			//Kill moves
+			for (int i = 0; i < Size; i++)
+			{
+				if (Field[i] != 0)
+				{
+					result.Add(new KillMove(i));
+				}
+			}
+
+			//Birth moves
+			var myFields = Enumerable.Range(0, Size).Where(i => Field[i] == (short)MyPlayer);
+			//var opponentFields = Enumerable.Range(0, Size).Where(i => Field[i] == (short)OpponentPlayer);
+			var emptyFields = Enumerable.Range(0, Size).Where(i => Field[i] == 0);
+
+			foreach(int b in emptyFields)
+			{
+				foreach(int s1 in myFields)
+				{
+					foreach(int s2 in myFields.Except(new[] { s1 }))
+					{
+						result.Add(new BirthMove(b, s1, s2));
+					}
+				}
+			}
+			return result;
 		}
 
 		#endregion
@@ -72,58 +102,63 @@ namespace RiddlesHackaton2017.Models
 
 			for(int i = 0; i < Size; i++)
 			{
-				int count = 0;
-				int count1 = 0;
-				foreach(int j in NeighbourFields[i])
-				{
-					if (board.Field[j] != 0)
-					{
-						count++;
-						if (board.Field[j] == 1)
-						{
-							count1++;
-						}
-					}
-				}
-				if (board.Field[i] != 0)
-				{
-					//Current cell is living
-					switch (count)
-					{
-						case 0:
-						case 1:
-							//Die
-							break;
-						case 2:
-						case 3:
-							//Live on
-							newBoard.Field[i] = board.Field[i];
-							break;
-						default:
-							//Die
-							break;
-					}
-				}
-				else
-				{
-					//Current cell dead
-					if (count == 3)
-					{
-						if (count1 >= 2)
-						{
-							//Player1 born
-							newBoard.Field[i] = 1;
-						}
-						else
-						{
-							//Player2 born
-							newBoard.Field[i] = 2;
-						}
-					}
-				}
+				newBoard.Field[i] = NextGenerationForField(board, i);
 			}
 
 			return newBoard;
+		}
+
+		private static short NextGenerationForField(Board board, int i)
+		{
+			int count = 0;
+			int count1 = 0;
+			foreach (int j in NeighbourFields[i])
+			{
+				if (board.Field[j] != 0)
+				{
+					count++;
+					if (board.Field[j] == 1)
+					{
+						count1++;
+					}
+				}
+			}
+			if (board.Field[i] != 0)
+			{
+				//Current cell is living
+				switch (count)
+				{
+					case 0:
+					case 1:
+						//Die
+						break;
+					case 2:
+					case 3:
+						//Live on
+						return board.Field[i];
+					default:
+						//Die
+						break;
+				}
+			}
+			else
+			{
+				//Current cell dead
+				if (count == 3)
+				{
+					if (count1 >= 2)
+					{
+						//Player1 born
+						return 1;
+					}
+					else
+					{
+						//Player2 born
+						return 2;
+					}
+				}
+			}
+			return 0;
 		}
 
 		#endregion
@@ -134,18 +169,36 @@ namespace RiddlesHackaton2017.Models
 		{
 			get
 			{
-				var copy = new Board(this);
+				var copy = new Board() { Round = Round, MyPlayer = OpponentPlayer };
 				for (int i = 0; i < Size; i++)
 				{
-					copy.Field[i] = (short)(3 - copy.Field[i]);
+					if (Field[i] != 0)
+					{
+						copy.Field[i] = (short)(3 - Field[i]);
+					}
 				}
 				return copy;
 			}
 		}
 
+		/// <remarks>TODO: cache</remarks>
+		public IEnumerable<int> MyCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == (short)MyPlayer); } }
+
+		/// <remarks>TODO: cache</remarks>
+		public IEnumerable<int> GetCells(Player player)
+		{
+			return Enumerable.Range(0, Size).Where(i => Field[i] == (short)player);
+		}
+
+		/// <remarks>TODO: cache</remarks>
+		public IEnumerable<int> OpponentCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == (short)OpponentPlayer); } }
+		/// <remarks>TODO: cache</remarks>
+		public IEnumerable<int> EmptyCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == 0); } }
+
 		public override string ToString()
 		{
-			return string.Format("Round {0};", Round);
+			return string.Format("Round {0}, {3}: my count: {1}; his count: {2}", 
+				Round, MyCells.Count(), OpponentCells.Count(), MyPlayer);
 		}
 
 		public string BoardString()

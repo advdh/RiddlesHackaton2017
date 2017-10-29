@@ -1,8 +1,6 @@
 ﻿using System;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
-using System.Collections.Generic;
-using System.Diagnostics;
 using RiddlesHackaton2017.Models;
 using System.Linq;
 using RiddlesHackaton2017.Moves;
@@ -11,6 +9,8 @@ namespace RiddlesHackaton2017.Bots
 {
 	public class MonteCarloBot : BaseBot
 	{
+		public MonteCarloParameters Parameters { get; set; } = MonteCarloParameters.Default;
+
 		private readonly IRandomGenerator Random;
 
 		public MonteCarloBot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
@@ -31,80 +31,143 @@ namespace RiddlesHackaton2017.Bots
 
 		public override Move GetMove()
 		{
-			var statistics = new Dictionary<Move, MonteCarloStatistics>();
-			var stopwatch = Stopwatch.StartNew();
 			int count = 0;
 
-			var allMoves = Board.GetFeasibleMovesForPlayer(Board.MyPlayer).ToArray();
-			if (allMoves.Length == 1) return allMoves[0];
+			//var stopwatch = Stopwatch.StartNew();
+			//TimeSpan duration = GetMaxDuration(TimeLimit);
+			//while (stopwatch.Elapsed < duration)
 
-			TimeSpan duration = GetMaxDuration(TimeLimit);
-			while (stopwatch.Elapsed < duration)
-			//while (count < 2000)
+			double bestScore = double.MinValue;
+			Move bestMove = null;
+			while (count < Parameters.MoveCount)
 			{
-				//Play move and simulate rest of game
-				var myBoard = new Board(Board);
-
-				var move = allMoves[count % allMoves.Length];
-
-				myBoard = Board.CopyAndPlay(myBoard, myBoard.MyPlayer, move);
-				bool won = SimulateRestOfGame(myBoard);
-
-				//Update statistics
-				MonteCarloStatistics statistic = null;
-				if (!statistics.ContainsKey(move))
+				//Get random move and simulate rest of the game several times
+				var move = GetRandomMove(Board, Board.MyPlayer);
+				double score = SimulateMove(Board, move);
+				if (Parameters.LogAllMoves)
 				{
-					statistic = new MonteCarloStatistics() { Move = move };
-					statistics.Add(move, statistic);
+					ConsoleError.WriteLine("{0}: {1:P0}: direct impact: {2}", 
+						move, score, move.DirectImpactForBoard(Board));
 				}
-				else
+				if (score > bestScore)
 				{
-					statistic = statistics[move];
+					bestScore = score;
+					bestMove = move;
 				}
-
-				statistic.Count++;
-				if (won) statistic.Won++;
-				//statistic.SumMyBearedOff += board.BearedOff[0];
-				//statistic.SumOpponentBearedOff += board.BearedOff[1];
 
 				count++;
 			}
 
-			//Select moves with best results
-			//Currently best probability to win
-			var orderedStatistics = statistics
-				.OrderByDescending(s => (double)s.Value.Won / s.Value.Count);
-			var best = orderedStatistics.FirstOrDefault().Value;
-			System.Console.WriteLine("Board: {0}, Move {1} ({2:P0}), {3} games simulated, {4} options",
-				Board, best.Move, (double)best.Won / best.Count, count, statistics.Count);
-			return best.Move;
+			//Log and return
+			LogMessage = string.Format("Move {0}: score {1:P0}", bestMove, bestScore);
+			return bestMove;
 		}
 
-		private bool SimulateRestOfGame(Board board)
+		/// <summary>
+		/// Simulates the specified move a number of times using MonteCarlo simulation
+		/// </summary>
+		/// <returns>Score for this move</returns>
+		private double SimulateMove(Board board, Move move)
 		{
-			bool endOfGame = false; //TODO
-			var bot1 = new MonteCarloRestOfGameBot(new NullConsole(), new RandomGenerator(new Random()));
-			var bot2 = new MonteCarloRestOfGameBot(new NullConsole(), new RandomGenerator(new Random()));
-			board = board.OpponentBoard;
+			var statistic = new MonteCarloStatistics() { Move = move };
 
-			Player myPlayer = board.OpponentPlayer;
-			while (!endOfGame)
+			for (int i = 0; i < Parameters.SimulationCount; i++)
 			{
-				var bot = board.MyPlayer == Player.Player1 ? bot1 : bot2;
-				//var dice = Dice.Roll(Random);
+				var myBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
+				bool? won = SimulateRestOfGame(myBoard);
 
-				//Bot play
-				Move move = Move.Parse(bot.GetMove(new Board(board), TimeSpan.Zero));
-				board = Board.CopyAndPlay(board, board.MyPlayer, move);
-				endOfGame = false; //TODO
-				if (endOfGame) break;
-
-				//Next player
-				myPlayer = myPlayer.Opponent();
-				board = board.OpponentBoard;
+				statistic.Count++;
+				if (won.HasValue && won.Value) statistic.Won++;
+				if (won.HasValue && !won.Value) statistic.Lost++;
 			}
 
-			return true; //TODO: return winner
+			return statistic.Score;
+		}
+
+		/// <summary>
+		/// Simulates one game to the end
+		/// </summary>
+		/// <returns>true if won, false if lost, null if draw</returns>
+		private bool? SimulateRestOfGame(Board board)
+		{
+			var player = board.OpponentPlayer;
+			while (board.Round < Board.MaxRounds)
+			{
+				//Bot play
+				Move move = GetRandomMove(board, player);
+				board = Board.CopyAndPlay(board, player, move);
+				bool anyHis = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
+				if (!anyHis) return true;
+				bool anyMine = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
+				if (anyMine) return false;
+
+				//Next player
+				player = player.Opponent();
+			}
+
+			return null;
+		}
+
+		private Move GetRandomMove(Board board, Player player)
+		{
+			int rnd = Random.Next(100);
+			if (rnd < Parameters.PassMovePercentage)
+			{
+				//With probability 1% we do a pass move
+				return new PassMove();
+			}
+			else if (rnd < Parameters.PassMovePercentage + Parameters.KillMovePercentage)
+			{
+				//With probability 49% we do a kill move
+				return GetRandomKillMove(board, player);
+			}
+			else
+			{
+				//With probability 50% we do a birth move
+				return GetRandomBirthMove(board, player);
+			}
+		}
+
+		public KillMove GetRandomKillMove(Board board, Player player)
+		{
+			var mine = board.GetCells(player);
+			var his = board.GetCells(player.Opponent());
+			var possible = mine.Union(his).ToArray();
+			return new KillMove(possible[Random.Next(possible.Length)]);
+		}
+
+		public Move GetRandomBirthMove(Board board, Player player)
+		{
+			var mine = board.GetCells(player).ToArray();
+			if (mine.Count() < 2)
+			{
+				//Only one cell left: cannot do a birth move
+				//Switch to pass move
+				return new PassMove();
+			}
+
+			//Pick one empty cell for birth
+			var empty = board.EmptyCells.ToArray();
+			int b = empty[Random.Next(empty.Length)];
+
+			//Pick two cells of my own to sacrifice
+			int s1, s2;
+			if (mine.Length == 2)
+			{
+				s1 = mine.First();
+				s2 = mine.Last();
+			}
+			else
+			{
+				s1 = mine[Random.Next(mine.Length)];
+				do
+				{
+					s2 = mine[Random.Next(mine.Length)];
+				}
+				while (s2 == s1);
+			}
+
+			return new BirthMove(b, s1, s2);
 		}
 	}
 }

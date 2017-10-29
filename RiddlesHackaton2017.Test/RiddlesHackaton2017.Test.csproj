@@ -53,6 +53,7 @@
     <Compile Include="BotParserTest.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Models\BoardTest.cs" />
+    <Compile Include="MonteCarloBotTest.cs" />
     <Compile Include="Moves\BirthMoveTest.cs" />
     <Compile Include="Moves\PassMoveTest.cs" />
     <Compile Include="TestBase.cs" />

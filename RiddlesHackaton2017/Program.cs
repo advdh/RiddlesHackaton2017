@@ -13,7 +13,8 @@ namespace RiddlesHackaton2017
 		static Board Board;
 		static Player Player;
 		static int Round;
-		static PassBot Bot = new PassBot(new ConsoleError());
+		static KillMoveBot Bot = new KillMoveBot(new ConsoleError());
+		//static PassBot Bot = new PassBot(new ConsoleError());
 		//static MonteCarloBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()));
 
 		static void Main(string[] args)

@@ -1,5 +1,5 @@
-﻿using System;
-using RiddlesHackaton2017.Models;
+﻿using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.Evaluation;
 
 namespace RiddlesHackaton2017.Moves
 {
@@ -9,9 +9,10 @@ namespace RiddlesHackaton2017.Moves
 
 		public abstract string ToOutputString();
 
-		internal static Move Parse(string v)
+		public int DirectImpactForBoard(Board board)
 		{
-			throw new NotImplementedException();
+			var newBoard = Board.CopyAndPlay(board, board.MyPlayer, this);
+			return BoardEvaluator.Evaluate(newBoard) - BoardEvaluator.Evaluate(board);
 		}
 	}
 }

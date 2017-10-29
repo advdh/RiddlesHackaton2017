@@ -21,9 +21,9 @@ namespace RiddlesHackaton2017.Evaluation
 		public static int Evaluate(Board board, 
 			int optionalArgument1 = 0)
 		{
-			throw new NotImplementedException();
-			int score = 0;
-			return score;
+			int mine = Enumerable.Range(0, Board.Size).Count(i => board.Field[i] == 1);
+			int his = Enumerable.Range(0, Board.Size).Count(i => board.Field[i] == 2);
+			return mine - his;
 		}
 	}
 }

@@ -39,11 +39,11 @@ namespace RiddlesHackaton2017.Moves
 			}
 			if (board.Field[SacrificeIndex1] != (short)player)
 			{
-				throw new InvalidBirthMoveException("SacrificeIndex1 position must be empty: {0}", SacrificePosition1);
+				throw new InvalidBirthMoveException("SacrificeIndex1 position must be owned by you: {0}", SacrificePosition1);
 			}
 			if (board.Field[SacrificeIndex2] != (short)player)
 			{
-				throw new InvalidBirthMoveException("SacrificeIndex2 position must be empty: {0}", SacrificePosition2);
+				throw new InvalidBirthMoveException("SacrificeIndex2 position must be owned by you: {0}", SacrificePosition2);
 			}
 			if (SacrificeIndex1 == SacrificeIndex2)
 			{
