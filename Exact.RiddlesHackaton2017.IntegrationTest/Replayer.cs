@@ -18,11 +18,22 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("640c2225-c01b-4740-af27-229881e724cf", 
-				parameters: new MonteCarloParameters() {
-					MaxDuration = TimeSpan.FromMinutes(1),
-					MoveCount = 500000,
-				});
+			DoReplay("bb708587-63cf-42e4-90f2-69066c815603", 
+				//rounds: new[] { 8 },
+				//action: Replay_OwnKillMoves,
+				parameters: new MonteCarloParameters());
+		}
+
+		void Replay_OwnKillMoves(Board board)
+		{
+			Console.WriteLine("Round {0}", board.Round);
+			var mine = board.GetCells(Player.Player1);
+			foreach(int i in mine)
+			{
+				var killMove = new KillMove(i);
+				//var newBoard = Board.CopyAndPlay(board, Player.Player1, killMove);
+				Console.WriteLine("{0}: direct impact = {1}", new Position(i), killMove.DirectImpactForBoard(board));
+			}
 		}
 
 		/// <summary>

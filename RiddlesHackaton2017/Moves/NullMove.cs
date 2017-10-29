@@ -14,5 +14,16 @@ namespace RiddlesHackaton2017.Moves
 		{
 			return string.Empty;
 		}
+
+		public static bool TryParse(string s, out Move move)
+		{
+			move = new NullMove();
+			return (s == string.Empty);
+		}
+
+		public override string ToString()
+		{
+			return "NullMove";
+		}
 	}
 }

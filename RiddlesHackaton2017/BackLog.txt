@@ -1,13 +1,25 @@
 ﻿Fixed KillMove when we are about to win:
 - if opponent has exactly one cell
-- try all kill moves and pick best if he has only a few cells left
+DONE V8
 
 Don't try Birthmoves, of which the new born cell has no neighbours at all: it will die immediately
 Note that it may be worth to select a new born cell with exactly one own neighbour: it will also die immediately,
 but it may keep the neighbour alive
+DONE V8
+
+Don't try Killmoves to kill our own cells
+DONE V8
+
+Fixed KillMove when we are about to win:
+- if opponent has two or more cells, which can be killed all by one Kill- or BirthMove
+
+If opponent has few cells left, then try all kill moves instead of 
+	picking random kill moves
 
 Select best moves, based on direct impact statistics
 	Improve calculation speed of direct impact statistics
+
+Score: include average number of rounds to win, because score is often 100%. Less rounds to win is better.
 
 MonteCarlo with max. duration: increase count and simulation count at the same time
 while (!timeToStop)

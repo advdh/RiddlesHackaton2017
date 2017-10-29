@@ -12,8 +12,9 @@ namespace RiddlesHackaton2017.Moves
 
 		public int DirectImpactForBoard(Board board)
 		{
-			var newBoard = Board.CopyAndPlay(board, board.MyPlayer, this);
-			return BoardEvaluator.Evaluate(newBoard) - BoardEvaluator.Evaluate(board);
+			var boardAfterMove = Board.CopyAndPlay(board, board.MyPlayer, this);
+			var boardAfterPassMove = Board.CopyAndPlay(board, board.MyPlayer, new PassMove());
+			return BoardEvaluator.Evaluate(boardAfterMove) - BoardEvaluator.Evaluate(boardAfterPassMove);
 		}
 
 		public static Move Parse(string moveString)
@@ -22,6 +23,7 @@ namespace RiddlesHackaton2017.Moves
 			if (PassMove.TryParse(moveString, out result)) return result;
 			if (KillMove.TryParse(moveString, out result)) return result;
 			if (BirthMove.TryParse(moveString, out result)) return result;
+			if (NullMove.TryParse(moveString, out result)) return result;
 			throw new ArgumentException("moveString");
 		}
 

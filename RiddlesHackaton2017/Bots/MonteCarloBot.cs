@@ -33,7 +33,12 @@ namespace RiddlesHackaton2017.Bots
 		{
 			int count = 0;
 			double bestScore = double.MinValue;
-			Move bestMove = null;
+			Move bestMove = GetDirectWinMove();
+			if (bestMove != null)
+			{
+				LogMessage = "Direct win move";
+				return bestMove;
+			}
 
 			var stopwatch = Stopwatch.StartNew();
 			TimeSpan duration = GetMaxDuration(TimeLimit);
@@ -65,6 +70,21 @@ namespace RiddlesHackaton2017.Bots
 				bestMove, bestScore, count);
 
 			return bestMove;
+		}
+
+		/// <summary>
+		/// Tries to get a direct win move
+		/// </summary>
+		/// <returns>Direct win move, if there is any, otherwise null</returns>
+		/// <remarks>TODO: Move out of this class; it has nothing to do with Monte Carlo</remarks>
+		private Move GetDirectWinMove()
+		{
+			var opponentCells = Board.OpponentCells;
+			if (opponentCells.Count() == 1)
+			{
+				return new KillMove(opponentCells.First());
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -134,10 +154,8 @@ namespace RiddlesHackaton2017.Bots
 
 		public KillMove GetRandomKillMove(Board board, Player player)
 		{
-			var mine = board.GetCells(player);
-			var his = board.GetCells(player.Opponent());
-			var possible = mine.Union(his).ToArray();
-			return new KillMove(possible[Random.Next(possible.Length)]);
+			var opponentCells = board.GetCells(player.Opponent()).ToArray();
+			return new KillMove(opponentCells[Random.Next(opponentCells.Length)]);
 		}
 
 		public Move GetRandomBirthMove(Board board, Player player)
@@ -151,7 +169,11 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Pick one empty cell for birth
-			var empty = board.EmptyCells.ToArray();
+			//Don't pick an empty cell without any neighbours
+			var empty = board.EmptyCells
+				.Where(c => Board.NeighbourFields[c]
+					.Any(nc => board.Field[nc] != 0))
+				.ToArray();
 			int b = empty[Random.Next(empty.Length)];
 
 			//Pick two cells of my own to sacrifice

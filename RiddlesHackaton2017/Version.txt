@@ -3,3 +3,6 @@ V2	28-10-2017, 15:04	Fixed board parsing
 V3	28-10-2017, 15:09	Removed AlphaBeta stuff
 V6	28-10-2017, 16:30	KillBot
 V7	29-10-2017, 15:42	First working Monte Carlo bot
+V8	29-10-2017, 17:30	Pick birth cell of birthmove only from cells with at least once living neighbour
+						Never pick own cells for KillMoves
+						Fixed KillMove if opponent has exactly one living cell
