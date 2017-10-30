@@ -128,6 +128,7 @@ namespace RiddlesHackaton2017.Bots
 			bool anyHis = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.OpponentPlayer);
 			if (!anyHis)
 			{
+				statistic.Count = Parameters.SimulationCount;
 				statistic.Won = Parameters.SimulationCount;
 				statistic.WonInRounds = Parameters.SimulationCount;
 				return statistic;
@@ -135,6 +136,7 @@ namespace RiddlesHackaton2017.Bots
 			bool anyMine = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.MyPlayer);
 			if (!anyMine)
 			{
+				statistic.Count = Parameters.SimulationCount;
 				statistic.Lost = Parameters.SimulationCount;
 				statistic.LostInRounds = Parameters.SimulationCount;
 				return statistic;

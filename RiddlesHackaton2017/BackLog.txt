@@ -13,6 +13,8 @@ DONE V8
 Score: include average number of rounds to win, because score is often 100%. Less rounds to win is better.
 DONE V10
 
+Exception handling: log as much data as possible and return PassMove
+
 To improve replayability, use a seed for randomization, based on first board.
 	Write this seed to the log.
 	Recreate the Random object every round based on this seed, 
