@@ -7,3 +7,5 @@ V8	29-10-2017, 17:30	Pick birth cell of birthmove only from cells with at least 
 						Never pick own cells for KillMoves
 						Fixed KillMove if opponent has exactly one living cell
 V9	29-10-2017, 07:56	Fixed System.IndexOutOfRangeException
+V10	29-10-2017, 09:28	Include average number of rounds to win/loose in score
+						Winning in less rounds is better, lossing in more rounds is better

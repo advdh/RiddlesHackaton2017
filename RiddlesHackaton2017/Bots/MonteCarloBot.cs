@@ -32,7 +32,13 @@ namespace RiddlesHackaton2017.Bots
 		public override Move GetMove()
 		{
 			int count = 0;
-			double bestScore = double.MinValue;
+			MonteCarloStatistics bestResult = new MonteCarloStatistics()
+			{
+				Count = Parameters.SimulationCount,
+				Won = -1,
+				Lost = Parameters.SimulationCount,
+				LostInRounds = Parameters.SimulationCount,
+			};
 			Move bestMove = GetDirectWinMove();
 			if (bestMove != null)
 			{
@@ -48,16 +54,40 @@ namespace RiddlesHackaton2017.Bots
 			{
 				//Get random move and simulate rest of the game several times
 				var move = GetRandomMove(Board, Board.MyPlayer);
-				double score = SimulateMove(Board, move);
+				var result = SimulateMove(Board, move);
 				if (Parameters.LogAllMoves)
 				{
-					ConsoleError.WriteLine("{0}: {1:P0}: direct impact: {2}", 
-						move, score, move.DirectImpactForBoard(Board));
+					ConsoleError.WriteLine("{0}: {1:P0}: direct impact: {2}, win in {3}, loose in {4}", 
+						move, result.Score, move.DirectImpactForBoard(Board),
+						result.AverageWinRounds, result.AverageLooseRounds);
 				}
-				if (score > bestScore)
+				if (result.Score > bestResult.Score)
 				{
-					bestScore = score;
+					//Prefer higher score
+					bestResult = result;
 					bestMove = move;
+				}
+				else if (result.Score == bestResult.Score)
+				{
+					//Same score
+					if (result.Score >= 0.50)
+					{
+						//Prefer to win in less rounds
+						if (result.AverageWinRounds < bestResult.AverageWinRounds)
+						{
+							bestResult = result;
+							bestMove = move;
+						}
+					}
+					else
+					{
+						//Prefer to loose in more rounds
+						if (result.AverageLooseRounds > bestResult.AverageLooseRounds)
+						{
+							bestResult = result;
+							bestMove = move;
+						}
+					}
 				}
 
 				count++;
@@ -66,8 +96,8 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = string.Format("{0}: score = {1:P0}, evaluated moves = {2}", 
-				bestMove, bestScore, count);
+			LogMessage = string.Format("{0}: score = {1:P0}, evaluated moves = {2}, win in {3}, loose in {4}", 
+				bestMove, bestResult.Score, count, bestResult.AverageWinRounds, bestResult.AverageLooseRounds);
 
 			return bestMove;
 		}
@@ -91,33 +121,51 @@ namespace RiddlesHackaton2017.Bots
 		/// Simulates the specified move a number of times using MonteCarlo simulation
 		/// </summary>
 		/// <returns>Score for this move</returns>
-		private double SimulateMove(Board board, Move move)
+		private MonteCarloStatistics SimulateMove(Board board, Move move)
 		{
 			var statistic = new MonteCarloStatistics() { Move = move };
 			var startBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
 			bool anyHis = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.OpponentPlayer);
-			if (!anyHis) return 1.0;
+			if (!anyHis)
+			{
+				statistic.Won = Parameters.SimulationCount;
+				statistic.WonInRounds = Parameters.SimulationCount;
+				return statistic;
+			}
 			bool anyMine = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.MyPlayer);
-			if (!anyMine) return 0.0;
+			if (!anyMine)
+			{
+				statistic.Lost = Parameters.SimulationCount;
+				statistic.LostInRounds = Parameters.SimulationCount;
+				return statistic;
+			}
 
 			for (int i = 0; i < Parameters.SimulationCount; i++)
 			{
 				var myBoard = new Board(startBoard);
-				bool? won = SimulateRestOfGame(myBoard);
+				var result = SimulateRestOfGame(myBoard);
 
 				statistic.Count++;
-				if (won.HasValue && won.Value) statistic.Won++;
-				if (won.HasValue && !won.Value) statistic.Lost++;
+				if (result.Won.HasValue && result.Won.Value)
+				{
+					statistic.Won++;
+					statistic.WonInRounds += (result.Round - startBoard.Round);
+				}
+				if (result.Won.HasValue && !result.Won.Value)
+				{
+					statistic.Lost++;
+					statistic.LostInRounds += (result.Round - startBoard.Round);
+				}
 			}
 
-			return statistic.Score;
+			return statistic;
 		}
 
 		/// <summary>
 		/// Simulates one game to the end
 		/// </summary>
 		/// <returns>true if won, false if lost, null if draw</returns>
-		private bool? SimulateRestOfGame(Board board)
+		private SimulationResult SimulateRestOfGame(Board board)
 		{
 			var player = board.OpponentPlayer;
 			while (board.Round < Board.MaxRounds)
@@ -126,15 +174,29 @@ namespace RiddlesHackaton2017.Bots
 				Move move = GetRandomMove(board, player);
 				board = Board.CopyAndPlay(board, player, move);
 				bool anyHis = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
-				if (!anyHis) return true;
+				if (!anyHis) return new SimulationResult(won: true, round: board.Round);
 				bool anyMine = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
-				if (!anyMine) return false;
+				if (!anyMine) return new SimulationResult(won: false, round: board.Round);
 
 				//Next player
 				player = player.Opponent();
 			}
 
-			return null;
+			return new SimulationResult(won: null, round: Board.MaxRounds);
+		}
+
+		private class SimulationResult
+		{
+			public bool? Won { get; set; }
+
+			/// <summary>Round number in which we win or loose, or MaxRounds if draw</summary>
+			public int Round { get; set; }
+
+			public SimulationResult(bool? won, int round)
+			{
+				Won = won;
+				Round = round;
+			}
 		}
 
 		private Move GetRandomMove(Board board, Player player)

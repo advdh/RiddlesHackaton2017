@@ -92,9 +92,10 @@ namespace RiddlesHackaton2017.Models
 			newBoard = NextGeneration(newBoard);
 
 			//Increment round
+			newBoard.Round = board.Round;
 			if (player == Player.Player2)
 			{
-				newBoard.Round = board.Round + 1;
+				newBoard.Round++;
 			}
 
 			return newBoard;
