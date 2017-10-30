@@ -28,3 +28,7 @@ while (!timeToStop)
 	generate new move, and simulate it <count> times
 }
 pick one with best statistics
+
+If only squares of 4 left, which do not touch, then draw (Nash equilibrium). 
+They fall apart if you try to add anything, especially if you can only sacrifice the square's cells.
+Example: aced3124-654a-44ae-9c71-1ffd35ebe567

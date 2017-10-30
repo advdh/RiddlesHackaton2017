@@ -1,10 +1,10 @@
-﻿using System;
+﻿using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
-using RiddlesHackaton2017.Models;
-using System.Linq;
-using RiddlesHackaton2017.Moves;
+using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Bots
 {
@@ -66,7 +66,7 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = string.Format("Move {0}: score = {1:P0}, evaluated moves = {2}", 
+			LogMessage = string.Format("{0}: score = {1:P0}, evaluated moves = {2}", 
 				bestMove, bestScore, count);
 
 			return bestMove;
@@ -94,10 +94,15 @@ namespace RiddlesHackaton2017.Bots
 		private double SimulateMove(Board board, Move move)
 		{
 			var statistic = new MonteCarloStatistics() { Move = move };
+			var startBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
+			bool anyHis = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.OpponentPlayer);
+			if (!anyHis) return 1.0;
+			bool anyMine = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.MyPlayer);
+			if (!anyMine) return 0.0;
 
 			for (int i = 0; i < Parameters.SimulationCount; i++)
 			{
-				var myBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
+				var myBoard = new Board(startBoard);
 				bool? won = SimulateRestOfGame(myBoard);
 
 				statistic.Count++;
@@ -120,9 +125,9 @@ namespace RiddlesHackaton2017.Bots
 				//Bot play
 				Move move = GetRandomMove(board, player);
 				board = Board.CopyAndPlay(board, player, move);
-				bool anyHis = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
+				bool anyHis = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
 				if (!anyHis) return true;
-				bool anyMine = Enumerable.Range(0, Models.Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
+				bool anyMine = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
 				if (!anyMine) return false;
 
 				//Next player

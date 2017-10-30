@@ -1,5 +1,7 @@
 ﻿using RiddlesHackaton2017.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Moves
 {
@@ -14,6 +16,14 @@ namespace RiddlesHackaton2017.Moves
 		public KillMove(int index)
 		{
 			Index = index;
+		}
+
+		public override IEnumerable<int> AffectedFields
+		{
+			get
+			{
+				return new[] { Index }.Union(Board.NeighbourFields[Index]);
+			}
 		}
 
 		public override string ToString()

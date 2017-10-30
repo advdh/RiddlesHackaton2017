@@ -18,12 +18,16 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("bb708587-63cf-42e4-90f2-69066c815603", 
-				//rounds: new[] { 8 },
+			DoReplay("216c3f09-e2a9-45e0-aa16-37124b508379"
+				//rounds: new[] { 0 },
 				//action: Replay_OwnKillMoves,
-				parameters: new MonteCarloParameters());
+				);
 		}
 
+		/// <summary>
+		/// Shows direct impact of all own kill moves
+		/// </summary>
+		/// <param name="board"></param>
 		void Replay_OwnKillMoves(Board board)
 		{
 			Console.WriteLine("Round {0}", board.Round);

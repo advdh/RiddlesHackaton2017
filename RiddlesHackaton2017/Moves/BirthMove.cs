@@ -1,5 +1,7 @@
 ﻿using System;
 using RiddlesHackaton2017.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Moves
 {
@@ -23,6 +25,19 @@ namespace RiddlesHackaton2017.Moves
 			BirthIndex = birthIndex;
 			SacrificeIndex1 = sacrificeIndex1;
 			SacrificeIndex2 = sacrificeIndex2;
+		}
+
+		public override IEnumerable<int> AffectedFields
+		{
+			get
+			{
+				return new[] { BirthIndex }
+					.Union(Board.NeighbourFields[BirthIndex])
+					.Union(new[] { SacrificeIndex1 })
+					.Union(Board.NeighbourFields[SacrificeIndex1])
+					.Union(new[] { SacrificeIndex2 })
+					.Union(Board.NeighbourFields[SacrificeIndex2]);
+			}
 		}
 
 		public override string ToString()

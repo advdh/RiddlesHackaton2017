@@ -1,9 +1,19 @@
 ﻿using RiddlesHackaton2017.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Moves
 {
 	public class PassMove : Move
 	{
+		public override IEnumerable<int> AffectedFields
+		{
+			get
+			{
+				return Enumerable.Empty<int>();
+			}
+		}
+
 		public override Board Apply(Board board, Player player)
 		{
 			return board;

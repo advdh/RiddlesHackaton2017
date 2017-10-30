@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using RiddlesHackaton2017.Models;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Moves
 {
 	public class NullMove : Move
 	{
+		public override IEnumerable<int> AffectedFields
+		{
+			get
+			{
+				return Enumerable.Empty<int>();
+			}
+		}
+
 		public override Board Apply(Board board, Player player)
 		{
 			throw new NotImplementedException();

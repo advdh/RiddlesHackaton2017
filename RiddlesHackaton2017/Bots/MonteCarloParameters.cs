@@ -9,7 +9,7 @@ namespace RiddlesHackaton2017.Bots
 		public int SimulationCount { get; set; } = 25;
 
 		/// <summary>Number of moves</summary>
-		public int MoveCount { get; set; } = 25;
+		public int MoveCount { get; set; } = int.MaxValue;
 
 		/// <summary>Percentage of kill moves in random move and simulation</summary>
 		public int KillMovePercentage { get; internal set; } = 49;
@@ -26,7 +26,7 @@ namespace RiddlesHackaton2017.Bots
 		/// For debugging purposes, timebound should be turned off
 		/// Also for replaying, it's better to turn it off, because local bot is much faster than live bot
 		/// </remarks>
-		public TimeSpan MaxDuration { get; set; } = TimeSpan.MaxValue;
+		public TimeSpan MaxDuration { get; set; } = TimeSpan.FromMilliseconds(500);
 
 		public static MonteCarloParameters Default
 		{

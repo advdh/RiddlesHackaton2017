@@ -79,6 +79,10 @@ namespace RiddlesHackaton2017.Models
 			Round = board.Round;
 		}
 
+		/// <summary>
+		/// Plays move for player and applies next generation
+		/// </summary>
+		/// <returns>New board</returns>
 		public static Board CopyAndPlay(Board board, Player player, Move move)
 		{
 			//Apply move
@@ -96,11 +100,45 @@ namespace RiddlesHackaton2017.Models
 			return newBoard;
 		}
 
+		/// <summary>
+		/// Plays move for player and applies next generation for the specified fields only
+		/// </summary>
+		/// <returns>Partial board</returns>
+		public static Board CopyAndPlayPartial(Board board, Player player, Move move, int[] affectedFields)
+		{
+			//Apply move
+			var newBoard = move.Apply(board, player);
+
+			//Apply next generation
+			newBoard = NextGeneration(newBoard, affectedFields);
+
+			//Increment round
+			if (player == Player.Player2)
+			{
+				newBoard.Round = board.Round + 1;
+			}
+
+			return newBoard;
+		}
+
+		/// <summary>
+		/// Moves to the next generation
+		/// </summary>
+		/// <returns>New board</returns>
 		public static Board NextGeneration(Board board)
+		{
+			return NextGeneration(board, Enumerable.Range(0, Size));
+		}
+
+		/// <summary>
+		/// Moves to the next generation
+		/// </summary>
+		/// <returns>New board</returns>
+		public static Board NextGeneration(Board board, IEnumerable<int> affectedFields)
 		{
 			var newBoard = new Board() { MyPlayer = board.MyPlayer };
 
-			for(int i = 0; i < Size; i++)
+			foreach(int i in affectedFields)
 			{
 				newBoard.Field[i] = NextGenerationForField(board, i);
 			}

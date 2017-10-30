@@ -6,3 +6,4 @@ V7	29-10-2017, 15:42	First working Monte Carlo bot
 V8	29-10-2017, 17:30	Pick birth cell of birthmove only from cells with at least once living neighbour
 						Never pick own cells for KillMoves
 						Fixed KillMove if opponent has exactly one living cell
+V9	29-10-2017, 07:56	Fixed System.IndexOutOfRangeException

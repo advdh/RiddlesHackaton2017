@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Test.Moves
 {
@@ -126,6 +127,15 @@ namespace RiddlesHackaton2017.Test.Moves
 			Move move;
 			Assert.IsFalse(BirthMove.TryParse("birth 5,0 6,0", out move));
 			Assert.AreEqual(new NullMove(), move);
+		}
+
+		[TestMethod]
+		public void AffectedFields_Test()
+		{
+			var move = new BirthMove(0, 2, 32);
+			var affectedFields = move.AffectedFields;
+			CollectionAssert.AreEquivalent(new[] { 0, 1, 2, 3, 16, 17, 18, 19, 32, 33, 48, 49 }, affectedFields.ToArray());
+			Assert.AreEqual(12, affectedFields.Count());
 		}
 	}
 }

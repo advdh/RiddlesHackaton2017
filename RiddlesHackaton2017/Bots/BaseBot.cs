@@ -34,8 +34,8 @@ namespace RiddlesHackaton2017.Bots
 			LogMessage = null;
 			var move = GetMove();
 			DateTime endTime = DateTime.UtcNow;
-			ConsoleError.WriteLine("Round {0}: timelimit {1:0} ms, StartTime {2:ss.fff}, EndTime {3:ss.fff}, used {4:0} ms: {5}",
-				Board.Round, timeLimit.TotalMilliseconds, StartTime, endTime, endTime.Subtract(StartTime).TotalMilliseconds, LogMessage);
+			ConsoleError.WriteLine("Round {0}: {1} - Used {2:0} ms, Timelimit {3:0} ms, Start {4:ss.fff}, End {5:ss.fff}",
+				Board.Round, LogMessage, endTime.Subtract(StartTime).TotalMilliseconds, timeLimit.TotalMilliseconds, StartTime, endTime);
 
 			return move.ToOutputString();
 		}

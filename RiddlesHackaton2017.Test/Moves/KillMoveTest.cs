@@ -118,5 +118,14 @@ namespace RiddlesHackaton2017.Test.Moves
 			Assert.IsFalse(KillMove.TryParse("kill 1,y", out move));
 			Assert.AreEqual(new NullMove(), move);
 		}
+
+		[TestMethod]
+		public void AffectedFields_Test()
+		{
+			var move = new KillMove(0, 0);
+			var affectedFields = move.AffectedFields;
+			CollectionAssert.AreEquivalent(new[] { 0, 1, 16, 17 }, affectedFields.ToArray());
+			Assert.AreEqual(4, affectedFields.Count());
+		}
 	}
 }
