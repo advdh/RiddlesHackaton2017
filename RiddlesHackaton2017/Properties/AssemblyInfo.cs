@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 
-// General Information about an assembly is controlled through the following 
 [assembly: AssemblyTitle("RiddlesHackaton2017")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]

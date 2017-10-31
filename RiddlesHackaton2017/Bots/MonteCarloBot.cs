@@ -1,8 +1,10 @@
-﻿using RiddlesHackaton2017.Models;
+﻿using RiddlesHackaton2017.Evaluation;
+using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -263,6 +265,58 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			return new BirthMove(b, s1, s2);
+		}
+		
+		/// <summary>Gets a dictionary of kill moves which kill a cell of our own with their scores</summary>
+		public Dictionary<int, int> GetMyKillMoves()
+		{
+			var result = new Dictionary<int, int>();
+			
+			var mine = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == (short)Board.MyPlayer);
+
+			foreach (int i in mine)
+			{
+				var move = new KillMove(i);
+				var newBoard = Models.Board.CopyAndPlay(Board, Board.MyPlayer, move);
+				int score = BoardEvaluator.Evaluate(newBoard);
+				result.Add(move.Index, score);
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of kill moves which kill an opponent's cell with their scores</summary>
+		public Dictionary<int, int> GetOpponentKillMoves()
+		{
+			var result = new Dictionary<int, int>();
+			
+			var his = Enumerable.Range(0, Models.Board.Size).Where(i => Board.Field[i] == (short)Board.OpponentPlayer);
+
+			foreach (int i in his)
+			{
+				var move = new KillMove(i);
+				var newBoard = Models.Board.CopyAndPlay(Board, Board.MyPlayer, move);
+				int score = BoardEvaluator.Evaluate(newBoard);
+				result.Add(move.Index, score);
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of birth moves with their scores</summary>
+		public Dictionary<int, int> GetBirthMoves()
+		{
+			var result = new Dictionary<int, int>();
+			
+			var empty = Enumerable.Range(0, Models.Board.Size).Where(i => Board.Field[i] == 0);
+
+			foreach (int i in empty)
+			{
+				var newBoard = new Models.Board(Board);
+				newBoard.Field[i] = (short)Board.MyPlayer;
+				newBoard = Board.NextGeneration(Board);
+				int score = BoardEvaluator.Evaluate(newBoard);
+				result.Add(i, score);
+			}
+			return result;
 		}
 	}
 }

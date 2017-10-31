@@ -10,9 +10,7 @@ namespace RiddlesHackaton2017
 {
 	static class Program
 	{
-		static Board Board;
-		static Player Player;
-		static int Round;
+		static Board Board = new Board();
 		//static KillMoveBot Bot = new KillMoveBot(new ConsoleError());
 		//static PassBot Bot = new PassBot(new ConsoleError());
 
@@ -67,7 +65,7 @@ namespace RiddlesHackaton2017
 					Board.Field = BotParser.ParseBoard(words[3]);
 					break;
 				case "round":
-					Round = int.Parse(words[3]);
+					Board.Round = int.Parse(words[3]);
 					break;
 				case "living_cells":
 					break;
@@ -80,7 +78,7 @@ namespace RiddlesHackaton2017
 			{
 				case "your_botid":
 					int value = int.Parse(words[2]);
-					Player = (Player)Enum.Parse(Player.GetType(), (value + 1).ToString());
+					Board.MyPlayer = (Player)Enum.Parse(typeof(Player), (value + 1).ToString());
 					break;
 			}
 		}
