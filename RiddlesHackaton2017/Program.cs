@@ -64,10 +64,12 @@ namespace RiddlesHackaton2017
 			switch (words[2])
 			{
 				case "field":
-					Board = BotParser.ParseBoard(words, Player, Round);
+					Board.Field = BotParser.ParseBoard(words[3]);
 					break;
 				case "round":
 					Round = int.Parse(words[3]);
+					break;
+				case "living_cells":
 					break;
 			}
 		}

@@ -19,7 +19,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			DoReplay("1a08e4e3-e2ec-4089-81de-b5d62ad61fff"
-				, rounds: new[] { 22 }
+				//, rounds: new[] { 22 }
 				//, action: Replay_OwnKillMoves
 				);
 		}
@@ -73,7 +73,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				Parameters = parameters
 			};
-			int round = 0;
 			Move originalMove;
 			Move newMove = new NullMove();
 
@@ -87,11 +86,11 @@ namespace RiddlesHackaton2017.IntegrationTest
 						break;
 
 					case "update":
-						ParseBoard(words, player, ref board, ref round);
+						ParseBoard(words, board);
 						break;
 
 					case "action":
-						if (rounds.Contains(round))
+						if (rounds.Contains(board.Round))
 						{
 							if (action == null)
 							{
@@ -106,14 +105,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 						break;
 
 					case "Output":
-						if (rounds.Contains(round))
+						if (rounds.Contains(board.Round))
 						{
 							string sMove = command.Split('"')[1];
 							originalMove = Move.Parse(sMove);
 							if (!differenceOnly || !newMove.Equals(originalMove))
 							{
 								Console.Error.WriteLine("Round {0}: original move: {1}, new move: {2}",
-									round, originalMove, newMove);
+									board.Round, originalMove, newMove);
 							}
 						}
 						break;
@@ -121,15 +120,15 @@ namespace RiddlesHackaton2017.IntegrationTest
 			}
 		}
 
-		private static void ParseBoard(string[] words, Player player, ref Board board, ref int round)
+		private static void ParseBoard(string[] words, Board board)
 		{
 			switch (words[2])
 			{
 				case "field":
-					board = BotParser.ParseBoard(words, player, round);
+					board.Field = BotParser.ParseBoard(words[3]);
 					break;
 				case "round":
-					round = int.Parse(words[3]);
+					board.Round = int.Parse(words[3]);
 					break;
 			}
 		}

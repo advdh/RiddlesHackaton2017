@@ -5,35 +5,29 @@ namespace RiddlesHackaton2017
 {
 	public static class BotParser
 	{
-		public static Board ParseBoard(string[] words, Player player, int round)
+		public static short[] ParseBoard(string boardString)
 		{
-			string value = words[3];
-			return ParseBoard(words[3], player, round);
-		}
-
-		public static Board ParseBoard(string boardString, Player player, int round)
-		{
+			var result = new short[Board.Size];
 			string[] values = boardString.Split(',');
-			var board = new Board() { MyPlayer = player, Round = round };
 			for (int i = 0; i < values.Length; i++)
 			{
-				int x = i % 18;
-				int y = i / 18;
+				int x = i % Board.Width;
+				int y = i / Board.Width;
 				int ix = new Position(x, y).Index;
 				switch (values[i])
 				{
 					case "0":
-						board.Field[ix] = 1;
+						result[ix] = 1;
 						break;
 					case "1":
-						board.Field[ix] = 2;
+						result[ix] = 2;
 						break;
 					case "x":
 						break;
 				}
 			}
 
-			return board;
+			return result;
 		}
 	}
 }
