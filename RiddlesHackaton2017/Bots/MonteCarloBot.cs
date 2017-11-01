@@ -33,7 +33,6 @@ namespace RiddlesHackaton2017.Bots
 
 		public override Move GetMove()
 		{
-			int count = 0;
 			MonteCarloStatistics bestResult = new MonteCarloStatistics()
 			{
 				Count = Parameters.SimulationCount,
@@ -52,10 +51,13 @@ namespace RiddlesHackaton2017.Bots
 			TimeSpan duration = GetMaxDuration(TimeLimit);
 			bool goOn = true;
 
+			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
+
+			int count = 0;
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
-				var move = GetRandomMove(Board, Board.MyPlayer);
+				var move = candidateMoves[count];
 				var result = SimulateMove(Board, move);
 				if (Parameters.LogAllMoves)
 				{
@@ -94,7 +96,7 @@ namespace RiddlesHackaton2017.Bots
 
 				count++;
 
-				goOn = stopwatch.Elapsed < duration && count < Parameters.MoveCount;
+				goOn = stopwatch.Elapsed < duration && count < candidateMoves.Length;
 			}
 
 			//Log and return
@@ -102,6 +104,63 @@ namespace RiddlesHackaton2017.Bots
 				bestMove, bestResult.Score, count, bestResult.AverageWinRounds, bestResult.AverageLooseRounds);
 
 			return bestMove;
+		}
+
+		/// <summary>
+		/// Generates birth moves and kill moves in such a way that two birth moves 
+		/// have never more than 1 move part (birth/kill) in common
+		/// </summary>
+		/// <returns>Sorted collection of moves</returns>
+		private IEnumerable<Move> GetCandidateMoves(int maxCount)
+		{
+			var result = new List<Move>();
+
+			var myKills = GetMyKillMoves().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var opponentKills = GetOpponentKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var myBirths = GetBirths().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+
+			var bkHashes = new HashSet<int>();
+			var kkHashes = new HashSet<int>();
+
+			result.Add(new PassMove());
+			int count = 1;
+
+			bool quit = false;
+			for (int i = 0; i < Math.Max(myKills.Length, myBirths.Length); i++)
+			{
+				quit = true;
+				for (int b = 0; b <= i && b < myBirths.Length; b++)
+				{
+					for (int k1 = 0; k1 <= i && k1 < myKills.Length; k1++)
+					{
+						for (int k2 = k1 + 1; k2 <= i + 1 && k2 < myKills.Length; k2++)
+						{
+							if (!bkHashes.Contains(b + 256 * k1)
+								&& !bkHashes.Contains(b + 256 * k2)
+								&& !kkHashes.Contains(k1 + 256 + k2))
+							{
+								bkHashes.Add(b + 256 * k1);
+								bkHashes.Add(b + 256 * k2);
+								kkHashes.Add(k1 + 256 + k2);
+								result.Add(new BirthMove(myBirths[b], myKills[k1], myKills[k2]));
+								count++;
+								quit = false;
+								if (count >= maxCount) return result;
+							}
+						}
+					}
+				}
+				if (i < opponentKills.Length)
+				{
+					result.Add(new KillMove(opponentKills[i]));
+					count++;
+					quit = false;
+					if (count >= maxCount) return result;
+				}
+				if (quit) break;
+			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -267,7 +326,7 @@ namespace RiddlesHackaton2017.Bots
 			return new BirthMove(b, s1, s2);
 		}
 		
-		/// <summary>Gets a dictionary of kill moves which kill a cell of our own with their scores</summary>
+		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
 		public Dictionary<int, int> GetMyKillMoves()
 		{
 			var result = new Dictionary<int, int>();
@@ -284,8 +343,8 @@ namespace RiddlesHackaton2017.Bots
 			return result;
 		}
 
-		/// <summary>Gets a dictionary of kill moves which kill an opponent's cell with their scores</summary>
-		public Dictionary<int, int> GetOpponentKillMoves()
+		/// <summary>Gets a dictionary of kills on opponent's cells with their scores</summary>
+		public Dictionary<int, int> GetOpponentKills()
 		{
 			var result = new Dictionary<int, int>();
 			
@@ -301,8 +360,8 @@ namespace RiddlesHackaton2017.Bots
 			return result;
 		}
 
-		/// <summary>Gets a dictionary of birth moves with their scores</summary>
-		public Dictionary<int, int> GetBirthMoves()
+		/// <summary>Gets a dictionary of births (not birth moves) with their scores</summary>
+		public Dictionary<int, int> GetBirths()
 		{
 			var result = new Dictionary<int, int>();
 			
@@ -312,7 +371,7 @@ namespace RiddlesHackaton2017.Bots
 			{
 				var newBoard = new Models.Board(Board);
 				newBoard.Field[i] = (short)Board.MyPlayer;
-				newBoard = Board.NextGeneration(Board);
+				newBoard = Board.NextGeneration(newBoard);
 				int score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}

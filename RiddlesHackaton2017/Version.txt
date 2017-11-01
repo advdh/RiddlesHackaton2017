@@ -10,3 +10,4 @@ V9	30-10-2017, 07:56	Fixed System.IndexOutOfRangeException
 V10	30-10-2017, 09:28	Include average number of rounds to win/loose in score
 						Winning in less rounds is better, lossing in more rounds is better
 V11	30-10-2017, 15:00	Fixed System.NullReferenceException
+V12	01-11-2017, 23:18	Improved move generation

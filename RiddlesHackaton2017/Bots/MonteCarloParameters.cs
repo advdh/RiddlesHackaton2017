@@ -9,7 +9,7 @@ namespace RiddlesHackaton2017.Bots
 		public int SimulationCount { get; set; } = 25;
 
 		/// <summary>Number of moves</summary>
-		public int MoveCount { get; set; } = int.MaxValue;
+		public int MoveCount { get; set; } = 100;
 
 		/// <summary>Percentage of kill moves in random move and simulation</summary>
 		public int KillMovePercentage { get; internal set; } = 49;
@@ -43,7 +43,7 @@ namespace RiddlesHackaton2017.Bots
 				return new MonteCarloParameters()
 				{
 					MaxDuration = TimeSpan.FromMilliseconds(800),
-					MoveCount = int.MaxValue,
+					MoveCount = 100,
 				};
 			}
 		}

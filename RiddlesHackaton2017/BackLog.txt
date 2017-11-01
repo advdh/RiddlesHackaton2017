@@ -40,3 +40,9 @@ pick one with best statistics
 If only squares of 4 left, which do not touch, then draw (Nash equilibrium). 
 They fall apart if you try to add anything, especially if you can only sacrifice the square's cells.
 Example: aced3124-654a-44ae-9c71-1ffd35ebe567
+
+V12, Tim, 0d511f0e-76a6-4f25-8d6b-236b2328cb96, rounds 6-30: win in 1?. 
+	Only at round 30 we do the correct move. Same problem.
+	Because opponent does in 50% of the times a birth move, which results in loss in 1.
+	TODO: PlayRestOfGame should be smarter: no more birth moves if player has very few cells,
+	expecially when in stable state.
