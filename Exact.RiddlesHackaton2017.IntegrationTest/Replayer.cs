@@ -19,7 +19,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			DoReplay("0d511f0e-76a6-4f25-8d6b-236b2328cb96"
-				, rounds: new[] { 9 }
+				//, rounds: new[] { 9 }
 				//, action: Replay_OwnKillMoves
 				);
 		}

@@ -123,42 +123,36 @@ namespace RiddlesHackaton2017.Bots
 			var kkHashes = new HashSet<int>();
 
 			result.Add(new PassMove());
-			int count = 1;
-
-			bool quit = false;
-			for (int i = 0; i < Math.Max(myKills.Length, myBirths.Length); i++)
+			int c = 1;
+			for (int k2 = 1; k2 < Math.Min(myKills.Length, myBirths.Length); k2++)
 			{
-				quit = true;
-				for (int b = 0; b <= i && b < myBirths.Length; b++)
+				for (int b = 0; b < k2 && b < myBirths.Length; b++)
 				{
-					for (int k1 = 0; k1 <= i && k1 < myKills.Length; k1++)
+					if (!bkHashes.Contains(b + 256 * k2))
 					{
-						for (int k2 = k1 + 1; k2 <= i + 1 && k2 < myKills.Length; k2++)
+						for (int k1 = 0; k1 < k2 && k1 < myKills.Length - 1; k1++)
 						{
+							c++;
 							if (!bkHashes.Contains(b + 256 * k1)
-								&& !bkHashes.Contains(b + 256 * k2)
 								&& !kkHashes.Contains(k1 + 256 + k2))
 							{
 								bkHashes.Add(b + 256 * k1);
 								bkHashes.Add(b + 256 * k2);
 								kkHashes.Add(k1 + 256 + k2);
 								result.Add(new BirthMove(myBirths[b], myKills[k1], myKills[k2]));
-								count++;
-								quit = false;
-								if (count >= maxCount) return result;
+								if (result.Count >= maxCount) return result;
+								break;
 							}
 						}
 					}
 				}
-				if (i < opponentKills.Length)
+				if (k2 <= opponentKills.Length)
 				{
-					result.Add(new KillMove(opponentKills[i]));
-					count++;
-					quit = false;
-					if (count >= maxCount) return result;
+					result.Add(new KillMove(opponentKills[k2 - 1]));
+					if (result.Count >= maxCount) return result;
 				}
-				if (quit) break;
 			}
+			Console.WriteLine("Round {0}: {1}, {2}", Board.Round, result.Count, c);
 
 			return result;
 		}
