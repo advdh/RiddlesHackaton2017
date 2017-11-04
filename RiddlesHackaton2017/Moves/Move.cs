@@ -1,8 +1,6 @@
 ﻿using RiddlesHackaton2017.Models;
-using RiddlesHackaton2017.Evaluation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RiddlesHackaton2017.Moves
 {
@@ -14,16 +12,6 @@ namespace RiddlesHackaton2017.Moves
 
 		/// <summary>Collection of affected fields of the move after one generation</summary>
 		public abstract IEnumerable<int> AffectedFields { get; }
-
-		public int DirectImpactForBoard(Board board)
-		{
-			//var boardAfterMove = Board.CopyAndPlay(board, board.MyPlayer, this);
-			//var boardAfterPassMove = Board.CopyAndPlay(board, board.MyPlayer, new PassMove());
-			var affectedFields = AffectedFields.ToArray();
-			var boardAfterMove = Board.CopyAndPlayPartial(board, board.MyPlayer, this, affectedFields);
-			var boardAfterPassMove = Board.CopyAndPlayPartial(board, board.MyPlayer, new PassMove(), affectedFields);
-			return BoardEvaluator.Evaluate(boardAfterMove) - BoardEvaluator.Evaluate(boardAfterPassMove);
-		}
 
 		public static Move Parse(string moveString)
 		{

@@ -54,6 +54,8 @@
     <Compile Include="Evaluation\BoardEvaluator.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="Models\BoardStatus.cs" />
+    <Compile Include="Models\GameStatus.cs" />
     <Compile Include="Moves\BirthMove.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Moves\KillMove.cs" />

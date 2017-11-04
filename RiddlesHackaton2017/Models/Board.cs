@@ -24,8 +24,34 @@ namespace RiddlesHackaton2017.Models
 			return player == Player.Player1 ? Player1FieldCount : Player2FieldCount;
 		}
 
-		public int MyPlayerFieldCount { get { return MyPlayer == Player.Player1 ? Player1FieldCount : Player2FieldCount; } }
-		public int OpponentPlayerFieldCount { get { return MyPlayer == Player.Player1 ? Player2FieldCount : Player1FieldCount; } }
+		public int MyPlayerFieldCount {
+			get
+			{
+				return MyPlayer == Player.Player1 ? Player1FieldCount : Player2FieldCount;
+			}
+			set
+			{
+				if (MyPlayer == Player.Player1)
+					Player1FieldCount = value;
+				else
+					Player2FieldCount = value;
+			}
+		}
+
+		public int OpponentPlayerFieldCount
+		{
+			get
+			{
+				return MyPlayer == Player.Player1 ? Player2FieldCount : Player1FieldCount;
+			}
+			set
+			{
+				if (MyPlayer == Player.Player1)
+					Player2FieldCount = value;
+				else
+					Player1FieldCount = value;
+			}
+		}
 
 		public short[] Field = new short[Size];
 

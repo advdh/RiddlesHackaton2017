@@ -24,10 +24,6 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		public int MinimumFieldCountForBirthMoves { get; internal set; } = 10;
 
-
-		/// <summary>Debug flag: if true, then output all attempted moves</summary>
-		public bool LogAllMoves { get; set; } = false;
-
 		/// <summary>If true, then use fixed time (the life version), if false, then use fixed number of moves (MoveCount)</summary>
 		/// <remarks>
 		/// For debugging purposes, timebound should be turned off
@@ -65,7 +61,6 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendFormat("KillMovePercentage = {0}", KillMovePercentage); sb.AppendLine();
 			sb.AppendFormat("BirthMovePercentage = {0}", BirthMovePercentage); sb.AppendLine();
 			sb.AppendFormat("MinimumFieldCountForBirthMoves = {0}", MinimumFieldCountForBirthMoves); sb.AppendLine();
-			sb.AppendFormat("LogAllMoves = {0}", LogAllMoves); sb.AppendLine();
 			return sb.ToString();
 		}
 	}

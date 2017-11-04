@@ -59,12 +59,6 @@ namespace RiddlesHackaton2017.Bots
 				//Get random move and simulate rest of the game several times
 				var move = candidateMoves[count];
 				var result = SimulateMove(Board, move);
-				if (Parameters.LogAllMoves)
-				{
-					ConsoleError.WriteLine("{0}: {1:P0}: direct impact: {2}, win in {3}, loose in {4}", 
-						move, result.Score, move.DirectImpactForBoard(Board),
-						result.AverageWinRounds, result.AverageLooseRounds);
-				}
 				if (result.Score > bestResult.Score)
 				{
 					//Prefer higher score
@@ -115,7 +109,7 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new List<Move>();
 
-			var myKills = GetMyKillMoves().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var myKills = GetMyKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 			var opponentKills = GetOpponentKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 			var myBirths = GetBirths().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 
@@ -324,52 +318,51 @@ namespace RiddlesHackaton2017.Bots
 		}
 		
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
-		public Dictionary<int, int> GetMyKillMoves()
+		public Dictionary<int, BoardStatus> GetMyKills()
 		{
-			var result = new Dictionary<int, int>();
+			var result = new Dictionary<int, BoardStatus>();
 			
-			var mine = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == (short)Board.MyPlayer);
-
-			foreach (int i in mine)
+			foreach (int i in Board.MyCells)
 			{
-				var move = new KillMove(i);
-				var newBoard = Models.Board.CopyAndPlay(Board, Board.MyPlayer, move);
-				int score = BoardEvaluator.Evaluate(newBoard);
-				result.Add(move.Index, score);
+				var newBoard = new Board(Board);
+				newBoard.Field[i] = 0;
+				newBoard.MyPlayerFieldCount--;
+				newBoard = newBoard.NextGeneration.NextGeneration;
+				var score = BoardEvaluator.Evaluate(newBoard);
+				result.Add(i, score);
 			}
 			return result;
 		}
 
 		/// <summary>Gets a dictionary of kills on opponent's cells with their scores</summary>
-		public Dictionary<int, int> GetOpponentKills()
+		public Dictionary<int, BoardStatus> GetOpponentKills()
 		{
-			var result = new Dictionary<int, int>();
+			var result = new Dictionary<int, BoardStatus>();
 			
-			var his = Enumerable.Range(0, Models.Board.Size).Where(i => Board.Field[i] == (short)Board.OpponentPlayer);
-
-			foreach (int i in his)
+			foreach (int i in Board.OpponentCells)
 			{
-				var move = new KillMove(i);
-				var newBoard = Models.Board.CopyAndPlay(Board, Board.MyPlayer, move);
-				int score = BoardEvaluator.Evaluate(newBoard);
-				result.Add(move.Index, score);
+				var newBoard = new Board(Board);
+				newBoard.Field[i] = 0;
+				newBoard.OpponentPlayerFieldCount--;
+				newBoard = newBoard.NextGeneration.NextGeneration;
+				var score = BoardEvaluator.Evaluate(newBoard);
+				result.Add(i, score);
 			}
 			return result;
 		}
 
 		/// <summary>Gets a dictionary of births (not birth moves) with their scores</summary>
-		public Dictionary<int, int> GetBirths()
+		public Dictionary<int, BoardStatus> GetBirths()
 		{
-			var result = new Dictionary<int, int>();
+			var result = new Dictionary<int, BoardStatus>();
 			
-			var empty = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == 0);
-
-			foreach (int i in empty)
+			foreach (int i in Board.EmptyCells)
 			{
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = (short)Board.MyPlayer;
-				newBoard = newBoard.NextGeneration;
-				int score = BoardEvaluator.Evaluate(newBoard);
+				newBoard.MyPlayerFieldCount++;
+				newBoard = newBoard.NextGeneration.NextGeneration;
+				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}
 			return result;

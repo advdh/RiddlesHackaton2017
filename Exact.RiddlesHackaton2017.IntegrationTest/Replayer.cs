@@ -36,7 +36,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				var killMove = new KillMove(i);
 				//var newBoard = Board.CopyAndPlay(board, Player.Player1, killMove);
-				Console.WriteLine("{0}: direct impact = {1}", new Position(i), killMove.DirectImpactForBoard(board));
+				//Console.WriteLine("{0}: direct impact = {1}", new Position(i), killMove.DirectImpactForBoard(board));
 			}
 		}
 
