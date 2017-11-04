@@ -362,13 +362,13 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new Dictionary<int, int>();
 			
-			var empty = Enumerable.Range(0, Models.Board.Size).Where(i => Board.Field[i] == 0);
+			var empty = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == 0);
 
 			foreach (int i in empty)
 			{
-				var newBoard = new Models.Board(Board);
+				var newBoard = new Board(Board);
 				newBoard.Field[i] = (short)Board.MyPlayer;
-				newBoard = Board.NextGeneration(newBoard);
+				newBoard = newBoard.NextGeneration;
 				int score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}

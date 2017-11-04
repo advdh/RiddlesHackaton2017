@@ -59,7 +59,7 @@ namespace RiddlesHackaton2017.Test.Models
 			Console.WriteLine("Original:");
 			Console.WriteLine(board.HumanBoardString());
 
-			var newBoard = Board.NextGeneration(board);
+			var newBoard = board.NextGeneration;
 
 			Console.WriteLine("After my move:");
 			Console.WriteLine(newBoard.HumanBoardString());
@@ -70,7 +70,7 @@ namespace RiddlesHackaton2017.Test.Models
 			Console.WriteLine("After opponent apply move:");
 			Console.WriteLine(newBoard.HumanBoardString());
 
-			newBoard = Board.NextGeneration(newBoard);
+			newBoard = newBoard.NextGeneration;
 
 			Console.WriteLine("After opponent move next generation:");
 			Console.WriteLine(newBoard.HumanBoardString());
@@ -109,7 +109,7 @@ namespace RiddlesHackaton2017.Test.Models
 			Console.WriteLine("Original:");
 			Console.WriteLine(board.HumanBoardString());
 
-			var newBoard = Board.NextGeneration(board);
+			var newBoard = board.NextGeneration;
 
 			Console.WriteLine("After my move:");
 			Console.WriteLine(newBoard.HumanBoardString());

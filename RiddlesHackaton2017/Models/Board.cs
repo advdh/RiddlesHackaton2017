@@ -35,40 +35,6 @@ namespace RiddlesHackaton2017.Models
 		/// <summary>Opponent</summary>
 		public Player OpponentPlayer { get { return MyPlayer.Opponent(); } }
 
-		public IEnumerable<Move> GetFeasibleMovesForPlayer(Player player)
-		{
-			var result = new List<Move>();
-
-			//Pass move
-			result.Add(new PassMove());
-
-			//Kill moves
-			for (int i = 0; i < Size; i++)
-			{
-				if (Field[i] != 0)
-				{
-					result.Add(new KillMove(i));
-				}
-			}
-
-			//Birth moves
-			var myFields = AllCells.Where(i => Field[i] == (short)MyPlayer);
-			//var opponentFields = AllCells.Where(i => Field[i] == (short)OpponentPlayer);
-			var emptyFields = AllCells.Where(i => Field[i] == 0);
-
-			foreach(int b in emptyFields)
-			{
-				foreach(int s1 in myFields)
-				{
-					foreach(int s2 in myFields.Except(new[] { s1 }))
-					{
-						result.Add(new BirthMove(b, s1, s2));
-					}
-				}
-			}
-			return result;
-		}
-
 		#endregion
 
 		#region Constructors and static Creaate methods
@@ -101,7 +67,7 @@ namespace RiddlesHackaton2017.Models
 			var newBoard = move.Apply(board, player);
 
 			//Apply next generation
-			newBoard = NextGeneration(newBoard);
+			newBoard = newBoard.NextGeneration;
 
 			//Increment round
 			newBoard.Round = board.Round;
@@ -123,7 +89,7 @@ namespace RiddlesHackaton2017.Models
 			var newBoard = move.Apply(board, player);
 
 			//Apply next generation
-			newBoard = NextGeneration(newBoard, affectedFields);
+			newBoard = newBoard.GetNextGeneration(affectedFields);
 
 			//Increment round
 			if (player == Player.Player2)
@@ -138,22 +104,25 @@ namespace RiddlesHackaton2017.Models
 		/// Moves to the next generation
 		/// </summary>
 		/// <returns>New board</returns>
-		public static Board NextGeneration(Board board)
+		public Board NextGeneration
 		{
-			return NextGeneration(board, AllCells);
+			get
+			{
+				return GetNextGeneration(AllCells);
+			}
 		}
 
 		/// <summary>
 		/// Moves to the next generation
 		/// </summary>
 		/// <returns>New board</returns>
-		public static Board NextGeneration(Board board, IEnumerable<int> affectedFields)
+		public Board GetNextGeneration(IEnumerable<int> affectedFields)
 		{
-			var newBoard = new Board() { MyPlayer = board.MyPlayer };
+			var newBoard = new Board() { MyPlayer = MyPlayer };
 
 			foreach(int i in affectedFields)
 			{
-				newBoard.Field[i] = NextGenerationForField(board, i);
+				newBoard.Field[i] = NextGenerationForField(i);
 				switch(newBoard.Field[i])
 				{
 					case 1:
@@ -168,34 +137,30 @@ namespace RiddlesHackaton2017.Models
 			return newBoard;
 		}
 
-		private static short NextGenerationForField(Board board, int i)
+		private short NextGenerationForField(int i)
 		{
 			int count = 0;
 			int count1 = 0;
 			foreach (int j in NeighbourFields[i])
 			{
-				if (board.Field[j] != 0)
+				if (Field[j] != 0)
 				{
 					count++;
-					if (board.Field[j] == 1)
+					if (Field[j] == 1)
 					{
 						count1++;
 					}
 				}
 			}
-			if (board.Field[i] != 0)
+			if (Field[i] != 0)
 			{
 				//Current cell is living
 				switch (count)
 				{
-					case 0:
-					case 1:
-						//Die
-						break;
 					case 2:
 					case 3:
 						//Live on
-						return board.Field[i];
+						return Field[i];
 					default:
 						//Die
 						break;
