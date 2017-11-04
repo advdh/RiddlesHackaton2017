@@ -31,6 +31,9 @@ namespace RiddlesHackaton2017.Bots
 		/// </remarks>
 		public TimeSpan MaxDuration { get; set; } = TimeSpan.FromMilliseconds(500);
 
+		/// <summary>Set this to true for debugging the bot without any time limit constraints</summary>
+		public bool Debug { get; set; } = false;
+
 		public static MonteCarloParameters Default
 		{
 			get
@@ -61,6 +64,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendFormat("KillMovePercentage = {0}", KillMovePercentage); sb.AppendLine();
 			sb.AppendFormat("BirthMovePercentage = {0}", BirthMovePercentage); sb.AppendLine();
 			sb.AppendFormat("MinimumFieldCountForBirthMoves = {0}", MinimumFieldCountForBirthMoves); sb.AppendLine();
+			sb.AppendFormat("Debug = {0}", Debug); sb.AppendLine();
 			return sb.ToString();
 		}
 	}

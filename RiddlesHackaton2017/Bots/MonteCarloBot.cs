@@ -28,6 +28,7 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		private TimeSpan GetMaxDuration(TimeSpan timeLimit)
 		{
+			if (Parameters.Debug) return Parameters.MaxDuration;
 			return new TimeSpan(Math.Min(timeLimit.Ticks / 4, Parameters.MaxDuration.Ticks));
 		}
 
@@ -144,7 +145,11 @@ namespace RiddlesHackaton2017.Bots
 					if (result.Count >= maxCount) return result;
 				}
 			}
-
+			for (int k2 = Math.Min(myKills.Length, myBirths.Length) - 1; k2 < opponentKills.Length; k2++)
+			{
+				result.Add(new KillMove(opponentKills[k2]));
+				if (result.Count >= maxCount) return result;
+			}
 			return result;
 		}
 
@@ -171,17 +176,26 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var statistic = new MonteCarloStatistics() { Move = move };
 			var startBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
-			bool anyHis = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.OpponentPlayer);
-			if (!anyHis)
+			if (startBoard.OpponentPlayerFieldCount == 0)
 			{
-				statistic.Count = Parameters.SimulationCount;
-				statistic.Won = Parameters.SimulationCount;
-				statistic.WonInRounds = Parameters.SimulationCount;
-				return statistic;
+				if (startBoard.MyPlayerFieldCount == 0)
+				{
+					//Draw in 1
+					statistic.Count = Parameters.SimulationCount;
+					return statistic;
+				}
+				else
+				{
+					//Won in 1
+					statistic.Count = Parameters.SimulationCount;
+					statistic.Won = Parameters.SimulationCount;
+					statistic.WonInRounds = Parameters.SimulationCount;
+					return statistic;
+				}
 			}
-			bool anyMine = Enumerable.Range(0, Board.Size).Any(i => startBoard.Field[i] == (short)Board.MyPlayer);
-			if (!anyMine)
+			if (startBoard.MyPlayerFieldCount == 0)
 			{
+				//Lost in 1
 				statistic.Count = Parameters.SimulationCount;
 				statistic.Lost = Parameters.SimulationCount;
 				statistic.LostInRounds = Parameters.SimulationCount;
@@ -221,10 +235,8 @@ namespace RiddlesHackaton2017.Bots
 				//Bot play
 				Move move = GetRandomMove(board, player);
 				board = Board.CopyAndPlay(board, player, move);
-				bool anyHis = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.OpponentPlayer);
-				if (!anyHis) return new SimulationResult(won: true, round: board.Round);
-				bool anyMine = Enumerable.Range(0, Board.Size).Any(i => board.Field[i] == (short)Board.MyPlayer);
-				if (!anyMine) return new SimulationResult(won: false, round: board.Round);
+				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, round: board.Round);
+				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, round: board.Round);
 
 				//Next player
 				player = player.Opponent();

@@ -13,3 +13,6 @@ V11	30-10-2017, 15:00	Fixed System.NullReferenceException
 V12	01-11-2017, 23:18	Improved move generation
 V13	04-11-2017, 01:45	Monte-Carlo simulations: no more birth moves if player has very few cells
 V14	04-11-2017, 12:24	Monte-Carlo move generation: board score is based on two generations ahead
+V15	04-11-2017, 19:06	Bugfixes end game: kill moves were not simulated if we had very few cells left
+						+ simulation that both players lost their last cells was not handled correctly
+						+ 20% performance improvement

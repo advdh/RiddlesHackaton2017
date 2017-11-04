@@ -1,33 +1,9 @@
-﻿Fixed KillMove when we are about to win:
-- if opponent has exactly one cell
-DONE V8
-
-Don't try Birthmoves, of which the new born cell has no neighbours at all: it will die immediately
-Note that it may be worth to select a new born cell with exactly one own neighbour: it will also die immediately,
-but it may keep the neighbour alive
-DONE V8
-
-Don't try Killmoves to kill our own cells
-DONE V8
-
-Score: include average number of rounds to win, because score is often 100%. Less rounds to win is better.
-DONE V10
-
-Exception handling: log as much data as possible and return PassMove
+﻿Exception handling: log as much data as possible and return PassMove
 
 To improve replayability, use a seed for randomization, based on first board.
 	Write this seed to the log.
 	Recreate the Random object every round based on this seed, 
 	so that even timing differences do not influence the randomization
-
-Fixed KillMove when we are about to win:
-- if opponent has two or more cells, which can be killed all by one Kill- or BirthMove
-
-If opponent has few cells left, then try all kill moves instead of 
-	picking random kill moves
-
-Select best moves, based on direct impact statistics
-	Improve calculation speed of direct impact statistics
 
 MonteCarlo with max. duration: increase count and simulation count at the same time
 while (!timeToStop)
@@ -37,12 +13,6 @@ while (!timeToStop)
 }
 pick one with best statistics
 
-If only squares of 4 left, which do not touch, then draw (Nash equilibrium). 
-They fall apart if you try to add anything, especially if you can only sacrifice the square's cells.
-Example: aced3124-654a-44ae-9c71-1ffd35ebe567
-
-V12, Tim, 0d511f0e-76a6-4f25-8d6b-236b2328cb96, rounds 6-30: win in 1?. 
-	Only at round 30 we do the correct move. Same problem.
-	Because opponent does in 50% of the times a birth move, which results in loss in 1.
-	TODO: PlayRestOfGame should be smarter: no more birth moves if player has very few cells,
-	expecially when in stable state.
+V14, UnmanagedCode, c5ccb885-2215-443b-b852-dca3c64ab49a
+	Round 31: don't pass but force draw by killing middle cell
+	Round 30: should kill middle cell of opponent

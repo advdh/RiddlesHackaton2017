@@ -14,12 +14,9 @@ namespace RiddlesHackaton2017.Bots
 
 		public override Move GetMove()
 		{
-			var mine = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == 1);
-			var his = Enumerable.Range(0, Board.Size).Where(i => Board.Field[i] == 2);
-
 			var bestScore = BoardStatus.MinValue;
 			int bestIndex = -1;
-			foreach (int i in mine.Union(his))
+			foreach (int i in Board.MyCells.Union(Board.OpponentCells))
 			{
 				var newBoard = Board.CopyAndPlay(Board, Board.MyPlayer, new KillMove(i));
 				var score = BoardEvaluator.Evaluate(newBoard);
