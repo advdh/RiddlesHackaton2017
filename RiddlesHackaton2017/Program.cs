@@ -68,6 +68,14 @@ namespace RiddlesHackaton2017
 					Board.Round = int.Parse(words[3]);
 					break;
 				case "living_cells":
+					if (words[1] == "player0")
+					{
+						Board.Player1FieldCount = int.Parse(words[3]);
+					}
+					else
+					{
+						Board.Player2FieldCount = int.Parse(words[3]);
+					}
 					break;
 			}
 		}

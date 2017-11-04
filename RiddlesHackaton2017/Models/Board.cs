@@ -17,6 +17,16 @@ namespace RiddlesHackaton2017.Models
 
 		public int Round { get; set; }
 
+		public int Player1FieldCount { get; set; }
+		public int Player2FieldCount { get; set; }
+		public int GetFieldCount(Player player)
+		{
+			return player == Player.Player1 ? Player1FieldCount : Player2FieldCount;
+		}
+
+		public int MyPlayerFieldCount { get { return MyPlayer == Player.Player1 ? Player1FieldCount : Player2FieldCount; } }
+		public int OpponentPlayerFieldCount { get { return MyPlayer == Player.Player1 ? Player2FieldCount : Player1FieldCount; } }
+
 		public short[] Field = new short[Size];
 
 		/// <summary>Me</summary>
@@ -42,9 +52,9 @@ namespace RiddlesHackaton2017.Models
 			}
 
 			//Birth moves
-			var myFields = Enumerable.Range(0, Size).Where(i => Field[i] == (short)MyPlayer);
-			//var opponentFields = Enumerable.Range(0, Size).Where(i => Field[i] == (short)OpponentPlayer);
-			var emptyFields = Enumerable.Range(0, Size).Where(i => Field[i] == 0);
+			var myFields = AllCells.Where(i => Field[i] == (short)MyPlayer);
+			//var opponentFields = AllCells.Where(i => Field[i] == (short)OpponentPlayer);
+			var emptyFields = AllCells.Where(i => Field[i] == 0);
 
 			foreach(int b in emptyFields)
 			{
@@ -77,6 +87,8 @@ namespace RiddlesHackaton2017.Models
 			}
 			MyPlayer = board.MyPlayer;
 			Round = board.Round;
+			Player1FieldCount = board.Player1FieldCount;
+			Player2FieldCount = board.Player2FieldCount;
 		}
 
 		/// <summary>
@@ -128,7 +140,7 @@ namespace RiddlesHackaton2017.Models
 		/// <returns>New board</returns>
 		public static Board NextGeneration(Board board)
 		{
-			return NextGeneration(board, Enumerable.Range(0, Size));
+			return NextGeneration(board, AllCells);
 		}
 
 		/// <summary>
@@ -142,6 +154,15 @@ namespace RiddlesHackaton2017.Models
 			foreach(int i in affectedFields)
 			{
 				newBoard.Field[i] = NextGenerationForField(board, i);
+				switch(newBoard.Field[i])
+				{
+					case 1:
+						newBoard.Player1FieldCount++;
+						break;
+					case 2:
+						newBoard.Player2FieldCount++;
+						break;
+				}
 			}
 
 			return newBoard;
@@ -216,23 +237,30 @@ namespace RiddlesHackaton2017.Models
 						copy.Field[i] = (short)(3 - Field[i]);
 					}
 				}
+				copy.Player2FieldCount = Player1FieldCount;
+				copy.Player1FieldCount = Player2FieldCount;
 				return copy;
 			}
 		}
 
 		/// <remarks>TODO: cache</remarks>
-		public IEnumerable<int> MyCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == (short)MyPlayer); } }
+		public IEnumerable<int> MyCells { get { return AllCells.Where(i => Field[i] == (short)MyPlayer); } }
 
 		/// <remarks>TODO: cache</remarks>
 		public IEnumerable<int> GetCells(Player player)
 		{
-			return Enumerable.Range(0, Size).Where(i => Field[i] == (short)player);
+			return AllCells.Where(i => Field[i] == (short)player);
 		}
 
+		public static IEnumerable<int> AllCells { get { return Enumerable.Range(0, Size); } }
+
 		/// <remarks>TODO: cache</remarks>
-		public IEnumerable<int> OpponentCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == (short)OpponentPlayer); } }
+		public IEnumerable<int> OpponentCells { get { return AllCells.Where(i => Field[i] == (short)OpponentPlayer); } }
 		/// <remarks>TODO: cache</remarks>
-		public IEnumerable<int> EmptyCells { get { return Enumerable.Range(0, Size).Where(i => Field[i] == 0); } }
+		public IEnumerable<int> EmptyCells { get { return AllCells.Where(i => Field[i] == 0); } }
+
+		public int CalculatedPlayer1FieldCount { get { return AllCells.Count(i => Field[i] == (short)Player.Player1); } }
+		public int CalculatedPlayer2FieldCount { get { return AllCells.Count(i => Field[i] == (short)Player.Player2); } }
 
 		public override string ToString()
 		{

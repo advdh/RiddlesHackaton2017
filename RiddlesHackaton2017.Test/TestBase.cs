@@ -51,11 +51,15 @@ namespace RiddlesHackaton2017.Test
 
 		protected static Board InitBoard(Player player, string boardString)
 		{
-			return new Board()
+			var board = new Board()
 			{
 				MyPlayer = player,
 				Field = BotParser.ParseBoard(boardString),
 			};
+			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
+			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+
+			return board;
 		}
 	}
 }

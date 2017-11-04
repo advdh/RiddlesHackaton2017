@@ -123,7 +123,6 @@ namespace RiddlesHackaton2017.Bots
 			var kkHashes = new HashSet<int>();
 
 			result.Add(new PassMove());
-			int c = 1;
 			for (int k2 = 1; k2 < Math.Min(myKills.Length, myBirths.Length); k2++)
 			{
 				for (int b = 0; b < k2 && b < myBirths.Length; b++)
@@ -132,7 +131,6 @@ namespace RiddlesHackaton2017.Bots
 					{
 						for (int k1 = 0; k1 < k2 && k1 < myKills.Length - 1; k1++)
 						{
-							c++;
 							if (!bkHashes.Contains(b + 256 * k1)
 								&& !kkHashes.Contains(k1 + 256 + k2))
 							{
@@ -152,7 +150,6 @@ namespace RiddlesHackaton2017.Bots
 					if (result.Count >= maxCount) return result;
 				}
 			}
-			Console.WriteLine("Round {0}: {1}, {2}", Board.Round, result.Count, c);
 
 			return result;
 		}
@@ -258,6 +255,12 @@ namespace RiddlesHackaton2017.Bots
 
 		private Move GetRandomMove(Board board, Player player)
 		{
+			//If player has only a few cells left, then do only kill moves
+			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
+			{
+				return GetRandomKillMove(board, player);
+			}
+
 			int rnd = Random.Next(100);
 			if (rnd < Parameters.PassMovePercentage)
 			{

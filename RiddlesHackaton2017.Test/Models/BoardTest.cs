@@ -2,8 +2,6 @@
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace RiddlesHackaton2017.Test.Models
@@ -15,13 +13,17 @@ namespace RiddlesHackaton2017.Test.Models
 		public void CopyConstructor_Test()
 		{
 			var board = InitBoard();
+
 			var newBoard = new Board(board);
+
 			Assert.AreEqual(board.MyPlayer, newBoard.MyPlayer, "MyPlayer");
 			Assert.AreEqual(board.Round, newBoard.Round, "Round");
 			for (int i = 0; i < Board.Size; i++)
 			{
 				Assert.AreEqual(board.Field[i], newBoard.Field[i]);
 			}
+			Assert.AreEqual(board.Player1FieldCount, newBoard.Player1FieldCount);
+			Assert.AreEqual(board.Player2FieldCount, newBoard.Player2FieldCount);
 		}
 
 		[TestMethod]
@@ -29,7 +31,9 @@ namespace RiddlesHackaton2017.Test.Models
 		{
 			var board = InitBoard();
 			board.Round = 3;
+
 			var opponentBoard = board.OpponentBoard;
+
 			Assert.AreEqual(board.MyPlayer, opponentBoard.OpponentPlayer, "OpponentPlayer");
 			Assert.AreEqual(board.OpponentPlayer, opponentBoard.MyPlayer, "MyPlayer");
 			Assert.AreEqual(board.Round, opponentBoard.Round, "Round");
@@ -37,6 +41,8 @@ namespace RiddlesHackaton2017.Test.Models
 			Assert.AreEqual(0, opponentBoard.Field[0]);
 			Assert.AreEqual(2, opponentBoard.Field[2]);
 			Assert.AreEqual(1, opponentBoard.Field[3]);
+			Assert.AreEqual(board.Player1FieldCount, opponentBoard.Player2FieldCount);
+			Assert.AreEqual(board.Player2FieldCount, opponentBoard.Player1FieldCount);
 		}
 
 		/// <summary>
@@ -74,6 +80,10 @@ namespace RiddlesHackaton2017.Test.Models
 			Console.WriteLine(expectedBboard.HumanBoardString());
 
 			Assert.AreEqual(expectedBboard.HumanBoardString(), newBoard.HumanBoardString());
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount);
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount);
+
 			var sb = new StringBuilder();
 			for (int i = 0; i < Board.Size; i++)
 			{
@@ -116,6 +126,10 @@ namespace RiddlesHackaton2017.Test.Models
 
 			Assert.AreEqual(expectedBboard.HumanBoardString(), newBoard.HumanBoardString());
 			Assert.AreEqual(1, newBoard.Round);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount);
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount);
+
 			var sb = new StringBuilder();
 			for (int i = 0; i < Board.Size; i++)
 			{

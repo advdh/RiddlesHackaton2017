@@ -18,6 +18,13 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Percentage of birth moves in random move and simulation</summary>
 		public int BirthMovePercentage { get { return 100 - KillMovePercentage - PassMovePercentage; } }
 
+		/// <summary>
+		/// Minimum field count in order for players to execute birth moves in the monte-carlo simulation.
+		/// If player has less than this minimum field count, then he only executes kill moves
+		/// </summary>
+		public int MinimumFieldCountForBirthMoves { get; internal set; } = 10;
+
+
 		/// <summary>Debug flag: if true, then output all attempted moves</summary>
 		public bool LogAllMoves { get; set; } = false;
 
@@ -57,6 +64,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendFormat("PassMovePercentage = {0}", PassMovePercentage); sb.AppendLine();
 			sb.AppendFormat("KillMovePercentage = {0}", KillMovePercentage); sb.AppendLine();
 			sb.AppendFormat("BirthMovePercentage = {0}", BirthMovePercentage); sb.AppendLine();
+			sb.AppendFormat("MinimumFieldCountForBirthMoves = {0}", MinimumFieldCountForBirthMoves); sb.AppendLine();
 			sb.AppendFormat("LogAllMoves = {0}", LogAllMoves); sb.AppendLine();
 			return sb.ToString();
 		}
