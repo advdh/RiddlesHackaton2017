@@ -35,8 +35,7 @@ namespace RiddlesHackaton2017.Bots
 
 		public override string ToString()
 		{
-			return string.Format("Move: {0}: Count {1}, Won {2}, Lost {3}, Draw {4}, Score = {5:P0}",
-				Move, Count, Won, Lost, Draw, Score);
+			return $"Move: {Move}: Count {Count}, Won {Won}, Lost {Lost}, Draw {Draw}, Score = {Score:P0}";
 		}
 	}
 }

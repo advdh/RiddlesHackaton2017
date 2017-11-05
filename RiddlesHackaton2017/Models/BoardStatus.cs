@@ -40,9 +40,34 @@ namespace RiddlesHackaton2017.Models
 			return boardStatus1.CompareTo(boardStatus2) <= 0;
 		}
 
+		public override bool Equals(object obj)
+		{
+			var other = obj as BoardStatus;
+			return (object)other != null
+				&& other.Score == Score
+				&& other.Status == Status;
+		}
+
+		public override int GetHashCode()
+		{
+			return Score.GetHashCode() % Status.GetHashCode();
+		}
+
+		public static bool operator ==(BoardStatus boardStatus1, BoardStatus boardStatus2)
+		{
+			return boardStatus1.Score == boardStatus2.Score
+				&& boardStatus1.Status == boardStatus2.Status;
+		}
+
+		public static bool operator !=(BoardStatus boardStatus1, BoardStatus boardStatus2)
+		{
+			return boardStatus1.Score != boardStatus2.Score
+				|| boardStatus1.Status != boardStatus2.Status;
+		}
+
 		public override string ToString()
 		{
-			return string.Format("{0}: score = {1}", Status, Score);
+			return $"{Status}: score = {Score}";
 		}
 
 		public int CompareTo(BoardStatus other)

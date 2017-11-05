@@ -15,12 +15,12 @@ namespace RiddlesHackaton2017.Evaluation
 		public const int WinThreshold = 499999;
 
 		/// <returns>score of MyPlayer</returns>
-		public static BoardStatus Evaluate(Board board)
+		public static BoardStatus Evaluate(Board board, int baseScore = 0)
 		{
 			var status = board.MyPlayerFieldCount > 0 ?
 				board.OpponentPlayerFieldCount > 0 ? GameStatus.Busy : GameStatus.Won :
 				board.MyPlayerFieldCount > 0 ? GameStatus.Lost : GameStatus.Draw;
-			return new BoardStatus(status, board.MyPlayerFieldCount - board.OpponentPlayerFieldCount);
+			return new BoardStatus(status, board.MyPlayerFieldCount - board.OpponentPlayerFieldCount - baseScore);
 		}
 	}
 }

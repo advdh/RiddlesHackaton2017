@@ -129,6 +129,27 @@ namespace RiddlesHackaton2017.Models
 		/// Moves to the next generation
 		/// </summary>
 		/// <returns>New board</returns>
+		public Board NextNextGeneration
+		{
+			get
+			{
+				return GetNextGeneration(AllCells).GetNextGeneration(AllCells);
+			}
+		}
+
+		public Board GetNextNextGeneration(int cell)
+		{
+			var affectedFields = NeighbourFields[cell]
+				.SelectMany(i => NeighbourFields[i])
+				.SelectMany(i => NeighbourFields[i])
+				.Distinct();
+			return GetNextGeneration(affectedFields).GetNextGeneration(affectedFields);
+		}
+
+		/// <summary>
+		/// Moves to the next generation
+		/// </summary>
+		/// <returns>New board</returns>
 		public Board GetNextGeneration(IEnumerable<int> affectedFields)
 		{
 			var newBoard = new Board() { MyPlayer = MyPlayer };
@@ -228,11 +249,7 @@ namespace RiddlesHackaton2017.Models
 		public int CalculatedPlayer1FieldCount { get { return AllCells.Count(i => Field[i] == (short)Player.Player1); } }
 		public int CalculatedPlayer2FieldCount { get { return AllCells.Count(i => Field[i] == (short)Player.Player2); } }
 
-		public override string ToString()
-		{
-			return string.Format("Round {0}, {3}: my count: {1}; his count: {2}", 
-				Round, MyCells.Count(), OpponentCells.Count(), MyPlayer);
-		}
+		public override string ToString() => $"Round {Round}, {MyPlayer}: my count: {MyPlayerFieldCount}; his count: {OpponentPlayerFieldCount}";
 
 		public string BoardString()
 		{

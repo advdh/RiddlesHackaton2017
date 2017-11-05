@@ -57,14 +57,14 @@ namespace RiddlesHackaton2017.Bots
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-			sb.AppendFormat("SimulationCount = {0}", SimulationCount); sb.AppendLine();
-			sb.AppendFormat("MoveCount = {0}", MoveCount); sb.AppendLine();
-			sb.AppendFormat("MaxDuration = {0:0} ms", MaxDuration.TotalMilliseconds); sb.AppendLine();
-			sb.AppendFormat("PassMovePercentage = {0}", PassMovePercentage); sb.AppendLine();
-			sb.AppendFormat("KillMovePercentage = {0}", KillMovePercentage); sb.AppendLine();
-			sb.AppendFormat("BirthMovePercentage = {0}", BirthMovePercentage); sb.AppendLine();
-			sb.AppendFormat("MinimumFieldCountForBirthMoves = {0}", MinimumFieldCountForBirthMoves); sb.AppendLine();
-			sb.AppendFormat("Debug = {0}", Debug); sb.AppendLine();
+			sb.AppendLine($"SimulationCount = {SimulationCount}");
+			sb.AppendLine($"MoveCount = {MoveCount}");
+			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
+			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
+			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");
+			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");
+			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
+			sb.AppendLine($"Debug = {Debug}");
 			return sb.ToString();
 		}
 	}

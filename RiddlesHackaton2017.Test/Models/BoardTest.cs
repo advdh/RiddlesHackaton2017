@@ -89,9 +89,7 @@ namespace RiddlesHackaton2017.Test.Models
 			{
 				if (expectedBboard.Field[i] != newBoard.Field[i])
 				{
-					sb.AppendFormat("{0}: expected: {1}, actual: {2}",
-						new Position(i), expectedBboard.Field[i], newBoard.Field[i]);
-					sb.AppendLine();
+					sb.AppendLine($"{new Position(i)}: expected: {expectedBboard.Field[i]}, actual: {newBoard.Field[i]}");
 				}
 			}
 			if (sb.Length > 0)
@@ -135,9 +133,7 @@ namespace RiddlesHackaton2017.Test.Models
 			{
 				if (expectedBboard.Field[i] != newBoard.Field[i])
 				{
-					sb.AppendFormat("{0}: expected: {1}, actual: {2}",
-						new Position(i), expectedBboard.Field[i], newBoard.Field[i]);
-					sb.AppendLine();
+					sb.AppendLine($"{new Position(i)}: expected: {expectedBboard.Field[i]}, actual: {newBoard.Field[i]}");
 				}
 			}
 			if (sb.Length > 0)

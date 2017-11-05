@@ -42,27 +42,26 @@ namespace RiddlesHackaton2017.Moves
 
 		public override string ToString()
 		{
-			return string.Format("Birthmove {0}, sacrifice = {1} and {2}", 
-				BirthPosition, SacrificePosition1, SacrificePosition2);
+			return $"Birthmove {BirthPosition}, sacrifice = {SacrificePosition1} and {SacrificePosition2}";
 		}
 
 		public override Board Apply(Board board, Player player)
 		{
 			if (board.Field[BirthIndex] != 0)
 			{
-				throw new InvalidBirthMoveException("Birth position must be empty: {0}", BirthPosition);
+				throw new InvalidBirthMoveException($"Birth position must be empty: {BirthPosition}");
 			}
 			if (board.Field[SacrificeIndex1] != (short)player)
 			{
-				throw new InvalidBirthMoveException("SacrificeIndex1 position must be owned by you: {0}", SacrificePosition1);
+				throw new InvalidBirthMoveException($"SacrificeIndex1 position must be owned by you: {SacrificePosition1}");
 			}
 			if (board.Field[SacrificeIndex2] != (short)player)
 			{
-				throw new InvalidBirthMoveException("SacrificeIndex2 position must be owned by you: {0}", SacrificePosition2);
+				throw new InvalidBirthMoveException($"SacrificeIndex2 position must be owned by you: {SacrificePosition2}");
 			}
 			if (SacrificeIndex1 == SacrificeIndex2)
 			{
-				throw new InvalidBirthMoveException("SacrificeIndex2 position must not be equals to Sacrifice1 position: {0}", SacrificePosition1);
+				throw new InvalidBirthMoveException($"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}");
 			}
 
 			var result = new Board(board);
@@ -74,10 +73,7 @@ namespace RiddlesHackaton2017.Moves
 
 		public override string ToOutputString()
 		{
-			return string.Format("birth {0},{1} {2},{3} {4},{5}",
-				BirthPosition.X, BirthPosition.Y,
-				SacrificePosition1.X, SacrificePosition1.Y,
-				SacrificePosition2.X, SacrificePosition2.Y);
+			return $"birth {BirthPosition.X},{BirthPosition.Y} {SacrificePosition1.X},{SacrificePosition1.Y} {SacrificePosition2.X},{SacrificePosition2.Y}";
 		}
 
 		public static bool TryParse(string moveString, out Move move)

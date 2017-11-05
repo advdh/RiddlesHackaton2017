@@ -28,12 +28,12 @@ namespace RiddlesHackaton2017.Moves
 
 		public override string ToString()
 		{
-			return string.Format("KillMove {0}", Position);
+			return $"KillMove {Position}";
 		}
 
 		public override string ToOutputString()
 		{
-			return string.Format("kill {0},{1}", Position.X, Position.Y);
+			return $"kill {Position.X},{Position.Y}";
 		}
 
 		public static bool TryParse(string moveString, out Move move)
@@ -61,7 +61,7 @@ namespace RiddlesHackaton2017.Moves
 		{
 			if (board.Field[Index] == 0)
 			{
-				throw new InvalidKillMoveException("Kill move position must not be empty: {0}", Position);
+				throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
 			}
 
 			var result = new Board(board);

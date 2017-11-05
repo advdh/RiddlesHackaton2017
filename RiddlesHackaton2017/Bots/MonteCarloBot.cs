@@ -95,8 +95,7 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = string.Format("{0}: score = {1:P0}, evaluated moves = {2}, win in {3}, loose in {4}", 
-				bestMove, bestResult.Score, count, bestResult.AverageWinRounds, bestResult.AverageLooseRounds);
+			LogMessage = $"{bestMove}: score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinRounds}, loose in {bestResult.AverageLooseRounds}";
 
 			return bestMove;
 		}
@@ -333,13 +332,15 @@ namespace RiddlesHackaton2017.Bots
 		public Dictionary<int, BoardStatus> GetMyKills()
 		{
 			var result = new Dictionary<int, BoardStatus>();
-			
+
+			//int currentScore = BoardEvaluator.Evaluate(Board.NextNextGeneration).Score;
 			foreach (int i in Board.MyCells)
 			{
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = 0;
 				newBoard.MyPlayerFieldCount--;
-				newBoard = newBoard.NextGeneration.NextGeneration;
+				newBoard = newBoard.NextNextGeneration;
+				//newBoard = newBoard.GetNextNextGeneration(i);
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}
@@ -356,7 +357,7 @@ namespace RiddlesHackaton2017.Bots
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = 0;
 				newBoard.OpponentPlayerFieldCount--;
-				newBoard = newBoard.NextGeneration.NextGeneration;
+				newBoard = newBoard.NextNextGeneration;
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}
@@ -373,7 +374,7 @@ namespace RiddlesHackaton2017.Bots
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = (short)Board.MyPlayer;
 				newBoard.MyPlayerFieldCount++;
-				newBoard = newBoard.NextGeneration.NextGeneration;
+				newBoard = newBoard.NextNextGeneration;
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}

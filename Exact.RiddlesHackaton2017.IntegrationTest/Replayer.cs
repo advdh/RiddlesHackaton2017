@@ -19,25 +19,33 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			DoReplay("988fe0cd-2193-4ab6-8f80-ebe6b69bffad"
-				//, rounds: new[] { 26 }
+				//, rounds: new[] { 24 }
 				//, action: Replay_OwnKillMoves
 				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
 				);
 		}
 
 		/// <summary>
-		/// Shows direct impact of all own kill moves
+		/// Quick scan for exceptions of a big number of logged files
 		/// </summary>
-		/// <param name="board"></param>
-		void Replay_OwnKillMoves(Board board)
+		[TestMethod]
+		public void QuickExceptionScan()
 		{
-			Console.WriteLine("Round {0}", board.Round);
-			var mine = board.GetCells(Player.Player1);
-			foreach(int i in mine)
+			DoQuickExceptionScan(maxCount: 100, maxDuration: TimeSpan.FromMilliseconds(50));
+		}
+
+		private void DoQuickExceptionScan(int maxCount, TimeSpan maxDuration)
+		{
+			foreach (var filename in Directory.GetFiles(Folder)
+				.OrderByDescending(file => File.GetLastWriteTime(file))
+				.Take(maxCount))
 			{
-				var killMove = new KillMove(i);
-				//var newBoard = Board.CopyAndPlay(board, Player.Player1, killMove);
-				//Console.WriteLine("{0}: direct impact = {1}", new Position(i), killMove.DirectImpactForBoard(board));
+				string gameId = Path.GetFileNameWithoutExtension(filename);
+				Console.WriteLine(gameId);
+				DoReplay(gameId, parameters: new MonteCarloParameters()
+				{
+					MaxDuration = maxDuration
+				});
 			}
 		}
 
@@ -112,8 +120,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 							originalMove = Move.Parse(sMove);
 							if (!differenceOnly || !newMove.Equals(originalMove))
 							{
-								Console.Error.WriteLine("Round {0}: original move: {1}, new move: {2}",
-									board.Round, originalMove, newMove);
+								Console.Error.WriteLine($"Round {board.Round}: original move: {originalMove}, new move: {newMove}");
 							}
 						}
 						break;

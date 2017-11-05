@@ -8,7 +8,7 @@ namespace RiddlesHackaton2017.Bots
 	public abstract class BaseBot
 	{
 		protected IConsole ConsoleError;
-		protected Board Board;
+		public Board Board;
 		protected TimeSpan TimeLimit;
 
 		protected DateTime StartTime { get; set; }
@@ -34,8 +34,7 @@ namespace RiddlesHackaton2017.Bots
 			LogMessage = null;
 			var move = GetMove();
 			DateTime endTime = DateTime.UtcNow;
-			ConsoleError.WriteLine("Round {0}: {1} - Used {2:0} ms, Timelimit {3:0} ms, Start {4:ss.fff}, End {5:ss.fff}",
-				Board.Round, LogMessage, endTime.Subtract(StartTime).TotalMilliseconds, timeLimit.TotalMilliseconds, StartTime, endTime);
+			ConsoleError.WriteLine($"Round {Board.Round}: {LogMessage} - Used {endTime.Subtract(StartTime).TotalMilliseconds:0} ms, Timelimit {timeLimit.TotalMilliseconds:0} ms, Start {StartTime:ss.fff}, End {endTime:ss.fff}");
 
 			return move.ToOutputString();
 		}

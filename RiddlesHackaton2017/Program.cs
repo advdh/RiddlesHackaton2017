@@ -23,9 +23,7 @@ namespace RiddlesHackaton2017
 		static void Main(string[] args)
 		{
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(512)));
-			Console.Error.WriteLine("Version {0}, UTC: {1}",
-				Assembly.GetExecutingAssembly().GetName().Version,
-				DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+			Console.Error.WriteLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}, UTC: {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}");
 			Console.Error.WriteLine("Parameters:");
 			Console.Error.WriteLine(Parameters);
 
