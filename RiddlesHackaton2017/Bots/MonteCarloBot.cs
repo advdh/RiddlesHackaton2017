@@ -109,7 +109,7 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new List<Move>();
 
-			var myKills = GetMyKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var myKills = GetMyKillsOld().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 			var opponentKills = GetOpponentKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 			var myBirths = GetBirths().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 
@@ -367,8 +367,12 @@ namespace RiddlesHackaton2017.Bots
 				killBoard1.GetNextGeneration(killBoard2, neighbours2);
 
 				//Calculate
-				(int myKillScore, int opponentKillScore) = BoardEvaluator.Evaluate(killBoard2, neighbours2);
-				(int myScore, int opponentScore) = BoardEvaluator.Evaluate(board2, neighbours2);
+				var killScore = BoardEvaluator.Evaluate(killBoard2, neighbours2);
+				int myKillScore = killScore.Item1;
+				int opponentKillScore = killScore.Item2;
+				var score = BoardEvaluator.Evaluate(board2, neighbours2);
+				int myScore = score.Item1;
+				int opponentScore = score.Item2;
 
 				//Calculate status
 				GameStatus newGameStatus = GameStatus.Busy;
