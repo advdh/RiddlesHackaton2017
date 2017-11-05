@@ -175,7 +175,7 @@ namespace RiddlesHackaton2017.Bots
 		private MonteCarloStatistics SimulateMove(Board board, Move move)
 		{
 			var statistic = new MonteCarloStatistics() { Move = move };
-			var startBoard = Board.CopyAndPlay(board, board.MyPlayer, move);
+			var startBoard = board.ApplyMoveAndNext(board.MyPlayer, move);
 			if (startBoard.OpponentPlayerFieldCount == 0)
 			{
 				if (startBoard.MyPlayerFieldCount == 0)
@@ -234,7 +234,7 @@ namespace RiddlesHackaton2017.Bots
 			{
 				//Bot play
 				Move move = GetRandomMove(board, player);
-				board = Board.CopyAndPlay(board, player, move);
+				board = board.ApplyMoveAndNext(player, move);
 				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, round: board.Round);
 				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, round: board.Round);
 

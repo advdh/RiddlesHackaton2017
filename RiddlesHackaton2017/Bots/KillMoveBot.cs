@@ -18,7 +18,7 @@ namespace RiddlesHackaton2017.Bots
 			int bestIndex = -1;
 			foreach (int i in Board.MyCells.Union(Board.OpponentCells))
 			{
-				var newBoard = Board.CopyAndPlay(Board, Board.MyPlayer, new KillMove(i));
+				var newBoard = Board.ApplyMoveAndNext(Board.MyPlayer, new KillMove(i));
 				var score = BoardEvaluator.Evaluate(newBoard);
 				if (score > bestScore)
 				{

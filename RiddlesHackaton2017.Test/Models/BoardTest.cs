@@ -115,7 +115,7 @@ namespace RiddlesHackaton2017.Test.Models
 			Console.WriteLine(newBoard.HumanBoardString());
 
 			var opponentMove = new BirthMove(new Position(0, 13), new Position(16, 0), new Position(16, 4));
-			newBoard = Board.CopyAndPlay(newBoard, Player.Player2, opponentMove);
+			newBoard = newBoard.ApplyMoveAndNext(Player.Player2, opponentMove);
 
 			Console.WriteLine("After copy and play");
 			Console.WriteLine(newBoard.HumanBoardString());

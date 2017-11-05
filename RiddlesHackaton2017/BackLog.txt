@@ -12,7 +12,3 @@ while (!timeToStop)
 	generate new move, and simulate it <count> times
 }
 pick one with best statistics
-
-V14, UnmanagedCode, c5ccb885-2215-443b-b852-dca3c64ab49a
-	Round 31: don't pass but force draw by killing middle cell
-	Round 30: should kill middle cell of opponent

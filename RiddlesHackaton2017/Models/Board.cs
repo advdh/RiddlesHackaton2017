@@ -84,23 +84,16 @@ namespace RiddlesHackaton2017.Models
 		}
 
 		/// <summary>
-		/// Plays move for player and applies next generation
+		/// Applies move for player and applies next generation
 		/// </summary>
 		/// <returns>New board</returns>
-		public static Board CopyAndPlay(Board board, Player player, Move move)
+		public Board ApplyMoveAndNext(Player player, Move move)
 		{
-			//Apply move
-			var newBoard = move.Apply(board, player);
-
-			//Apply next generation
-			newBoard = newBoard.NextGeneration;
+			//Apply move and next generation
+			var newBoard = move.Apply(this, player).NextGeneration;
 
 			//Increment round
-			newBoard.Round = board.Round;
-			if (player == Player.Player2)
-			{
-				newBoard.Round++;
-			}
+			newBoard.Round = Round + (player == Player.Player2 ? 1 : 0);
 
 			return newBoard;
 		}
@@ -109,19 +102,13 @@ namespace RiddlesHackaton2017.Models
 		/// Plays move for player and applies next generation for the specified fields only
 		/// </summary>
 		/// <returns>Partial board</returns>
-		public static Board CopyAndPlayPartial(Board board, Player player, Move move, int[] affectedFields)
+		public Board ApplyMoveAndNext(Player player, Move move, int[] affectedFields)
 		{
-			//Apply move
-			var newBoard = move.Apply(board, player);
-
-			//Apply next generation
-			newBoard = newBoard.GetNextGeneration(affectedFields);
+			//Apply move and next generation
+			var newBoard = move.Apply(this, player).GetNextGeneration(affectedFields);
 
 			//Increment round
-			if (player == Player.Player2)
-			{
-				newBoard.Round = board.Round + 1;
-			}
+			newBoard.Round = Round + (player == Player.Player2 ? 1 : 0);
 
 			return newBoard;
 		}
@@ -192,22 +179,10 @@ namespace RiddlesHackaton2017.Models
 						break;
 				}
 			}
-			else
+			else if (count == 3)
 			{
-				//Current cell dead
-				if (count == 3)
-				{
-					if (count1 >= 2)
-					{
-						//Player1 born
-						return 1;
-					}
-					else
-					{
-						//Player2 born
-						return 2;
-					}
-				}
+				//Get born
+				return (short)(count1 >= 2 ? 1 : 2);
 			}
 			return 0;
 		}
