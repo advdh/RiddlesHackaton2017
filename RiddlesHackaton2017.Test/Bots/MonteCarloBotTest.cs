@@ -11,21 +11,128 @@ namespace RiddlesHackaton2017.Test.Bots
 	public class MonteCarloBotTest : TestBase
 	{
 		[TestMethod]
-		public void Test()
+		public void GetMyKills_Busy()
 		{
-			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator());
-			bot.Board = ExampleBoard();
+			var board = new Board();
+			board.Field[new Position(0, 0).Index] = 1;
+			board.Field[new Position(1, 0).Index] = 1;
+			board.Field[new Position(1, 1).Index] = 1;
 
-			var myKills = bot.GetMyKills().OrderByDescending(kvp => kvp.Value).ToList();
+			//Add stable blocks for playe r1 and 2
+			board.Field[new Position(4, 0).Index] = 1;
+			board.Field[new Position(5, 0).Index] = 1;
+			board.Field[new Position(4, 1).Index] = 1;
+			board.Field[new Position(5, 1).Index] = 1;
+			board.Field[new Position(14, 0).Index] = 2;
+			board.Field[new Position(15, 0).Index] = 2;
+			board.Field[new Position(14, 1).Index] = 2;
+			board.Field[new Position(15, 1).Index] = 2;
+			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
+			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
 
-			Assert.AreEqual(50, myKills.Count);
-			Assert.AreEqual(184, myKills[0].Key);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 7), myKills[0].Value);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 6), myKills[1].Value);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 6), myKills[2].Value);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 6), myKills[3].Value);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 6), myKills[4].Value);
-			Assert.AreEqual(new BoardStatus(GameStatus.Busy, 5), myKills[5].Value);
+			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
+			{
+				Board = board
+			};
+			var myKills = bot.GetMyKills();
+
+			var kill = myKills[new Position(0, 0).Index];
+			Assert.AreEqual(-4, kill.Score);
+			Assert.AreEqual(GameStatus.Busy, kill.Status);
+
+			kill = myKills[new Position(4, 0).Index];
+			Assert.AreEqual(0, kill.Score);
+			Assert.AreEqual(GameStatus.Busy, kill.Status);
+		}
+
+		[TestMethod]
+		public void GetMyKills_Lost()
+		{
+			var board = new Board();
+			board.Field[new Position(0, 0).Index] = 1;
+			board.Field[new Position(1, 0).Index] = 1;
+			board.Field[new Position(1, 1).Index] = 1;
+
+			//Add stable blocks for player 2
+			board.Field[new Position(14, 0).Index] = 2;
+			board.Field[new Position(15, 0).Index] = 2;
+			board.Field[new Position(14, 1).Index] = 2;
+			board.Field[new Position(15, 1).Index] = 2;
+			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
+			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+
+			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
+			{
+				Board = board
+			};
+			var myKills = bot.GetMyKills();
+
+			var kill0 = myKills[0];
+			Assert.AreEqual(-4, kill0.Score);
+			Assert.AreEqual(GameStatus.Lost, kill0.Status);
+		}
+
+		[TestMethod]
+		public void GetMyKills_Won()
+		{
+			var board = new Board();
+			board.Field[new Position(0, 0).Index] = 1;
+			board.Field[new Position(1, 0).Index] = 2;
+			board.Field[new Position(1, 1).Index] = 2;
+
+			//Add stable blocks for player 2
+			board.Field[new Position(4, 0).Index] = 1;
+			board.Field[new Position(5, 0).Index] = 1;
+			board.Field[new Position(4, 1).Index] = 1;
+			board.Field[new Position(5, 1).Index] = 1;
+			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
+			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+
+			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
+			{
+				Board = board
+			};
+			var myKills = bot.GetMyKills();
+
+			var kill = myKills[0];
+			Assert.AreEqual(2, kill.Score);
+			Assert.AreEqual(GameStatus.Won, kill.Status);
+
+			kill = myKills[new Position(4, 0).Index];
+			Assert.AreEqual(0, kill.Score);
+			Assert.AreEqual(GameStatus.Busy, kill.Status);
+		}
+
+		[TestMethod]
+		public void GetMyKills_Draw()
+		{
+			var board = new Board();
+			board.Field[new Position(0, 0).Index] = 1;
+			board.Field[new Position(1, 0).Index] = 2;
+			board.Field[new Position(1, 1).Index] = 2;
+
+			//Add stable blocks for player 2
+			board.Field[new Position(4, 0).Index] = 1;
+			board.Field[new Position(5, 1).Index] = 1;
+			board.Field[new Position(6, 0).Index] = 1;
+			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
+			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+
+			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
+			{
+				Board = board
+			};
+			var myKills = bot.GetMyKills();
+
+			//Draw in two because we will both loose all in two turns
+			var kill = myKills[new Position(0, 0).Index];
+			Assert.AreEqual(2, kill.Score);
+			Assert.AreEqual(GameStatus.Draw, kill.Status);
+
+			//If we kill the other one, then stable state with 1 of mine and two of his
+			kill = myKills[new Position(4, 0).Index];
+			Assert.AreEqual(0, kill.Score);
+			Assert.AreEqual(GameStatus.Busy, kill.Status);
 		}
 	}
 }

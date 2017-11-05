@@ -51,10 +51,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PerformanceTest.cs" />
     <Compile Include="Replayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RiddlesHackaton2017.Test\RiddlesHackaton2017.Test.csproj">
+      <Project>{CBEFAB1E-AEFC-4E7F-8FF3-3A02B2AA21C2}</Project>
+      <Name>RiddlesHackaton2017.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RiddlesHackaton2017\RiddlesHackaton2017.csproj">
       <Project>{913D9577-6305-4DB5-835F-500DE00BF190}</Project>
       <Name>RiddlesHackaton2017</Name>

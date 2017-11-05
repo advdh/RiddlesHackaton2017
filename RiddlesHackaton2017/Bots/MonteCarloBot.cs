@@ -327,9 +327,9 @@ namespace RiddlesHackaton2017.Bots
 
 			return new BirthMove(b, s1, s2);
 		}
-		
+
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
-		public Dictionary<int, BoardStatus> GetMyKills()
+		public Dictionary<int, BoardStatus> GetMyKillsOld()
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
@@ -343,6 +343,57 @@ namespace RiddlesHackaton2017.Bots
 				//newBoard = newBoard.GetNextNextGeneration(i);
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
+		public Dictionary<int, BoardStatus> GetMyKills()
+		{
+			var result = new Dictionary<int, BoardStatus>();
+
+			var board1 = Board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(Board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+
+			foreach (int i in Board.MyCells)
+			{
+				var neighbours1 = Board.NeighbourFields[i];
+				var neighbours2 = neighbours1.SelectMany(j => Board.NeighbourFields[j]).Distinct();
+				killBoard.Field[i] = 0;
+				killBoard.GetNextGeneration(killBoard1, neighbours1);
+				killBoard1.GetNextGeneration(killBoard2, neighbours2);
+
+				//Calculate
+				(int myKillScore, int opponentKillScore) = BoardEvaluator.Evaluate(killBoard2, neighbours2);
+				(int myScore, int opponentScore) = BoardEvaluator.Evaluate(board2, neighbours2);
+
+				//Calculate status
+				GameStatus newGameStatus = GameStatus.Busy;
+				bool opponent0 = board2.OpponentPlayerFieldCount + opponentKillScore - opponentScore == 0;
+				bool me0 = board2.MyPlayerFieldCount + myKillScore - myScore == 0;
+				if (opponent0)
+				{
+					newGameStatus = me0 ? GameStatus.Draw : GameStatus.Won;
+				}
+				else if (me0)
+				{
+					newGameStatus = GameStatus.Lost;
+				}
+				result.Add(i, new BoardStatus(newGameStatus, myKillScore - opponentKillScore - (myScore - opponentScore)));
+
+				//Reset kill boards
+				killBoard.Field[i] = Board.Field[i];
+				foreach (int j in neighbours1)
+				{
+					killBoard1.Field[j] = board1.Field[j];
+				}
+				foreach (int j in neighbours2)
+				{
+					killBoard2.Field[j] = board2.Field[j];
+				}
 			}
 			return result;
 		}

@@ -139,6 +139,10 @@ namespace RiddlesHackaton2017.Models
 
 		public Board GetNextNextGeneration(int cell)
 		{
+			var board1 = NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
 			var affectedFields = NeighbourFields[cell]
 				.SelectMany(i => NeighbourFields[i])
 				.SelectMany(i => NeighbourFields[i])
@@ -154,10 +158,10 @@ namespace RiddlesHackaton2017.Models
 		{
 			var newBoard = new Board() { MyPlayer = MyPlayer };
 
-			foreach(int i in affectedFields)
+			foreach (int i in affectedFields)
 			{
 				newBoard.Field[i] = NextGenerationForField(i);
-				switch(newBoard.Field[i])
+				switch (newBoard.Field[i])
 				{
 					case 1:
 						newBoard.Player1FieldCount++;
@@ -169,6 +173,28 @@ namespace RiddlesHackaton2017.Models
 			}
 
 			return newBoard;
+		}
+
+		/// <summary>
+		/// Moves to the next generation for only the specified fields
+		/// and return the next generation board in board/>
+		/// </summary>
+		/// <returns>New board</returns>
+		public void GetNextGeneration(Board board, IEnumerable<int> affectedFields)
+		{
+			foreach (int i in affectedFields)
+			{
+				board.Field[i] = NextGenerationForField(i);
+				switch (board.Field[i])
+				{
+					case 1:
+						board.Player1FieldCount++;
+						break;
+					case 2:
+						board.Player2FieldCount++;
+						break;
+				}
+			}
 		}
 
 		private short NextGenerationForField(int i)
