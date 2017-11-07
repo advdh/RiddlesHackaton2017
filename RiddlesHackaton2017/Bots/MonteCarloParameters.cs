@@ -54,6 +54,8 @@ namespace RiddlesHackaton2017.Bots
 			}
 		}
 
+		public bool LogAllMoves { get; set; } = false;
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -65,6 +67,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");
 			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
 			sb.AppendLine($"Debug = {Debug}");
+			sb.AppendLine($"LogAllMoves = {LogAllMoves}");
 			return sb.ToString();
 		}
 	}

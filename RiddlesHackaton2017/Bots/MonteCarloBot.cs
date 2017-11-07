@@ -60,6 +60,12 @@ namespace RiddlesHackaton2017.Bots
 				//Get random move and simulate rest of the game several times
 				var move = candidateMoves[count];
 				var result = SimulateMove(Board, move);
+
+				if (Parameters.LogAllMoves)
+				{
+					ConsoleError.WriteLine($"     Move {count}: {move} - score = {result.Score:P0}, win in {result.AverageWinRounds}, loose in {result.AverageLooseRounds}");
+				}
+
 				if (result.Score > bestResult.Score)
 				{
 					//Prefer higher score
@@ -107,7 +113,7 @@ namespace RiddlesHackaton2017.Bots
 		/// <returns>Sorted collection of moves</returns>
 		private IEnumerable<Move> GetCandidateMoves(int maxCount)
 		{
-			var result = new List<Move>();
+			var result = new Dictionary<Move, int>();
 
 			var board1 = Board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -115,50 +121,53 @@ namespace RiddlesHackaton2017.Bots
 			var killBoard1 = new Board(board1);
 			var killBoard2 = new Board(board2);
 
-			var myKills = GetMyKills(board1, board2, killBoard, killBoard1, killBoard2)
-				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
-			var opponentKills = GetOpponentKills(board1, board2, killBoard, killBoard1, killBoard2)
-				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
-			var myBirths = GetBirths(board1, board2, killBoard, killBoard1, killBoard2)
-				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var myKills = GetMyKills(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
+			var opponentKills = GetOpponentKills(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
+			var myBirths = GetBirths(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
 
-			var bkHashes = new HashSet<int>();
-			var kkHashes = new HashSet<int>();
-
-			result.Add(new PassMove());
-			for (int k2 = 1; k2 < Math.Min(myKills.Length, myBirths.Length); k2++)
+			result.Add(new PassMove(), BoardEvaluator.Evaluate(board2).Score - BoardEvaluator.Evaluate(Board).Score);
+			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
-				for (int b = 0; b < k2 && b < myBirths.Length; b++)
+				for (int b = 0; b < i && b < myBirths.Count(); b++)
 				{
-					if (!bkHashes.Contains(b + 256 * k2))
+					var birth = myBirths.ElementAt(b);
+					for (int k1 = 0; k1 < i && k1 < myKills.Count(); k1++)
 					{
-						for (int k1 = 0; k1 < k2 && k1 < myKills.Length - 1; k1++)
+						var kill1 = myKills.ElementAt(k1);
+						for (int k2 = k1 + 1; k2 < i + 1 && k2 < myKills.Count(); k2++)
 						{
-							if (!bkHashes.Contains(b + 256 * k1)
-								&& !kkHashes.Contains(k1 + 256 + k2))
+							if (b == i - 1 || k1 == i - 1 || k2 == i)
 							{
-								bkHashes.Add(b + 256 * k1);
-								bkHashes.Add(b + 256 * k2);
-								kkHashes.Add(k1 + 256 + k2);
-								result.Add(new BirthMove(myBirths[b], myKills[k1], myKills[k2]));
-								if (result.Count >= maxCount) return result;
-								break;
+								//Else already done
+								var kill2 = myKills.ElementAt(k2);
+								int score = birth.Value.Score + kill1.Value.Score + kill2.Value.Score;
+								result.Add(new BirthMove(birth.Key, kill1.Key, kill2.Key), score);
+								if (result.Count >= maxCount)
+								{
+									i = 1000;
+									b = 1000;
+									k1 = 1000;
+									break;
+								}
 							}
 						}
 					}
 				}
-				if (k2 <= opponentKills.Length)
-				{
-					result.Add(new KillMove(opponentKills[k2 - 1]));
-					if (result.Count >= maxCount) return result;
-				}
 			}
-			for (int k2 = Math.Min(myKills.Length, myBirths.Length) - 1; k2 < opponentKills.Length; k2++)
+
+			//Kill moves
+			foreach (var killMove in myKills)
 			{
-				result.Add(new KillMove(opponentKills[k2]));
-				if (result.Count >= maxCount) return result;
+				result.Add(new KillMove(killMove.Key), killMove.Value.Score);
 			}
-			return result;
+
+			//Kill moves
+			foreach (var killMove in opponentKills)
+			{
+				result.Add(new KillMove(killMove.Key), killMove.Value.Score);
+			}
+
+			return result.OrderByDescending(r => r.Value).Take(maxCount).Select(r => r.Key);
 		}
 
 		/// <summary>
@@ -338,40 +347,6 @@ namespace RiddlesHackaton2017.Bots
 		}
 
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
-		public Dictionary<int, BoardStatus> GetMyKillsOld()
-		{
-			var result = new Dictionary<int, BoardStatus>();
-
-			foreach (int i in Board.MyCells)
-			{
-				var newBoard = new Board(Board);
-				newBoard.Field[i] = 0;
-				newBoard.MyPlayerFieldCount--;
-				newBoard = newBoard.NextNextGeneration;
-				var score = BoardEvaluator.Evaluate(newBoard);
-				result.Add(i, score);
-			}
-			return result;
-		}
-
-		public Dictionary<int, BoardStatus> GetOpponentKillsOld()
-		{
-			var result = new Dictionary<int, BoardStatus>();
-
-			foreach (int i in Board.OpponentCells)
-			{
-				var newBoard = new Board(Board);
-				newBoard.Field[i] = 0;
-				newBoard.MyPlayerFieldCount--;
-				newBoard = newBoard.NextNextGeneration;
-				var score = BoardEvaluator.Evaluate(newBoard);
-				result.Add(i, score);
-			}
-			return result;
-		}
-
-
-		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
 		public Dictionary<int, BoardStatus> GetMyKills(Board board1, Board board2,
 			Board killBoard, Board killBoard1, Board killBoard2)
 		{
@@ -421,22 +396,6 @@ namespace RiddlesHackaton2017.Bots
 				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
 				result.Add(i, r);
 				killBoard.Field[i] = 0;
-			}
-			return result;
-		}
-
-		public Dictionary<int, BoardStatus> GetBirthsOld()
-		{ 
-			var result = new Dictionary<int, BoardStatus>();
-			
-			foreach (int i in Board.EmptyCells)
-			{
-				var newBoard = new Board(Board);
-				newBoard.Field[i] = (short)Board.MyPlayer;
-				newBoard.MyPlayerFieldCount++;
-				newBoard = newBoard.NextNextGeneration;
-				var score = BoardEvaluator.Evaluate(newBoard);
-				result.Add(i, score);
 			}
 			return result;
 		}

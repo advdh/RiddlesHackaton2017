@@ -114,6 +114,8 @@ namespace RiddlesHackaton2017.Models
 			return newBoard;
 		}
 
+		private Board _NextGeneration;
+
 		/// <summary>
 		/// Moves to the next generation
 		/// </summary>
@@ -122,19 +124,23 @@ namespace RiddlesHackaton2017.Models
 		{
 			get
 			{
-				return GetNextGeneration(AllCells);
+				if (_NextGeneration == null)
+				{
+					_NextGeneration = GetNextGeneration(AllCells);
+				}
+				return _NextGeneration;
 			}
 		}
 
 		/// <summary>
-		/// Moves to the next generation
+		/// Moves to the next-next generation
 		/// </summary>
 		/// <returns>New board</returns>
 		public Board NextNextGeneration
 		{
 			get
 			{
-				return GetNextGeneration(AllCells).GetNextGeneration(AllCells);
+				return NextGeneration.NextGeneration;
 			}
 		}
 

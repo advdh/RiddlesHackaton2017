@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RiddlesHackaton2017.Bots;
+using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
@@ -16,12 +17,25 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
 		[TestMethod]
+		public void Test()
+		{
+			var board = new Board();
+			ParseBoard(new[] { "update", "game", "field", "1,.,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,0,1,.,.,0,.,.,1,.,.,1,.,.,.,.,.,0,.,0,.,.,1,.,0,1,.,.,0,.,.,.,.,.,.,.,.,1,1,1,.,.,0,1,1,.,0,1,0,0,0,.,.,.,.,.,.,1,0,0,1,1,.,.,.,.,.,.,.,.,1,.,.,.,0,.,.,.,.,1,1,0,.,.,.,0,.,0,.,0,.,0,.,.,.,1,.,.,.,0,1,.,0,1,.,.,0,1,.,.,.,.,1,.,.,0,.,.,.,.,1,.,.,1,.,.,0,.,.,0,.,.,.,.,1,.,.,0,.,.,.,.,0,1,.,.,0,1,.,0,1,.,.,.,0,.,.,.,1,.,1,.,1,.,1,.,.,.,1,0,0,.,.,.,.,1,.,.,.,0,.,.,.,.,.,.,.,.,0,0,1,1,0,.,.,.,.,.,.,1,1,1,0,1,.,0,0,1,.,.,0,0,0,.,.,.,.,.,.,.,.,1,.,.,0,1,.,0,.,.,1,.,1,.,.,.,.,.,0,.,.,0,.,.,1,.,.,0,1,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,.,0" }, board);
+			var move = new BirthMove(new Position(12, 10), new Position(13, 11), new Position(9, 13));
+			var newBoard = board.ApplyMoveAndNext(Player.Player1, move);
+			var nextNextBoard = newBoard.NextGeneration;
+			Console.WriteLine(BoardEvaluator.Evaluate(board));
+			Console.WriteLine(BoardEvaluator.Evaluate(nextNextBoard));
+		}
+
+		[TestMethod]
 		public void Replay_Test()
 		{
 			DoReplay("988fe0cd-2193-4ab6-8f80-ebe6b69bffad"
-				//, rounds: new[] { 24 }
+				//, rounds: new[] { 25 }
 				//, action: Replay_OwnKillMoves
 				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
+				//, parameters: new MonteCarloParameters() { LogAllMoves = true }
 				);
 		}
 

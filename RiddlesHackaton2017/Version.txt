@@ -16,3 +16,5 @@ V14	04-11-2017, 12:24	Monte-Carlo move generation: board score is based on two g
 V15	04-11-2017, 19:06	Bugfixes end game: kill moves were not simulated if we had very few cells left
 						+ simulation that both players lost their last cells was not handled correctly
 						+ 20% performance improvement
+V20	07-11-2017, 23:04	New move generator: takes best of (100 best birth moves + all kill moves) 
+						+ 92% performance improvement calculation of births and kills
