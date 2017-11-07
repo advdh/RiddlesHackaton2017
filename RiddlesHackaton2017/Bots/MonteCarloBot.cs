@@ -109,9 +109,18 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new List<Move>();
 
-			var myKills = GetMyKillsOld().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
-			var opponentKills = GetOpponentKills().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
-			var myBirths = GetBirths().OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var board1 = Board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(Board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+
+			var myKills = GetMyKills(board1, board2, killBoard, killBoard1, killBoard2)
+				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var opponentKills = GetOpponentKills(board1, board2, killBoard, killBoard1, killBoard2)
+				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+			var myBirths = GetBirths(board1, board2, killBoard, killBoard1, killBoard2)
+				.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
 
 			var bkHashes = new HashSet<int>();
 			var kkHashes = new HashSet<int>();
@@ -333,85 +342,27 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
-			//int currentScore = BoardEvaluator.Evaluate(Board.NextNextGeneration).Score;
 			foreach (int i in Board.MyCells)
 			{
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = 0;
 				newBoard.MyPlayerFieldCount--;
 				newBoard = newBoard.NextNextGeneration;
-				//newBoard = newBoard.GetNextNextGeneration(i);
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
 			}
 			return result;
 		}
 
-		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
-		public Dictionary<int, BoardStatus> GetMyKills()
+		public Dictionary<int, BoardStatus> GetOpponentKillsOld()
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
-			var board1 = Board.NextGeneration;
-			var board2 = board1.NextGeneration;
-			var killBoard = new Board(Board);
-			var killBoard1 = new Board(board1);
-			var killBoard2 = new Board(board2);
-
-			foreach (int i in Board.MyCells)
-			{
-				var neighbours1 = Board.NeighbourFields[i];
-				var neighbours2 = neighbours1.SelectMany(j => Board.NeighbourFields[j]).Distinct();
-				killBoard.Field[i] = 0;
-				killBoard.GetNextGeneration(killBoard1, neighbours1);
-				killBoard1.GetNextGeneration(killBoard2, neighbours2);
-
-				//Calculate
-				var killScore = BoardEvaluator.Evaluate(killBoard2, neighbours2);
-				int myKillScore = killScore.Item1;
-				int opponentKillScore = killScore.Item2;
-				var score = BoardEvaluator.Evaluate(board2, neighbours2);
-				int myScore = score.Item1;
-				int opponentScore = score.Item2;
-
-				//Calculate status
-				GameStatus newGameStatus = GameStatus.Busy;
-				bool opponent0 = board2.OpponentPlayerFieldCount + opponentKillScore - opponentScore == 0;
-				bool me0 = board2.MyPlayerFieldCount + myKillScore - myScore == 0;
-				if (opponent0)
-				{
-					newGameStatus = me0 ? GameStatus.Draw : GameStatus.Won;
-				}
-				else if (me0)
-				{
-					newGameStatus = GameStatus.Lost;
-				}
-				result.Add(i, new BoardStatus(newGameStatus, myKillScore - opponentKillScore - (myScore - opponentScore)));
-
-				//Reset kill boards
-				killBoard.Field[i] = Board.Field[i];
-				foreach (int j in neighbours1)
-				{
-					killBoard1.Field[j] = board1.Field[j];
-				}
-				foreach (int j in neighbours2)
-				{
-					killBoard2.Field[j] = board2.Field[j];
-				}
-			}
-			return result;
-		}
-
-		/// <summary>Gets a dictionary of kills on opponent's cells with their scores</summary>
-		public Dictionary<int, BoardStatus> GetOpponentKills()
-		{
-			var result = new Dictionary<int, BoardStatus>();
-			
 			foreach (int i in Board.OpponentCells)
 			{
 				var newBoard = new Board(Board);
 				newBoard.Field[i] = 0;
-				newBoard.OpponentPlayerFieldCount--;
+				newBoard.MyPlayerFieldCount--;
 				newBoard = newBoard.NextNextGeneration;
 				var score = BoardEvaluator.Evaluate(newBoard);
 				result.Add(i, score);
@@ -419,9 +370,63 @@ namespace RiddlesHackaton2017.Bots
 			return result;
 		}
 
-		/// <summary>Gets a dictionary of births (not birth moves) with their scores</summary>
-		public Dictionary<int, BoardStatus> GetBirths()
+
+		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
+		public Dictionary<int, BoardStatus> GetMyKills(Board board1, Board board2,
+			Board killBoard, Board killBoard1, Board killBoard2)
 		{
+			var result = new Dictionary<int, BoardStatus>();
+
+			foreach (int i in Board.MyCells)
+			{
+				var neighbours1 = Board.NeighbourFields[i];
+				var neighbours2 = Board.NeighbourFields2[i];
+				killBoard.Field[i] = 0;
+				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				result.Add(i, r);
+				killBoard.Field[i] = Board.Field[i];
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of kills on opponent's cells with their scores</summary>
+		public Dictionary<int, BoardStatus> GetOpponentKills(Board board1, Board board2,
+			Board killBoard, Board killBoard1, Board killBoard2)
+		{
+			var result = new Dictionary<int, BoardStatus>();
+
+			foreach (int i in Board.OpponentCells)
+			{
+				var neighbours1 = Board.NeighbourFields[i];
+				var neighbours2 = Board.NeighbourFields2[i];
+				killBoard.Field[i] = 0;
+				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				result.Add(i, r);
+				killBoard.Field[i] = Board.Field[i];
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of births (not birth moves) with their scores</summary>
+		public Dictionary<int, BoardStatus> GetBirths(Board board1, Board board2,
+			Board killBoard, Board killBoard1, Board killBoard2)
+		{
+			var result = new Dictionary<int, BoardStatus>();
+
+			foreach (int i in Board.EmptyCells)
+			{
+				var neighbours1 = Board.NeighbourFields[i];
+				var neighbours2 = Board.NeighbourFields2[i];
+				killBoard.Field[i] = (short)Board.MyPlayer;
+				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				result.Add(i, r);
+				killBoard.Field[i] = 0;
+			}
+			return result;
+		}
+
+		public Dictionary<int, BoardStatus> GetBirthsOld()
+		{ 
 			var result = new Dictionary<int, BoardStatus>();
 			
 			foreach (int i in Board.EmptyCells)
@@ -434,6 +439,56 @@ namespace RiddlesHackaton2017.Bots
 				result.Add(i, score);
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Calculates board status
+		/// </summary>
+		/// <param name="board1">Next generation board after pass move</param>
+		/// <param name="board2">Next-next generation board after two pass moves</param>
+		/// <param name="killBoard">Board after specific move</param>
+		/// <param name="killBoard1">Next generation board after specific move</param>
+		/// <param name="killBoard2">Next-next generation board after specific move</param>
+		/// <param name="neighbours1">Neighbours of i</param>
+		/// <param name="neighbours2">Neighbours of neighbours of i</param>
+		private BoardStatus CalculateBoardStatus(Board board1, Board board2,
+			Board killBoard, Board killBoard1, Board killBoard2,
+			int[] neighbours1, IEnumerable<int> neighbours2)
+		{
+			killBoard.GetNextGeneration(killBoard1, neighbours1);
+			killBoard1.GetNextGeneration(killBoard2, neighbours2);
+
+			//Calculate
+			var killScore = BoardEvaluator.Evaluate(killBoard2, neighbours2);
+			int myKillScore = killScore.Item1;
+			int opponentKillScore = killScore.Item2;
+			var score = BoardEvaluator.Evaluate(board2, neighbours2);
+			int myScore = score.Item1;
+			int opponentScore = score.Item2;
+
+			//Calculate status
+			GameStatus newGameStatus = GameStatus.Busy;
+			bool opponent0 = board2.OpponentPlayerFieldCount + opponentKillScore - opponentScore == 0;
+			bool me0 = board2.MyPlayerFieldCount + myKillScore - myScore == 0;
+			if (opponent0)
+			{
+				newGameStatus = me0 ? GameStatus.Draw : GameStatus.Won;
+			}
+			else if (me0)
+			{
+				newGameStatus = GameStatus.Lost;
+			}
+
+			//Reset kill boards
+			foreach (int j in neighbours1)
+			{
+				killBoard1.Field[j] = board1.Field[j];
+			}
+			foreach (int j in neighbours2)
+			{
+				killBoard2.Field[j] = board2.Field[j];
+			}
+			return new BoardStatus(newGameStatus, myKillScore - opponentKillScore - (myScore - opponentScore));
 		}
 	}
 }

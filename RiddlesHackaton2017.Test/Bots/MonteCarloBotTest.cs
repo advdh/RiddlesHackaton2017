@@ -34,7 +34,12 @@ namespace RiddlesHackaton2017.Test.Bots
 			{
 				Board = board
 			};
-			var myKills = bot.GetMyKills();
+			var board1 = board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill = myKills[new Position(0, 0).Index];
 			Assert.AreEqual(-4, kill.Score);
@@ -65,7 +70,12 @@ namespace RiddlesHackaton2017.Test.Bots
 			{
 				Board = board
 			};
-			var myKills = bot.GetMyKills();
+			var board1 = board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill0 = myKills[0];
 			Assert.AreEqual(-4, kill0.Score);
@@ -92,7 +102,12 @@ namespace RiddlesHackaton2017.Test.Bots
 			{
 				Board = board
 			};
-			var myKills = bot.GetMyKills();
+			var board1 = board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill = myKills[0];
 			Assert.AreEqual(2, kill.Score);
@@ -122,7 +137,12 @@ namespace RiddlesHackaton2017.Test.Bots
 			{
 				Board = board
 			};
-			var myKills = bot.GetMyKills();
+			var board1 = board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var killBoard = new Board(board);
+			var killBoard1 = new Board(board1);
+			var killBoard2 = new Board(board2);
+			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			//Draw in two because we will both loose all in two turns
 			var kill = myKills[new Position(0, 0).Index];

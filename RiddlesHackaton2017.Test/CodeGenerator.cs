@@ -32,8 +32,32 @@ namespace RiddlesHackaton2017.Test
 					{
 						if (!first) sb.Append(",");
 						sb.Append(new Position(position.X + pair[0], position.Y + pair[1]).Index);
-						first = false;						
+						first = false;
 					}
+				}
+				sb.AppendLine(" },");
+			}
+			sb.AppendLine("};");
+			Console.WriteLine(sb.ToString());
+		}
+
+		[TestMethod]
+		public void GenerateNeighbourNeighbours()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("public static int[][] NeighbourFields2 = new[]");
+			sb.AppendLine("{");
+
+			for (int i = 0; i < Board.Size; i++)
+			{
+				sb.Append("new int[] {");
+				var neighbours2 = Board.NeighbourFields[i].SelectMany(j => Board.NeighbourFields[j]).Distinct().OrderBy(j => j);
+				bool first = true;
+				foreach (int j in neighbours2)
+				{
+					if (!first) sb.Append(",");
+					sb.Append(j);
+					first = false;
 				}
 				sb.AppendLine(" },");
 			}
