@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="BotParser.cs" />
     <Compile Include="Bots\BaseBot.cs" />
+    <Compile Include="Bots\CheatBot.cs" />
     <Compile Include="Bots\KillMoveBot.cs" />
     <Compile Include="Bots\MonteCarloBot.cs" />
     <Compile Include="Bots\MonteCarloParameters.cs" />

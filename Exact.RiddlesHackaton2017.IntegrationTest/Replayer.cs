@@ -31,8 +31,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("988fe0cd-2193-4ab6-8f80-ebe6b69bffad"
-				//, rounds: new[] { 25 }
+			DoReplay("4d4866ca-a96a-4d23-84b1-3937e90b52ae"
+				//, rounds: new[] { 7 }
 				//, action: Replay_OwnKillMoves
 				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
 				//, parameters: new MonteCarloParameters() { LogAllMoves = true }
@@ -92,10 +92,11 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			var board = new Board();
 			Player player = Player.Player1;
-			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
-			{
-				Parameters = parameters
-			};
+			//var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
+			//{
+			//	Parameters = parameters
+			//};
+			var bot = new CheatBot(console);
 			Move originalMove;
 			Move newMove = new NullMove();
 

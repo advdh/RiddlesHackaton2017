@@ -12,3 +12,14 @@ while (!timeToStop)
 	generate new move, and simulate it <count> times
 }
 pick one with best statistics
+
+v20, 4d4866ca-a96a-4d23-84b1-3937e90b52ae, testbot, round 8: should kill (4,4) or (5,3) to win in 1
+	Generally, v20 seems to value birth moves too high and kill moves too low
+
+v20, 3f2e4dd7-1f3a-4ecb-bb72-3eeb8123ae73, Gynther:
+	Round 30: very limited time left: only 3 moves are simulated
+	Generally: don't spend so much time in the beginning. Already around round 16, timelimit is under 1,000 ms
+	Try to cut off simulations, which have bad statistics
+
+v20, c50ead8d-f98c-477f-b763-7c87666c3b19, SBRNC:
+	Round 30: opponent does a birth move, but only sacrifices one cell. That should not be allowed.
