@@ -65,6 +65,7 @@
     <Compile Include="Models\Board.cs" />
     <Compile Include="Moves\KillMove.cs" />
     <Compile Include="Moves\Move.cs" />
+    <Compile Include="Models\MoveScore.cs" />
     <Compile Include="Moves\NullMove.cs" />
     <Compile Include="Moves\PassMove.cs" />
     <Compile Include="Models\Player.cs" />

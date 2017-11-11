@@ -17,22 +17,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
 		[TestMethod]
-		public void Test()
-		{
-			var board = new Board();
-			ParseBoard(new[] { "update", "game", "field", "1,.,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,0,1,.,.,0,.,.,1,.,.,1,.,.,.,.,.,0,.,0,.,.,1,.,0,1,.,.,0,.,.,.,.,.,.,.,.,1,1,1,.,.,0,1,1,.,0,1,0,0,0,.,.,.,.,.,.,1,0,0,1,1,.,.,.,.,.,.,.,.,1,.,.,.,0,.,.,.,.,1,1,0,.,.,.,0,.,0,.,0,.,0,.,.,.,1,.,.,.,0,1,.,0,1,.,.,0,1,.,.,.,.,1,.,.,0,.,.,.,.,1,.,.,1,.,.,0,.,.,0,.,.,.,.,1,.,.,0,.,.,.,.,0,1,.,.,0,1,.,0,1,.,.,.,0,.,.,.,1,.,1,.,1,.,1,.,.,.,1,0,0,.,.,.,.,1,.,.,.,0,.,.,.,.,.,.,.,.,0,0,1,1,0,.,.,.,.,.,.,1,1,1,0,1,.,0,0,1,.,.,0,0,0,.,.,.,.,.,.,.,.,1,.,.,0,1,.,0,.,.,1,.,1,.,.,.,.,.,0,.,.,0,.,.,1,.,.,0,1,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,.,0" }, board);
-			var move = new BirthMove(new Position(12, 10), new Position(13, 11), new Position(9, 13));
-			var newBoard = board.ApplyMoveAndNext(Player.Player1, move);
-			var nextNextBoard = newBoard.NextGeneration;
-			Console.WriteLine(BoardEvaluator.Evaluate(board));
-			Console.WriteLine(BoardEvaluator.Evaluate(nextNextBoard));
-		}
-
-		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("4d4866ca-a96a-4d23-84b1-3937e90b52ae"
-				//, rounds: new[] { 7 }
+			DoReplay("509a76d7-c7eb-4bc8-b70f-44d1578afcf0"
+				, rounds: new[] { 9 }
 				//, action: Replay_OwnKillMoves
 				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
 				//, parameters: new MonteCarloParameters() { LogAllMoves = true }
@@ -91,12 +79,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 			Action<Board> action, int[] rounds, IConsole console, MonteCarloParameters parameters)
 		{
 			var board = new Board();
-			Player player = Player.Player1;
-			//var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
-			//{
-			//	Parameters = parameters
-			//};
-			var bot = new CheatBot(console);
+			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
+			{
+				Parameters = parameters
+			};
 			Move originalMove;
 			Move newMove = new NullMove();
 
@@ -106,7 +92,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				switch (words[0])
 				{
 					case "settings":
-						ParseSettings(words, ref player);
+						ParseSettings(words, board);
 						break;
 
 					case "update":
@@ -166,13 +152,13 @@ namespace RiddlesHackaton2017.IntegrationTest
 			}
 		}
 
-		private static void ParseSettings(string[] words, ref Player player)
+		private static void ParseSettings(string[] words, Board board)
 		{
 			switch (words[1])
 			{
 				case "your_botid":
 					int value = int.Parse(words[2]);
-					player = (Player)Enum.Parse(player.GetType(), (value + 1).ToString());
+					board.MyPlayer = (Player)Enum.Parse(typeof(Player), (value + 1).ToString());
 					break;
 			}
 		}

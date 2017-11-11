@@ -13,19 +13,19 @@ namespace RiddlesHackaton2017
 		static Board Board = new Board();
 		//static KillMoveBot Bot = new KillMoveBot(new ConsoleError());
 		//static PassBot Bot = new PassBot(new ConsoleError());
-		static CheatBot Bot = new CheatBot(new ConsoleError());
-		//static MonteCarloParameters Parameters = MonteCarloParameters.Life;
-		//static MonteCarloBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()))
-		//{
-		//	Parameters = Parameters,
-		//};
+		//static CheatBot Bot = new CheatBot(new ConsoleError());
+		static MonteCarloParameters Parameters = MonteCarloParameters.Life;
+		static MonteCarloBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()))
+		{
+			Parameters = Parameters,
+		};
 
 		static void Main(string[] args)
 		{
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(512)));
 			Console.Error.WriteLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}, UTC: {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}");
-			//Console.Error.WriteLine("Parameters:");
-			//Console.Error.WriteLine(Parameters);
+			Console.Error.WriteLine("Parameters:");
+			Console.Error.WriteLine(Parameters);
 
 			while (true)
 			{

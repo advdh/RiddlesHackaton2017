@@ -65,7 +65,16 @@ namespace RiddlesHackaton2017.Moves
 			}
 
 			var result = new Board(board);
+			if (board.Field[Index] == (short)board.MyPlayer)
+			{
+				result.MyPlayerFieldCount--;
+			}
+			else
+			{
+				result.OpponentPlayerFieldCount--;
+			}
 			result.Field[Index] = 0;
+
 			return result;
 		}
 	}

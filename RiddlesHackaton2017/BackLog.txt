@@ -23,3 +23,9 @@ v20, 3f2e4dd7-1f3a-4ecb-bb72-3eeb8123ae73, Gynther:
 
 v20, c50ead8d-f98c-477f-b763-7c87666c3b19, SBRNC:
 	Round 30: opponent does a birth move, but only sacrifices one cell. That should not be allowed.
+	Round 36: killing birthmove: loose in 1, but we think win in 1
+		Should do smarter moves in 'rest of game'
+
+
+v19, c578b859-6b8f-4afc-a009-4824cb8144f1, SBRNC:
+	Round 19: win in one if we kill (17,9)

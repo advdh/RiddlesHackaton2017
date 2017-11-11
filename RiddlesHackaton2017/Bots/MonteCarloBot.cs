@@ -54,16 +54,28 @@ namespace RiddlesHackaton2017.Bots
 
 			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
 
+			if (Parameters.LogAllMoves)
+			{
+				int ix = 0;
+				foreach (var moveScore in candidateMoves)
+				{
+					ConsoleError.WriteLine($"  {ix}: {moveScore}");
+					ix++;
+				}
+			}
+
 			int count = 0;
+			int bestGain2 = 0;
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
-				var move = candidateMoves[count];
+				var moveScore = candidateMoves[count];
+				var move = moveScore.Move;
 				var result = SimulateMove(Board, move);
 
 				if (Parameters.LogAllMoves)
 				{
-					ConsoleError.WriteLine($"     Move {count}: {move} - score = {result.Score:P0}, win in {result.AverageWinRounds}, loose in {result.AverageLooseRounds}");
+					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinRounds}, loose in {result.AverageLooseRounds}");
 				}
 
 				if (result.Score > bestResult.Score)
@@ -71,6 +83,7 @@ namespace RiddlesHackaton2017.Bots
 					//Prefer higher score
 					bestResult = result;
 					bestMove = move;
+					bestGain2 = moveScore.Gain2;
 				}
 				else if (result.Score == bestResult.Score)
 				{
@@ -82,6 +95,7 @@ namespace RiddlesHackaton2017.Bots
 						{
 							bestResult = result;
 							bestMove = move;
+							bestGain2 = moveScore.Gain2;
 						}
 					}
 					else
@@ -91,6 +105,7 @@ namespace RiddlesHackaton2017.Bots
 						{
 							bestResult = result;
 							bestMove = move;
+							bestGain2 = moveScore.Gain2;
 						}
 					}
 				}
@@ -101,7 +116,7 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = $"{bestMove}: score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinRounds}, loose in {bestResult.AverageLooseRounds}";
+			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinRounds}, loose in {bestResult.AverageLooseRounds}";
 
 			return bestMove;
 		}
@@ -111,21 +126,21 @@ namespace RiddlesHackaton2017.Bots
 		/// have never more than 1 move part (birth/kill) in common
 		/// </summary>
 		/// <returns>Sorted collection of moves</returns>
-		private IEnumerable<Move> GetCandidateMoves(int maxCount)
+		private IEnumerable<MoveScore> GetCandidateMoves(int maxCount)
 		{
-			var result = new Dictionary<Move, int>();
+			var result = new List<MoveScore>();
 
 			var board1 = Board.NextGeneration;
 			var board2 = board1.NextGeneration;
-			var killBoard = new Board(Board);
-			var killBoard1 = new Board(board1);
-			var killBoard2 = new Board(board2);
+			var afterMoveBoard = new Board(Board);
+			var afterMoveBoard1 = new Board(board1);
+			var afterMoveBoard2 = new Board(board2);
 
-			var myKills = GetMyKills(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
-			var opponentKills = GetOpponentKills(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
-			var myBirths = GetBirths(board1, board2, killBoard, killBoard1, killBoard2).OrderByDescending(kvp => kvp.Value);
+			var myKills = GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var opponentKills = GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var myBirths = GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 
-			result.Add(new PassMove(), BoardEvaluator.Evaluate(board2).Score - BoardEvaluator.Evaluate(Board).Score);
+			result.Add(new MoveScore(new PassMove(), BoardEvaluator.Evaluate(board2).Score - BoardEvaluator.Evaluate(Board).Score));
 			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
 				for (int b = 0; b < i && b < myBirths.Count(); b++)
@@ -140,34 +155,45 @@ namespace RiddlesHackaton2017.Bots
 							{
 								//Else already done
 								var kill2 = myKills.ElementAt(k2);
-								int score = birth.Value.Score + kill1.Value.Score + kill2.Value.Score;
-								result.Add(new BirthMove(birth.Key, kill1.Key, kill2.Key), score);
-								if (result.Count >= maxCount)
-								{
-									i = 1000;
-									b = 1000;
-									k1 = 1000;
-									break;
-								}
+
+								//int score = birth.Value.Score + kill1.Value.Score + kill2.Value.Score;
+								//Calculate real score
+								var birthMove = new BirthMove(birth.Key, kill1.Key, kill2.Key);
+
+								var neighbours1 = Board.NeighbourFields[birth.Key].Union(Board.NeighbourFields[kill1.Key]).Union(Board.NeighbourFields[kill2.Key]);
+								var neighbours2 = Board.NeighbourFields2[birth.Key].Union(Board.NeighbourFields2[kill1.Key]).Union(Board.NeighbourFields2[kill2.Key]);
+								afterMoveBoard.Field[birth.Key] = (short)Board.MyPlayer;
+								afterMoveBoard.Field[kill1.Key] = 0;
+								afterMoveBoard.Field[kill2.Key] = 0;
+								var r = CalculateBoardStatus(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
+								afterMoveBoard.Field[birth.Key] = 0;
+								afterMoveBoard.Field[kill1.Key] = (short)Board.MyPlayer;
+								afterMoveBoard.Field[kill2.Key] = (short)Board.MyPlayer;
+								//var realScore = GetRealScore(birthMove, BoardEvaluator.Evaluate(board2).Score);
+								result.Add(new MoveScore(birthMove, r.Score));
+								if (result.Count >= maxCount) break;
 							}
 						}
+						if (result.Count >= maxCount) break;
 					}
+					if (result.Count >= maxCount) break;
 				}
+				if (result.Count >= maxCount) break;
 			}
 
 			//Kill moves
 			foreach (var killMove in myKills)
 			{
-				result.Add(new KillMove(killMove.Key), killMove.Value.Score);
+				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value.Score));
 			}
 
 			//Kill moves
 			foreach (var killMove in opponentKills)
 			{
-				result.Add(new KillMove(killMove.Key), killMove.Value.Score);
+				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value.Score));
 			}
 
-			return result.OrderByDescending(r => r.Value).Take(maxCount).Select(r => r.Key);
+			return result.OrderByDescending(r => r.Gain2).Take(maxCount);
 		}
 
 		/// <summary>
@@ -348,7 +374,7 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>
 		public Dictionary<int, BoardStatus> GetMyKills(Board board1, Board board2,
-			Board killBoard, Board killBoard1, Board killBoard2)
+			Board afterMoveBoard, Board afterMoveBoard1, Board afterMoveBoard2)
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
@@ -356,17 +382,22 @@ namespace RiddlesHackaton2017.Bots
 			{
 				var neighbours1 = Board.NeighbourFields[i];
 				var neighbours2 = Board.NeighbourFields2[i];
-				killBoard.Field[i] = 0;
-				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				afterMoveBoard.Field[i] = 0;
+				var r = CalculateBoardStatus(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
 				result.Add(i, r);
-				killBoard.Field[i] = Board.Field[i];
+				afterMoveBoard.Field[i] = Board.Field[i];
 			}
 			return result;
 		}
 
+		public int GetRealScore(BirthMove move, int baseScore)
+		{
+			return BoardEvaluator.Evaluate(move.Apply(Board, Board.MyPlayer).NextGeneration.NextGeneration).Score - baseScore;
+		}
+
 		/// <summary>Gets a dictionary of kills on opponent's cells with their scores</summary>
 		public Dictionary<int, BoardStatus> GetOpponentKills(Board board1, Board board2,
-			Board killBoard, Board killBoard1, Board killBoard2)
+			Board afterMoveBoard, Board afterMoveBoard1, Board afterMoveBoard2)
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
@@ -374,17 +405,17 @@ namespace RiddlesHackaton2017.Bots
 			{
 				var neighbours1 = Board.NeighbourFields[i];
 				var neighbours2 = Board.NeighbourFields2[i];
-				killBoard.Field[i] = 0;
-				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				afterMoveBoard.Field[i] = 0;
+				var r = CalculateBoardStatus(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
 				result.Add(i, r);
-				killBoard.Field[i] = Board.Field[i];
+				afterMoveBoard.Field[i] = Board.Field[i];
 			}
 			return result;
 		}
 
 		/// <summary>Gets a dictionary of births (not birth moves) with their scores</summary>
 		public Dictionary<int, BoardStatus> GetBirths(Board board1, Board board2,
-			Board killBoard, Board killBoard1, Board killBoard2)
+			Board afterMoveBoard, Board afterMoveBoard1, Board afterMoveBoard2)
 		{
 			var result = new Dictionary<int, BoardStatus>();
 
@@ -392,10 +423,10 @@ namespace RiddlesHackaton2017.Bots
 			{
 				var neighbours1 = Board.NeighbourFields[i];
 				var neighbours2 = Board.NeighbourFields2[i];
-				killBoard.Field[i] = (short)Board.MyPlayer;
-				var r = CalculateBoardStatus(board1, board2, killBoard, killBoard1, killBoard2, neighbours1, neighbours2);
+				afterMoveBoard.Field[i] = (short)Board.MyPlayer;
+				var r = CalculateBoardStatus(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
 				result.Add(i, r);
-				killBoard.Field[i] = 0;
+				afterMoveBoard.Field[i] = 0;
 			}
 			return result;
 		}
@@ -405,30 +436,30 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		/// <param name="board1">Next generation board after pass move</param>
 		/// <param name="board2">Next-next generation board after two pass moves</param>
-		/// <param name="killBoard">Board after specific move</param>
-		/// <param name="killBoard1">Next generation board after specific move</param>
-		/// <param name="killBoard2">Next-next generation board after specific move</param>
+		/// <param name="afterMoveBoard">Board after specific move</param>
+		/// <param name="afterMoveBoard1">Next generation board after specific move</param>
+		/// <param name="afterMoveBoard2">Next-next generation board after specific move</param>
 		/// <param name="neighbours1">Neighbours of i</param>
 		/// <param name="neighbours2">Neighbours of neighbours of i</param>
 		private BoardStatus CalculateBoardStatus(Board board1, Board board2,
-			Board killBoard, Board killBoard1, Board killBoard2,
-			int[] neighbours1, IEnumerable<int> neighbours2)
+			Board afterMoveBoard, Board afterMoveBoard1, Board afterMoveBoard2,
+			IEnumerable<int> neighbours1, IEnumerable<int> neighbours2)
 		{
-			killBoard.GetNextGeneration(killBoard1, neighbours1);
-			killBoard1.GetNextGeneration(killBoard2, neighbours2);
+			afterMoveBoard.GetNextGeneration(afterMoveBoard1, neighbours1);
+			afterMoveBoard1.GetNextGeneration(afterMoveBoard2, neighbours2);
 
 			//Calculate
-			var killScore = BoardEvaluator.Evaluate(killBoard2, neighbours2);
-			int myKillScore = killScore.Item1;
-			int opponentKillScore = killScore.Item2;
+			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2);
+			int myMoveScore = moveScore.Item1;
+			int opponentMoveScore = moveScore.Item2;
 			var score = BoardEvaluator.Evaluate(board2, neighbours2);
 			int myScore = score.Item1;
 			int opponentScore = score.Item2;
 
 			//Calculate status
 			GameStatus newGameStatus = GameStatus.Busy;
-			bool opponent0 = board2.OpponentPlayerFieldCount + opponentKillScore - opponentScore == 0;
-			bool me0 = board2.MyPlayerFieldCount + myKillScore - myScore == 0;
+			bool opponent0 = board2.OpponentPlayerFieldCount + opponentMoveScore - opponentScore == 0;
+			bool me0 = board2.MyPlayerFieldCount + myMoveScore - myScore == 0;
 			if (opponent0)
 			{
 				newGameStatus = me0 ? GameStatus.Draw : GameStatus.Won;
@@ -438,16 +469,20 @@ namespace RiddlesHackaton2017.Bots
 				newGameStatus = GameStatus.Lost;
 			}
 
-			//Reset kill boards
+			//Reset after move boards
 			foreach (int j in neighbours1)
 			{
-				killBoard1.Field[j] = board1.Field[j];
+				afterMoveBoard1.Field[j] = board1.Field[j];
 			}
+			afterMoveBoard1.MyPlayerFieldCount = board1.MyPlayerFieldCount;
+			afterMoveBoard1.OpponentPlayerFieldCount = board1.OpponentPlayerFieldCount;
 			foreach (int j in neighbours2)
 			{
-				killBoard2.Field[j] = board2.Field[j];
+				afterMoveBoard2.Field[j] = board2.Field[j];
 			}
-			return new BoardStatus(newGameStatus, myKillScore - opponentKillScore - (myScore - opponentScore));
+			afterMoveBoard2.MyPlayerFieldCount = board2.MyPlayerFieldCount;
+			afterMoveBoard2.OpponentPlayerFieldCount = board2.OpponentPlayerFieldCount;
+			return new BoardStatus(newGameStatus, myMoveScore - opponentMoveScore - (myScore - opponentScore));
 		}
 	}
 }

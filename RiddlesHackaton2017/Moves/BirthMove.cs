@@ -68,6 +68,7 @@ namespace RiddlesHackaton2017.Moves
 			result.Field[BirthIndex] = (short)player;
 			result.Field[SacrificeIndex1] = 0;
 			result.Field[SacrificeIndex2] = 0;
+			result.MyPlayerFieldCount--;
 			return result;
 		}
 
