@@ -140,7 +140,7 @@ namespace RiddlesHackaton2017.Bots
 			var opponentKills = GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 			var myBirths = GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 
-			result.Add(new MoveScore(new PassMove(), BoardEvaluator.Evaluate(board2).Score - BoardEvaluator.Evaluate(Board).Score));
+			result.Add(new MoveScore(new PassMove(), 0));
 			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
 				for (int b = 0; b < i && b < myBirths.Count(); b++)
