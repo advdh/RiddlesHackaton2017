@@ -1,4 +1,5 @@
-﻿using RiddlesHackaton2017.Models;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RiddlesHackaton2017.Models;
 
 namespace RiddlesHackaton2017.Test
 {
@@ -49,17 +50,32 @@ namespace RiddlesHackaton2017.Test
 			return InitBoard(Player.Player1, boardString);
 		}
 
+		protected static Board InitBoard(int width, int height, string boardString)
+		{
+			return InitBoard(width, height, Player.Player1, boardString);
+		}
+
 		protected static Board InitBoard(Player player, string boardString)
+		{
+			return InitBoard(Board.Width, Board.Height, player, boardString);
+		}
+
+		protected static Board InitBoard(int width, int height, Player player, string boardString)
 		{
 			var board = new Board()
 			{
 				MyPlayer = player,
-				Field = BotParser.ParseBoard(boardString),
+				Field = BotParser.ParseBoard(width, height, boardString),
 			};
 			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
 			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
 
 			return board;
+		}
+
+		protected void AssertHumanBoardString(string expected, string actual)
+		{
+			Assert.AreEqual(expected.Trim(), actual.Trim());
 		}
 	}
 }

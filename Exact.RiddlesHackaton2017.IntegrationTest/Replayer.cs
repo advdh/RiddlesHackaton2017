@@ -19,12 +19,35 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("ba250225-0dd3-4462-bcc6-665c0f06cae0"
-				, rounds: new[] { 4 }
+			DoReplay("f9474a9c-4252-443c-b652-095d2dcb0c5f"
+				//, rounds: new[] { 4 }
+				//, action: Replay_OwnKillMoves
+				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
+				{
+					Parameters = new MonteCarloParameters()
+					{
+						LogLevel = 1,
+						//Debug = true,
+						//MaxDuration = TimeSpan.FromDays(1)
+					}
+				});
+		}
+
+		[TestMethod]
+		public void Replay_V15_Test()
+		{
+			var parameters = new MonteCarloParameters()
+			{
+				LogLevel = 3,
+			};
+			DoReplay("f9474a9c-4252-443c-b652-095d2dcb0c5f"
+				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
-				, parameters: new MonteCarloParameters() { LogAllMoves = true }
-				);
+				, bot: new V15Bot(new TheConsole(), new RandomGenerator(new Random()))
+				{
+					Parameters = parameters
+				});
 		}
 
 		/// <summary>
@@ -44,9 +67,9 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				string gameId = Path.GetFileNameWithoutExtension(filename);
 				Console.WriteLine(gameId);
-				DoReplay(gameId, parameters: new MonteCarloParameters()
+				DoReplay(gameId, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
-					MaxDuration = maxDuration
+					Parameters = new MonteCarloParameters() { MaxDuration = maxDuration }
 				});
 			}
 		}
@@ -60,29 +83,25 @@ namespace RiddlesHackaton2017.IntegrationTest
 		private void DoReplay(string gameId, bool differenceOnly = true,
 			Action<Board> action = null,
 			int[] rounds = null,
-			MonteCarloParameters parameters = null)
+			BaseBot bot = null)
 		{
 			var filename = Path.Combine(Folder, gameId + ".txt");
 			if (rounds == null)
 			{
 				rounds = Enumerable.Range(0, Board.Size).ToArray();
 			}
-			if (parameters == null)
+			if (bot == null)
 			{
-				parameters = MonteCarloParameters.Default;
+				bot = new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()));
 			}
 			var lines = File.ReadAllLines(filename);
-			DoReplayLines(lines, differenceOnly, action, rounds, new TheConsole(), parameters);
+			DoReplayLines(lines, differenceOnly, action, rounds, bot);
 		}
 
 		private void DoReplayLines(string[] lines, bool differenceOnly, 
-			Action<Board> action, int[] rounds, IConsole console, MonteCarloParameters parameters)
+			Action<Board> action, int[] rounds, BaseBot bot)
 		{
 			var board = new Board();
-			var bot = new MonteCarloBot(console, new RandomGenerator(new Random()))
-			{
-				Parameters = parameters
-			};
 			Move originalMove;
 			Move newMove = new NullMove();
 
@@ -134,7 +153,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			switch (words[2])
 			{
 				case "field":
-					board.Field = BotParser.ParseBoard(words[3]);
+					board.SetField(BotParser.ParseBoard(words[3]));
 					break;
 				case "round":
 					board.Round = int.Parse(words[3]);

@@ -45,6 +45,42 @@ namespace RiddlesHackaton2017.Test.Models
 			Assert.AreEqual(board.Player2FieldCount, opponentBoard.Player1FieldCount);
 		}
 
+		[TestMethod]
+		public void NextGeneration_Test()
+		{
+			var board = InitBoard(4, 4, @"
+1...
+0...
+.1..
+1...");
+			var next = board.NextGeneration;
+
+			AssertHumanBoardString(@"
+....
+01..
+11..
+....
+", board.NextGeneration.HumanBoardString(4, 4));
+		}
+
+		[TestMethod]
+		public void NextNextGeneration_Test()
+		{
+			var board = InitBoard(4, 4, @"
+1...
+0...
+.1..
+1...");
+			var next = board.NextGeneration.NextGeneration;
+
+			AssertHumanBoardString(@"
+....
+01..
+11..
+....
+", board.NextGeneration.HumanBoardString(4, 4));
+		}
+
 		/// <summary>
 		/// Start with an initial board
 		/// Move to the next generation

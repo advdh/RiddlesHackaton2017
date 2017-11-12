@@ -84,6 +84,12 @@ namespace RiddlesHackaton2017.Models
 			Player2FieldCount = board.Player2FieldCount;
 		}
 
+		public void SetField(short[] v)
+		{
+			Field = v;
+			_NextGeneration = null;
+		}
+
 		/// <summary>
 		/// Applies move for player and applies next generation
 		/// </summary>
@@ -290,10 +296,15 @@ namespace RiddlesHackaton2017.Models
 
 		public string BoardString()
 		{
+			return BoardString(Width, Height);
+		}
+
+		public string BoardString(int width, int height)
+		{
 			var result = new StringBuilder();
-			for (int y = 0; y < Height; y++)
+			for (int y = 0; y < height; y++)
 			{
-				for (int x = 0; x < Width; x++)
+				for (int x = 0; x < width; x++)
 				{
 					if (result.Length > 0) result.Append(",");
 					int ix = new Position(x, y).Index;
@@ -310,10 +321,15 @@ namespace RiddlesHackaton2017.Models
 
 		public string HumanBoardString()
 		{
+			return HumanBoardString(Width, Height);
+		}
+
+		public string HumanBoardString(int width, int height)
+		{
 			var result = new StringBuilder();
-			for (int y = 0; y < Height; y++)
+			for (int y = 0; y < height; y++)
 			{
-				for (int x = 0; x < Width; x++)
+				for (int x = 0; x < width; x++)
 				{
 					int ix = new Position(x, y).Index;
 					switch (Field[ix])
@@ -915,6 +931,8 @@ namespace RiddlesHackaton2017.Models
 			new int[] {252,253,254,255,268,269,270,271,284,285,286,287 },
 			new int[] {253,254,255,269,270,271,285,286,287 },
 		};
+		private int v1;
+		private int v2;
 
 		#endregion
 

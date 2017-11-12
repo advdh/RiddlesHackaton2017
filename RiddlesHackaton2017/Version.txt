@@ -21,3 +21,5 @@ V20	07-11-2017, 23:04	New move generator: takes best of (100 best birth moves + 
 V21 08-11-2017, 20:00	CheatBot test version: cheats by sacrificing the same cell twice
 V22	11-11-2017, 16:02	Move generator orders by real gain2 + several bugfixes in calculating gain2
 V23	11-11-2017, 16:21	Bugfix: gain2 of PassMove is always 0
+V24 12-11-2017, 19:00	Bugfix BotParser: reset Board.NextGeneration
+						Bugfix CalculateBoardStatus: also recalculate mofified field board1
