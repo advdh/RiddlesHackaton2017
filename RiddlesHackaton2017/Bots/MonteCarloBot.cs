@@ -485,14 +485,10 @@ namespace RiddlesHackaton2017.Bots
 			int opponentScore = score.Item2;
 
 			//Win bonus
-			//TODO: Math.Max should not be necessary, but there is still something not completely correct
-			//with the counts. Example "f9474a9c-4252-443c-b652-095d2dcb0c5f", round 10, position 49:
-			//index = -1
-			int winBonus = 0;
-			winBonus += Parameters.WinBonus[Math.Max(0, afterMoveBoard1.OpponentPlayerFieldCount)];
-			winBonus -= Parameters.WinBonus[Math.Max(0, afterMoveBoard1.MyPlayerFieldCount)];
-			winBonus += Parameters.WinBonus[Math.Max(0, afterMoveBoard2.OpponentPlayerFieldCount)];
-			winBonus -= Parameters.WinBonus[Math.Max(0, afterMoveBoard2.MyPlayerFieldCount)];
+			int winBonus = Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
+				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
+				+ Parameters.WinBonus[afterMoveBoard2.OpponentPlayerFieldCount]
+				- Parameters.WinBonus[afterMoveBoard2.MyPlayerFieldCount];
 
 			//Reset after move boards
 			foreach (int j in neighbours1AndThis)

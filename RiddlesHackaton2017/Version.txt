@@ -25,3 +25,4 @@ V24 12-11-2017, 19:00	Bugfix BotParser: reset Board.NextGeneration
 						Bugfix CalculateBoardStatus: also recalculate mofified field board1
 V25	13-11-2017, 09:33	Score calculation: give win bonus to moves if opponent has 8 or less cells left, next and/or nextnext round, negative if it's me
 						Precalculated NeighboursAndMe
+V26	13-11-2017, 18:59	MoveGenerator: two bugfixes in score calculation

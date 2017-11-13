@@ -194,22 +194,16 @@ namespace RiddlesHackaton2017.Models
 		{
 			foreach (int i in affectedFields)
 			{
-				int orig = board.Field[i];
-				board.Field[i] = NextGenerationForField(i);
-				switch (board.Field[i] - orig)
+				switch(board.Field[i])
 				{
-					case 1:
-						board.Player1FieldCount++;
-						break;
-					case 2:
-						board.Player2FieldCount++;
-						break;
-					case -1:
-						board.Player1FieldCount--;
-						break;
-					case -2:
-						board.Player2FieldCount--;
-						break;
+					case 1: board.Player1FieldCount--; break;
+					case 2: board.Player2FieldCount--; break;
+				}
+				board.Field[i] = NextGenerationForField(i);
+				switch (board.Field[i])
+				{
+					case 1: board.Player1FieldCount++; break;
+					case 2: board.Player2FieldCount++; break;
 				}
 			}
 		}
