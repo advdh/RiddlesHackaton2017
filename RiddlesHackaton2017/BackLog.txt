@@ -32,3 +32,6 @@ v19, c578b859-6b8f-4afc-a009-4824cb8144f1, SBRNC:
 
 v23, ba250225-0dd3-4462-bcc6-665c0f06cae0, testbot:
 	Round 4: birth in the middle of nowhere
+
+v24, add5c6d3-cc84-47e9-88ec-477cf1a56929, Renegade
+	Round 15: opponent has 3; can win in 1

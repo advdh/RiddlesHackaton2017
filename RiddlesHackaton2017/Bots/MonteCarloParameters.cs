@@ -11,6 +11,8 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Number of moves</summary>
 		public int MoveCount { get; set; } = 100;
 
+		public int[] WinBonus { get; set; } = new[] { 128, 64, 32, 16, 8, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 		/// <summary>Percentage of kill moves in random move and simulation</summary>
 		public int KillMovePercentage { get; internal set; } = 49;
 		/// <summary>Percentage of pass moves in random move and simulation</summary>
@@ -61,6 +63,7 @@ namespace RiddlesHackaton2017.Bots
 			var sb = new StringBuilder();
 			sb.AppendLine($"SimulationCount = {SimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
+			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus)}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
 			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");

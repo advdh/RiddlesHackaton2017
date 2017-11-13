@@ -43,12 +43,10 @@ namespace RiddlesHackaton2017.Test.Bots
 			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill = myKills[new Position(0, 0).Index];
-			Assert.AreEqual(-4, kill.Score);
-			Assert.AreEqual(GameStatus.Busy, kill.Status);
+			Assert.AreEqual(-4, kill);
 
 			kill = myKills[new Position(4, 0).Index];
-			Assert.AreEqual(0, kill.Score);
-			Assert.AreEqual(GameStatus.Busy, kill.Status);
+			Assert.AreEqual(0, kill);
 		}
 
 		[TestMethod]
@@ -79,8 +77,7 @@ namespace RiddlesHackaton2017.Test.Bots
 			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill0 = myKills[0];
-			Assert.AreEqual(-4, kill0.Score);
-			Assert.AreEqual(GameStatus.Lost, kill0.Status);
+			Assert.AreEqual(-4, kill0);
 		}
 
 		[TestMethod]
@@ -111,12 +108,10 @@ namespace RiddlesHackaton2017.Test.Bots
 			var myKills = bot.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
 
 			var kill = myKills[0];
-			Assert.AreEqual(2, kill.Score);
-			Assert.AreEqual(GameStatus.Won, kill.Status);
+			Assert.AreEqual(2, kill);
 
 			kill = myKills[new Position(4, 0).Index];
-			Assert.AreEqual(0, kill.Score);
-			Assert.AreEqual(GameStatus.Busy, kill.Status);
+			Assert.AreEqual(0, kill);
 		}
 
 		[TestMethod]
@@ -147,13 +142,11 @@ namespace RiddlesHackaton2017.Test.Bots
 
 			//Draw in two because we will both loose all in two turns
 			var kill = myKills[new Position(0, 0).Index];
-			Assert.AreEqual(2, kill.Score);
-			Assert.AreEqual(GameStatus.Draw, kill.Status);
+			Assert.AreEqual(2, kill);
 
 			//If we kill the other one, then stable state with 1 of mine and two of his
 			kill = myKills[new Position(4, 0).Index];
-			Assert.AreEqual(0, kill.Score);
-			Assert.AreEqual(GameStatus.Busy, kill.Status);
+			Assert.AreEqual(0, kill);
 		}
 
 		/// <remarks>First round of f9474a9c-4252-443c-b652-095d2dcb0c5f (V15, Renegade)</remarks>
@@ -170,7 +163,7 @@ namespace RiddlesHackaton2017.Test.Bots
 			var afterMoveBoard2 = new Board(board2);
 
 			int i = new Position(5, 9).Index;
-			var neighbours1 = Board.NeighbourFields[i];
+			var neighbours1 = Board.NeighbourFieldsAndThis[i];
 			var neighbours2 = Board.NeighbourFields2[i];
 			afterMoveBoard.Field[i] = 0;
 
@@ -178,14 +171,14 @@ namespace RiddlesHackaton2017.Test.Bots
 			checkBoard.Player1FieldCount = checkBoard.CalculatedPlayer1FieldCount;
 			checkBoard.Player2FieldCount = checkBoard.CalculatedPlayer2FieldCount;
 
-			var r = bot.CalculateBoardStatus(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, i, neighbours1, neighbours2);
+			var score = bot.CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
 			afterMoveBoard.Field[i] = board.Field[i];
 
 			Assert.AreEqual(board1.HumanBoardString(), afterMoveBoard1.HumanBoardString());
 			Assert.AreEqual(board2.HumanBoardString(), afterMoveBoard2.HumanBoardString());
 			Assert.AreEqual(0, BoardEvaluator.Evaluate(board2).Score);
 			Assert.AreEqual(5, BoardEvaluator.Evaluate(checkBoard.NextGeneration.NextGeneration).Score);
-			Assert.AreEqual(5, r.Score);
+			Assert.AreEqual(5, score);
 		}
 	}
 }

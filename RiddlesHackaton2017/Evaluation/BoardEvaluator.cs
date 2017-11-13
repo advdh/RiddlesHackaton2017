@@ -6,16 +6,6 @@ namespace RiddlesHackaton2017.Evaluation
 {
 	public static class BoardEvaluator
 	{
-		/// <summary>
-		/// Bonus for score if we are (pretty) sure that we're going to win
-		/// </summary>
-		public const int WinBonus = 999999;
-
-		/// <summary>
-		/// Threshold, above which we assume that we win
-		/// </summary>
-		public const int WinThreshold = 499999;
-
 		public static BoardStatus Evaluate(Board board)
 		{
 			var status = board.MyPlayerFieldCount > 0 ?

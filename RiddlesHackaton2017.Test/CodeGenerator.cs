@@ -42,6 +42,35 @@ namespace RiddlesHackaton2017.Test
 		}
 
 		[TestMethod]
+		public void GenerateNeighboursAndThis()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("public static int[][] NeighbourFieldsAndThis = new[]");
+			sb.AppendLine("{");
+
+			for (int i = 0; i < Board.Size; i++)
+			{
+				sb.Append("new int[] {");
+				var position = new Position(i);
+				sb.Append(new Position(position.X, position.Y).Index);
+				foreach (var pair in RelativeNeighbours)
+				{
+					if (position.X + pair[0] >= 0
+						&& position.X + pair[0] < Board.Width
+						&& position.Y + pair[1] >= 0
+						&& position.Y + pair[1] < Board.Height)
+					{
+						sb.Append(",");
+						sb.Append(new Position(position.X + pair[0], position.Y + pair[1]).Index);
+					}
+				}
+				sb.AppendLine(" },");
+			}
+			sb.AppendLine("};");
+			Console.WriteLine(sb.ToString());
+		}
+
+		[TestMethod]
 		public void GenerateNeighbourNeighbours()
 		{
 			var sb = new StringBuilder();

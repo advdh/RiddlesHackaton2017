@@ -23,3 +23,5 @@ V22	11-11-2017, 16:02	Move generator orders by real gain2 + several bugfixes in 
 V23	11-11-2017, 16:21	Bugfix: gain2 of PassMove is always 0
 V24 12-11-2017, 19:00	Bugfix BotParser: reset Board.NextGeneration
 						Bugfix CalculateBoardStatus: also recalculate mofified field board1
+V25	13-11-2017, 09:33	Score calculation: give win bonus to moves if opponent has 8 or less cells left, next and/or nextnext round, negative if it's me
+						Precalculated NeighboursAndMe

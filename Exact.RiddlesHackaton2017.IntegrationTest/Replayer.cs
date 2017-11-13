@@ -19,14 +19,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("f9474a9c-4252-443c-b652-095d2dcb0c5f"
-				//, rounds: new[] { 4 }
+			DoReplay("add5c6d3-cc84-47e9-88ec-477cf1a56929"
+				//, rounds: new[] { 14 }
 				//, action: Replay_OwnKillMoves
 				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						LogLevel = 1,
+						//LogLevel = 2,
 						//Debug = true,
 						//MaxDuration = TimeSpan.FromDays(1)
 					}
