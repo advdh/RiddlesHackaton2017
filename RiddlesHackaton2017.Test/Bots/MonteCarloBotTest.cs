@@ -19,7 +19,7 @@ namespace RiddlesHackaton2017.Test.Bots
 			board.Field[new Position(1, 0).Index] = 1;
 			board.Field[new Position(1, 1).Index] = 1;
 
-			//Add stable blocks for playe r1 and 2
+			//Add stable blocks for player 1 and 2
 			board.Field[new Position(4, 0).Index] = 1;
 			board.Field[new Position(5, 0).Index] = 1;
 			board.Field[new Position(4, 1).Index] = 1;
@@ -33,7 +33,8 @@ namespace RiddlesHackaton2017.Test.Bots
 
 			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
 			{
-				Board = board
+				Board = board,
+				Parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] }
 			};
 			var board1 = board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -67,7 +68,8 @@ namespace RiddlesHackaton2017.Test.Bots
 
 			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
 			{
-				Board = board
+				Board = board,
+				Parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] }
 			};
 			var board1 = board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -98,7 +100,8 @@ namespace RiddlesHackaton2017.Test.Bots
 
 			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
 			{
-				Board = board
+				Board = board,
+				Parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] }
 			};
 			var board1 = board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -131,7 +134,8 @@ namespace RiddlesHackaton2017.Test.Bots
 
 			var bot = new MonteCarloBot(new NullConsole(), new FirstIndexGenerator())
 			{
-				Board = board
+				Board = board,
+				Parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] }
 			};
 			var board1 = board.NextGeneration;
 			var board2 = board1.NextGeneration;

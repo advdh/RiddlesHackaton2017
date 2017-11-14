@@ -40,7 +40,7 @@ namespace RiddlesHackaton2017.Bots
 				Count = Parameters.SimulationCount,
 				Won = -1,
 				Lost = Parameters.SimulationCount,
-				LostInRounds = Parameters.SimulationCount,
+				LostInGenerations = Parameters.SimulationCount,
 			};
 			Move bestMove = GetDirectWinMove();
 			if (bestMove != null)

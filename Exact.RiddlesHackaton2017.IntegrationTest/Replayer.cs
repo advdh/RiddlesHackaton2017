@@ -28,6 +28,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 					{
 						LogLevel = 0,
 						//Debug = true,
+						MaxDuration = TimeSpan.FromSeconds(1),
 						//MaxDuration = TimeSpan.FromDays(1)
 					}
 				});

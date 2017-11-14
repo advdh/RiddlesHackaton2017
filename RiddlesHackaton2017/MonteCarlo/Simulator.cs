@@ -30,25 +30,23 @@ namespace RiddlesHackaton2017.MonteCarlo
 			{
 				if (StartBoard.MyPlayerFieldCount == 0)
 				{
-					//Draw in 1
+					//Draw in 0
 					statistic.Count = Parameters.SimulationCount;
 					return statistic;
 				}
 				else
 				{
-					//Won in 1
+					//Won in 0
 					statistic.Count = Parameters.SimulationCount;
 					statistic.Won = Parameters.SimulationCount;
-					statistic.WonInRounds = Parameters.SimulationCount;
 					return statistic;
 				}
 			}
 			if (StartBoard.MyPlayerFieldCount == 0)
 			{
-				//Lost in 1
+				//Lost in 0
 				statistic.Count = Parameters.SimulationCount;
 				statistic.Lost = Parameters.SimulationCount;
-				statistic.LostInRounds = Parameters.SimulationCount;
 				return statistic;
 			}
 
@@ -60,12 +58,12 @@ namespace RiddlesHackaton2017.MonteCarlo
 				if (result.Won.HasValue && result.Won.Value)
 				{
 					statistic.Won++;
-					statistic.WonInRounds += (result.Round - StartBoard.Round);
+					statistic.WonInGenerations += result.GenerationCount;
 				}
 				if (result.Won.HasValue && !result.Won.Value)
 				{
 					statistic.Lost++;
-					statistic.LostInRounds += (result.Round - StartBoard.Round);
+					statistic.LostInGenerations += result.GenerationCount;
 				}
 			}
 
@@ -76,25 +74,27 @@ namespace RiddlesHackaton2017.MonteCarlo
 		/// <summary>
 		/// Simulates one game to the end
 		/// </summary>
-		/// <returns>true if won, false if lost, null if draw</returns>
 		public SimulationResult SimulateRestOfGame()
 		{
 			var board = new Board(StartBoard);
 
 			var player = board.OpponentPlayer;
-			while (board.Round < Board.MaxRounds)
+			int generationCount = 0;
+			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds)
 			{
 				//Bot play
 				Move move = GetRandomMove(board, player);
-				board = board.ApplyMoveAndNext(player, move);
-				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, round: board.Round);
-				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, round: board.Round);
+				move.ApplyInline(board, player);
+				board = board.NextGeneration;
+				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, generationCount: generationCount);
+				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, generationCount: generationCount);
 
 				//Next player
 				player = player.Opponent();
+				generationCount++;
 			}
 
-			return new SimulationResult(won: null, round: Board.MaxRounds);
+			return new SimulationResult(won: null, generationCount: generationCount);
 		}
 
 		private Move GetRandomMove(Board board, Player player)

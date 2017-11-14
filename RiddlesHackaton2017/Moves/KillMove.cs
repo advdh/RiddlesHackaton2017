@@ -77,5 +77,24 @@ namespace RiddlesHackaton2017.Moves
 
 			return result;
 		}
+
+		public override void ApplyInline(Board board, Player player)
+		{
+			if (board.Field[Index] == 0)
+			{
+				throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
+			}
+
+			if (board.Field[Index] == (short)board.MyPlayer)
+			{
+				board.MyPlayerFieldCount--;
+			}
+			else
+			{
+				board.OpponentPlayerFieldCount--;
+			}
+			board.Field[Index] = 0;
+			board.ResetNextGeneration();
+		}
 	}
 }

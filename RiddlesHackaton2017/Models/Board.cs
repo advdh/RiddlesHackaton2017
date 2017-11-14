@@ -84,10 +84,15 @@ namespace RiddlesHackaton2017.Models
 			Player2FieldCount = board.Player2FieldCount;
 		}
 
+		public void ResetNextGeneration()
+		{
+			_NextGeneration = null;
+		}
+
 		public void SetField(short[] v)
 		{
 			Field = v;
-			_NextGeneration = null;
+			ResetNextGeneration();
 		}
 
 		/// <summary>

@@ -9,4 +9,4 @@
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("26.0.0.0")]
+[assembly: AssemblyVersion("27.0.0.0")]

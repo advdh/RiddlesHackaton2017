@@ -6,7 +6,18 @@ namespace RiddlesHackaton2017.Moves
 {
 	public abstract class Move
 	{
+		/// <summary>
+		/// Applies the move for the specified player and returns a new Board
+		/// </summary>
 		public abstract Board Apply(Board board, Player player);
+
+		/// <summary>
+		/// Applies the move for the specified player to the current Board
+		/// </summary>
+		public virtual void ApplyInline(Board board, Player player)
+		{
+
+		}
 
 		public abstract string ToOutputString();
 

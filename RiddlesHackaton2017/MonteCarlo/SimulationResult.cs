@@ -4,13 +4,13 @@
 	{
 		public bool? Won { get; set; }
 
-		/// <summary>Round number in which we win or loose, or MaxRounds if draw</summary>
-		public int Round { get; set; }
+		/// <summary>Number of simulated generations till the end of the game</summary>
+		public int GenerationCount { get; set; }
 
-		public SimulationResult(bool? won, int round)
+		public SimulationResult(bool? won, int generationCount)
 		{
 			Won = won;
-			Round = round;
+			GenerationCount = generationCount;
 		}
 	}
 }
