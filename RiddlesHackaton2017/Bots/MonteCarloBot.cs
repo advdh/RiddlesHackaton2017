@@ -1,5 +1,6 @@
 ﻿using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.MonteCarlo;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
@@ -76,7 +77,9 @@ namespace RiddlesHackaton2017.Bots
 				//Get random move and simulate rest of the game several times
 				var moveScore = candidateMoves[count];
 				var move = moveScore.Move;
-				var result = SimulateMove(Board, move);
+				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
+				var simulator = new Simulator(startBoard, Random, Parameters);
+				var result = simulator.SimulateMove(move);
 
 				if (Parameters.LogLevel >= 2)
 				{
@@ -237,167 +240,6 @@ namespace RiddlesHackaton2017.Bots
 				return new KillMove(opponentCells.First());
 			}
 			return null;
-		}
-
-		/// <summary>
-		/// Simulates the specified move a number of times using MonteCarlo simulation
-		/// </summary>
-		/// <returns>Score for this move</returns>
-		private MonteCarloStatistics SimulateMove(Board board, Move move)
-		{
-			var statistic = new MonteCarloStatistics() { Move = move };
-			var startBoard = board.ApplyMoveAndNext(board.MyPlayer, move);
-			if (startBoard.OpponentPlayerFieldCount == 0)
-			{
-				if (startBoard.MyPlayerFieldCount == 0)
-				{
-					//Draw in 1
-					statistic.Count = Parameters.SimulationCount;
-					return statistic;
-				}
-				else
-				{
-					//Won in 1
-					statistic.Count = Parameters.SimulationCount;
-					statistic.Won = Parameters.SimulationCount;
-					statistic.WonInRounds = Parameters.SimulationCount;
-					return statistic;
-				}
-			}
-			if (startBoard.MyPlayerFieldCount == 0)
-			{
-				//Lost in 1
-				statistic.Count = Parameters.SimulationCount;
-				statistic.Lost = Parameters.SimulationCount;
-				statistic.LostInRounds = Parameters.SimulationCount;
-				return statistic;
-			}
-
-			for (int i = 0; i < Parameters.SimulationCount; i++)
-			{
-				var myBoard = new Board(startBoard);
-				var result = SimulateRestOfGame(myBoard);
-
-				statistic.Count++;
-				if (result.Won.HasValue && result.Won.Value)
-				{
-					statistic.Won++;
-					statistic.WonInRounds += (result.Round - startBoard.Round);
-				}
-				if (result.Won.HasValue && !result.Won.Value)
-				{
-					statistic.Lost++;
-					statistic.LostInRounds += (result.Round - startBoard.Round);
-				}
-			}
-
-			return statistic;
-		}
-
-		/// <summary>
-		/// Simulates one game to the end
-		/// </summary>
-		/// <returns>true if won, false if lost, null if draw</returns>
-		private SimulationResult SimulateRestOfGame(Board board)
-		{
-			var player = board.OpponentPlayer;
-			while (board.Round < Board.MaxRounds)
-			{
-				//Bot play
-				Move move = GetRandomMove(board, player);
-				board = board.ApplyMoveAndNext(player, move);
-				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, round: board.Round);
-				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, round: board.Round);
-
-				//Next player
-				player = player.Opponent();
-			}
-
-			return new SimulationResult(won: null, round: Board.MaxRounds);
-		}
-
-		private class SimulationResult
-		{
-			public bool? Won { get; set; }
-
-			/// <summary>Round number in which we win or loose, or MaxRounds if draw</summary>
-			public int Round { get; set; }
-
-			public SimulationResult(bool? won, int round)
-			{
-				Won = won;
-				Round = round;
-			}
-		}
-
-		private Move GetRandomMove(Board board, Player player)
-		{
-			//If player has only a few cells left, then do only kill moves
-			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
-			{
-				return GetRandomKillMove(board, player);
-			}
-
-			int rnd = Random.Next(100);
-			if (rnd < Parameters.PassMovePercentage)
-			{
-				//With probability 1% we do a pass move
-				return new PassMove();
-			}
-			else if (rnd < Parameters.PassMovePercentage + Parameters.KillMovePercentage)
-			{
-				//With probability 49% we do a kill move
-				return GetRandomKillMove(board, player);
-			}
-			else
-			{
-				//With probability 50% we do a birth move
-				return GetRandomBirthMove(board, player);
-			}
-		}
-
-		public KillMove GetRandomKillMove(Board board, Player player)
-		{
-			var opponentCells = board.GetCells(player.Opponent()).ToArray();
-			return new KillMove(opponentCells[Random.Next(opponentCells.Length)]);
-		}
-
-		public Move GetRandomBirthMove(Board board, Player player)
-		{
-			var mine = board.GetCells(player).ToArray();
-			if (mine.Count() < 2)
-			{
-				//Only one cell left: cannot do a birth move
-				//Switch to pass move
-				return new PassMove();
-			}
-
-			//Pick one empty cell for birth
-			//Don't pick an empty cell without any neighbours
-			var empty = board.EmptyCells
-				.Where(c => Board.NeighbourFields[c]
-					.Any(nc => board.Field[nc] != 0))
-				.ToArray();
-			int b = empty[Random.Next(empty.Length)];
-
-			//Pick two cells of my own to sacrifice
-			int s1, s2;
-			if (mine.Length == 2)
-			{
-				s1 = mine.First();
-				s2 = mine.Last();
-			}
-			else
-			{
-				s1 = mine[Random.Next(mine.Length)];
-				do
-				{
-					s2 = mine[Random.Next(mine.Length)];
-				}
-				while (s2 == s1);
-			}
-
-			return new BirthMove(b, s1, s2);
 		}
 
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores</summary>

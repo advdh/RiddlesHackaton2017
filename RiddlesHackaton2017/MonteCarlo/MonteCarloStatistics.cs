@@ -1,8 +1,8 @@
 ﻿using RiddlesHackaton2017.Moves;
 
-namespace RiddlesHackaton2017.Bots
+namespace RiddlesHackaton2017.MonteCarlo
 {
-	class MonteCarloStatistics
+	public class MonteCarloStatistics
 	{
 		public Move Move { get; set; }
 

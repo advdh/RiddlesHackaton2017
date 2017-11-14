@@ -19,8 +19,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("f9474a9c-4252-443c-b652-095d2dcb0c5f"
-				//, rounds: new[] { 10 }
+			DoReplay("76e4c3b5-4797-4d64-b804-6004eabe6c1f"
+				//, rounds: new[] { 7 }
 				//, action: Replay_OwnKillMoves
 				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
@@ -30,23 +30,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 						//Debug = true,
 						//MaxDuration = TimeSpan.FromDays(1)
 					}
-				});
-		}
-
-		[TestMethod]
-		public void Replay_V15_Test()
-		{
-			var parameters = new MonteCarloParameters()
-			{
-				LogLevel = 3,
-			};
-			DoReplay("f9474a9c-4252-443c-b652-095d2dcb0c5f"
-				//, rounds: new[] { 1 }
-				//, action: Replay_OwnKillMoves
-				//, parameters: new MonteCarloParameters() { Debug = true, MaxDuration = TimeSpan.FromDays(1) }
-				, bot: new V15Bot(new TheConsole(), new RandomGenerator(new Random()))
-				{
-					Parameters = parameters
 				});
 		}
 
