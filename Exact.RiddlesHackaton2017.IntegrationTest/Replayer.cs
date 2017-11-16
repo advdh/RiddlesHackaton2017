@@ -29,7 +29,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						LogLevel = 0,
+						LogLevel = 1,
 						//Debug = true,
 						//MaxDuration = TimeSpan.FromSeconds(1),
 						//MaxDuration = TimeSpan.FromDays(1)
