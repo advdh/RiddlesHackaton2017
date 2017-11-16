@@ -79,7 +79,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			var board = new Board(StartBoard);
 
 			var player = board.OpponentPlayer;
-			int generationCount = 0;
+			int generationCount = 1;
 			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds)
 			{
 				//Bot play

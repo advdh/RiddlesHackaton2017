@@ -16,11 +16,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 	{
 		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
+		/// <summary>
+		/// Round 63: Birthmove (2,2), sacrifice = (7,1) and (10,9) (gain2 = 91): score = 100 %, moves = 18, win in 1, loose in 2147483647 - Used 97 ms, Timelimit 371 ms, Start 54.922, End 55.018
+		/// </summary>
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("76e4c3b5-4797-4d64-b804-6004eabe6c1f"
-				//, rounds: new[] { 7 }
+			DoReplay("b29012e8-a732-4cce-ae10-bb1059e3b303"
+				//, rounds: new[] { 99 }
 				//, action: Replay_OwnKillMoves
 				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
@@ -28,7 +31,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 					{
 						LogLevel = 0,
 						//Debug = true,
-						MaxDuration = TimeSpan.FromSeconds(1),
+						//MaxDuration = TimeSpan.FromSeconds(1),
 						//MaxDuration = TimeSpan.FromDays(1)
 					}
 				});

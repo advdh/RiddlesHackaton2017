@@ -36,9 +36,6 @@ v23, ba250225-0dd3-4462-bcc6-665c0f06cae0, testbot:
 v24, add5c6d3-cc84-47e9-88ec-477cf1a56929, Renegade
 	Round 15: opponent has 3; can win in 1
 
-v25.1, replay of 76e4c3b5-4797-4d64-b804-6004eabe6c1f, round 7
-	BirthMove, win in 0: is incorrect
-	TODO: count generations, not rounds, because number of generations contains more information
-	Better: KillMove (11,6): win in 1 generation
-			OR BirthMove (10,6), but then don't sacrifice (12,6)
-
+v27, OIO, b29012e8-a732-4cce-ae10-bb1059e3b303: Why don't we win just after round 61?
+	Round 63: best move is especially good after 2 generations. 
+	TODO: give more winbonus for next generation than for nextnext generation

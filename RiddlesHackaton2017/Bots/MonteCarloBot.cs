@@ -83,7 +83,7 @@ namespace RiddlesHackaton2017.Bots
 
 				if (Parameters.LogLevel >= 2)
 				{
-					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinRounds}, loose in {result.AverageLooseRounds}");
+					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}");
 				}
 
 				if (result.Score > bestResult.Score)
@@ -99,7 +99,7 @@ namespace RiddlesHackaton2017.Bots
 					if (result.Score >= 0.50)
 					{
 						//Prefer to win in less rounds
-						if (result.AverageWinRounds < bestResult.AverageWinRounds)
+						if (result.WonInGenerations < bestResult.WonInGenerations)
 						{
 							bestResult = result;
 							bestMove = move;
@@ -109,7 +109,7 @@ namespace RiddlesHackaton2017.Bots
 					else
 					{
 						//Prefer to loose in more rounds
-						if (result.AverageLooseRounds > bestResult.AverageLooseRounds)
+						if (result.LostInGenerations > bestResult.LostInGenerations)
 						{
 							bestResult = result;
 							bestMove = move;
@@ -124,7 +124,7 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinRounds}, loose in {bestResult.AverageLooseRounds}";
+			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
 
 			return bestMove;
 		}

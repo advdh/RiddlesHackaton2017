@@ -26,10 +26,10 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public int LostInGenerations { get; internal set; }
 
 		/// <summary>Average number of generations until we win</summary>
-		public int AverageWinRounds { get { return Won > 0 ? WonInGenerations / Won : int.MaxValue; } }
+		public double AverageWinGenerations { get { return Won > 0 ? (double)WonInGenerations / Won : double.PositiveInfinity; } }
 
 		/// <summary>Average number of generations until we loose</summary>
-		public int AverageLooseRounds { get { return Lost > 0 ? LostInGenerations / Lost : int.MaxValue; } }
+		public double AverageLooseGenerations { get { return Lost > 0 ? (double)LostInGenerations / Lost : double.PositiveInfinity; } }
 
 		public override string ToString()
 		{
