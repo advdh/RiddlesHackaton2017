@@ -115,7 +115,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 		public Move GetRandomKillMove(Board board, Player player)
 		{
-			var moveGenerator = new MoveGenerator(board, new MonteCarloParameters());
+			var moveGenerator = new SimulationMoveGenerator(board);
 			var board1 = board.NextGeneration;
 			var afterMoveBoard = new Board(board);
 			var afterMoveBoard1 = new Board(board1);
@@ -140,7 +140,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 		public Move GetRandomBirthMove(Board board, Player player)
 		{
-			var moveGenerator = new MoveGenerator(board, new MonteCarloParameters());
+			var moveGenerator = new SimulationMoveGenerator(board);
 			var board1 = board.NextGeneration;
 			if (board1.GetFieldCount(player.Opponent()) == 0)
 			{

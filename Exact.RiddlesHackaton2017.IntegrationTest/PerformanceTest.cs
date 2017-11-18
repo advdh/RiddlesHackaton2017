@@ -2,6 +2,7 @@
 using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.MonteCarlo;
 using RiddlesHackaton2017.MoveGeneration;
 using RiddlesHackaton2017.Test;
 using System;
@@ -18,8 +19,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			int count = 1000;
 
 			var board = ExampleBoard();
-			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
-			var moveGenerator = new MoveGenerator(board, parameters);
+			var moveGenerator = new SimulationMoveGenerator(board);
 
 			var board1 = board.NextGeneration;
 			var afterMoveBoard = new Board(board);
