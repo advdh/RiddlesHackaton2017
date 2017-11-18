@@ -1,5 +1,6 @@
 ﻿using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.MoveGeneration;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.RandomGeneration;
 using System.Linq;
@@ -97,74 +98,116 @@ namespace RiddlesHackaton2017.MonteCarlo
 			return new SimulationResult(won: null, generationCount: generationCount);
 		}
 
-		private Move GetRandomMove(Board board, Player player)
+		public Move GetRandomMove(Board board, Player player)
 		{
-			//If player has only a few cells left, then do only kill moves
+			//If player has only a few cells left, then do a kill move
 			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
 			{
-				return GetRandomKillMove(board, player);
-			}
-
-			int rnd = Random.Next(100);
-			if (rnd < Parameters.PassMovePercentage)
-			{
-				//With probability 1% we do a pass move
-				return new PassMove();
-			}
-			else if (rnd < Parameters.PassMovePercentage + Parameters.KillMovePercentage)
-			{
-				//With probability 49% we do a kill move
+				//Do a kill move
 				return GetRandomKillMove(board, player);
 			}
 			else
 			{
-				//With probability 50% we do a birth move
+				//Do a birth move
 				return GetRandomBirthMove(board, player);
 			}
 		}
 
-		public KillMove GetRandomKillMove(Board board, Player player)
+		public Move GetRandomKillMove(Board board, Player player)
 		{
-			var opponentCells = board.GetCells(player.Opponent()).ToArray();
-			return new KillMove(opponentCells[Random.Next(opponentCells.Length)]);
+			var moveGenerator = new MoveGenerator(board, new MonteCarloParameters());
+			var board1 = board.NextGeneration;
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+			var opponentKillMoves = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player.Opponent(), player);
+			if (!opponentKillMoves.Any())
+			{
+				//No kill moves with positive gain: do a pass move
+				return new PassMove();
+			}
+			int value = Random.Next(opponentKillMoves.Last().Value);
+			int index = 0;
+			foreach (var kvp in opponentKillMoves)
+			{
+				if (value < kvp.Value)
+				{
+					index = kvp.Key;
+					break;
+				}
+			}
+			return new KillMove(index);
 		}
 
 		public Move GetRandomBirthMove(Board board, Player player)
 		{
-			var mine = board.GetCells(player).ToArray();
-			if (mine.Count() < 2)
+			var moveGenerator = new MoveGenerator(board, new MonteCarloParameters());
+			var board1 = board.NextGeneration;
+			if (board1.GetFieldCount(player.Opponent()) == 0)
 			{
-				//Only one cell left: cannot do a birth move
-				//Switch to pass move
+				//Pass leads to win
 				return new PassMove();
 			}
-
-			//Pick one empty cell for birth
-			//Don't pick an empty cell without any neighbours
-			var empty = board.EmptyCells
-				.Where(c => Board.NeighbourFields[c]
-					.Any(nc => board.Field[nc] != 0))
-				.ToArray();
-			int b = empty[Random.Next(empty.Length)];
-
-			//Pick two cells of my own to sacrifice
-			int s1, s2;
-			if (mine.Length == 2)
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+			var births = moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
+			if (!births.Any())
 			{
-				s1 = mine.First();
-				s2 = mine.Last();
+				//Not enough births: do a kill move anyway
+				return GetRandomKillMove(board, player);
 			}
-			else
+			var myKills = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
+
+			if (myKills.Count < 2)
 			{
-				s1 = mine[Random.Next(mine.Length)];
-				do
+				//Not enough own kills: do a kill move anyway
+				return GetRandomKillMove(board, player);
+			}
+
+			int birthValue = Random.Next(births.Last().Value);
+			int birthIndex = -1;
+			foreach (var kvp in births)
+			{
+				if (birthValue < kvp.Value)
 				{
-					s2 = mine[Random.Next(mine.Length)];
+					birthIndex = kvp.Key;
+					break;
 				}
-				while (s2 == s1);
 			}
-
-			return new BirthMove(b, s1, s2);
+			int myKill1 = Random.Next(myKills.Last().Value);
+			int killIndex1 = -1;
+			foreach (var kvp in myKills)
+			{
+				if (myKill1 < kvp.Value)
+				{
+					killIndex1 = kvp.Key;
+					break;
+				}
+			}
+			int myKill2 = Random.Next(myKills.Last().Value);
+			int killIndex2 = -1;
+			foreach (var kvp in myKills)
+			{
+				if (myKill2 < kvp.Value)
+				{
+					if (killIndex1 == kvp.Key)
+					{
+						if (killIndex1 == myKills.First().Key)
+						{
+							killIndex2 = myKills.ElementAt(1).Key;
+						}
+						else
+						{
+							killIndex2 = myKills.First().Key;
+						}
+					}
+					else
+					{
+						killIndex2 = kvp.Key;
+					}
+					break;
+				}
+			}
+			return new BirthMove(birthIndex, killIndex1, killIndex2);
 		}
 	}
 }

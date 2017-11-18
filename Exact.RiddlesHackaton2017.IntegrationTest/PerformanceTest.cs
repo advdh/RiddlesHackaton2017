@@ -13,7 +13,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 	public class PerformanceTest : TestBase
 	{
 		[TestMethod]
-		public void Combined_PerformanceTest()
+		public void OneMoveAhead_PerformanceTest()
 		{
 			int count = 1000;
 
@@ -21,20 +21,45 @@ namespace RiddlesHackaton2017.IntegrationTest
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);
 
+			var board1 = board.NextGeneration;
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+
 			var stopwatch = Stopwatch.StartNew();
 			for (int i = 0; i < count; i++)
 			{
-				var board1 = board.NextGeneration;
-				var board2 = board1.NextGeneration;
-				var killBoard = new Board(board);
-				var killBoard1 = new Board(board1);
-				var killBoard2 = new Board(board2);
-				moveGenerator.GetBirths(board1, board2, killBoard, killBoard1, killBoard2);
-				moveGenerator.GetMyKills(board1, board2, killBoard, killBoard1, killBoard2);
-				moveGenerator.GetOpponentKills(board1, board2, killBoard, killBoard1, killBoard2);
+				moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, Player.Player1);
+				moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, Player.Player1, Player.Player1);
+				moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, Player.Player2, Player.Player1);
 			}
 
-			Console.WriteLine($"Average duration: {(double)stopwatch.ElapsedMilliseconds / count : 0.00} ms");
+			Console.WriteLine($"Average duration: {(double)stopwatch.ElapsedMilliseconds / count: 0.00} ms");
+		}
+
+		[TestMethod]
+		public void TwoMovesAhead_PerformanceTest()
+		{
+			int count = 1000;
+
+			var board = ExampleBoard();
+			var board1 = board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+			var afterMoveBoard2 = new Board(board2);
+
+			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
+			var moveGenerator = new MoveGenerator(board, parameters);
+
+			var stopwatch = Stopwatch.StartNew();
+			for (int i = 0; i < count; i++)
+			{
+				moveGenerator.GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2);
+				moveGenerator.GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2);
+				moveGenerator.GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2);
+			}
+
+			Console.WriteLine($"Average duration: {(double)stopwatch.ElapsedMilliseconds / count: 0.00} ms");
 		}
 
 		[TestMethod]

@@ -67,8 +67,7 @@ namespace RiddlesHackaton2017.Test
 				MyPlayer = player,
 				Field = BotParser.ParseBoard(width, height, boardString),
 			};
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 
 			return board;
 		}

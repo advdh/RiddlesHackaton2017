@@ -54,6 +54,12 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
+		public void UpdateFieldCounts()
+		{
+			Player1FieldCount = CalculatedPlayer1FieldCount;
+			Player2FieldCount = CalculatedPlayer2FieldCount;
+		}
+
 		public short[] Field = new short[Size];
 
 		/// <summary>Me</summary>

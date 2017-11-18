@@ -26,8 +26,7 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 			board.Field[new Position(15, 0).Index] = 2;
 			board.Field[new Position(14, 1).Index] = 2;
 			board.Field[new Position(15, 1).Index] = 2;
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);
@@ -58,8 +57,7 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 			board.Field[new Position(15, 0).Index] = 2;
 			board.Field[new Position(14, 1).Index] = 2;
 			board.Field[new Position(15, 1).Index] = 2;
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);
@@ -87,8 +85,7 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 			board.Field[new Position(5, 0).Index] = 1;
 			board.Field[new Position(4, 1).Index] = 1;
 			board.Field[new Position(5, 1).Index] = 1;
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);
@@ -118,8 +115,7 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 			board.Field[new Position(4, 0).Index] = 1;
 			board.Field[new Position(5, 1).Index] = 1;
 			board.Field[new Position(6, 0).Index] = 1;
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);
@@ -157,8 +153,7 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 			afterMoveBoard.Field[i] = 0;
 
 			var checkBoard = new Board(afterMoveBoard);
-			checkBoard.Player1FieldCount = checkBoard.CalculatedPlayer1FieldCount;
-			checkBoard.Player2FieldCount = checkBoard.CalculatedPlayer2FieldCount;
+			checkBoard.UpdateFieldCounts();
 
 			var parameters = new MonteCarloParameters() { WinBonus = new int[Board.Size] };
 			var moveGenerator = new MoveGenerator(board, parameters);

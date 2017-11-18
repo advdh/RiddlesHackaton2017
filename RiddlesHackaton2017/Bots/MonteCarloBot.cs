@@ -145,15 +145,10 @@ namespace RiddlesHackaton2017.Bots
 			var afterMoveBoard1 = new Board(board1);
 			var afterMoveBoard2 = new Board(board2);
 
-			var stopwatch = Stopwatch.StartNew();
 			var moveGenerator = new MoveGenerator(Board, Parameters);
-			var myKills = moveGenerator.GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value).ToArray();
-			var opponentKills = moveGenerator.GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value).ToArray();
-			var myBirths = moveGenerator.GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value).ToArray();
-			if (Parameters.LogLevel >= 1)
-			{
-				ConsoleError.WriteLine($"Round {Board.Round}: GetCandidateMoves in {stopwatch.ElapsedTicks} ticks");
-			}
+			var myKills = moveGenerator.GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var opponentKills = moveGenerator.GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var myBirths = moveGenerator.GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 
 			if (Parameters.LogLevel >= 3)
 			{

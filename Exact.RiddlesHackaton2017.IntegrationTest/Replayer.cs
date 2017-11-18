@@ -23,7 +23,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			DoReplay("b29012e8-a732-4cce-ae10-bb1059e3b303"
-				//, rounds: new[] { 99 }
+				//, rounds: new[] { 63 }
 				//, action: Replay_OwnKillMoves
 				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
