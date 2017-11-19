@@ -69,7 +69,7 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
-		public int SmartMoveGenerationCount { get; set; } = 4;
+		public int SmartMoveGenerationCount { get; set; } = 0;
 
 		/// <summary>
 		/// Minimum field count for smart move simulator: 

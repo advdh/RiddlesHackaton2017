@@ -37,3 +37,4 @@ V28	19-11-2017, 11:56	New smart move simulator: applicable first 4 generations i
 V29	19-11-2017, 14:34	Decrease simulation count if limited time
 						Use max. 20% of available timebank
 V30	19-11-2017, 15:21	Bugfix: don't exclude births with score <= 0
+V31	19-11-2017, 17:24	Turn off smart simulation: it's too slow and therefore leads to timeouts
