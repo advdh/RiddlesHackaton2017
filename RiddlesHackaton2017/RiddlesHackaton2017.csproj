@@ -53,6 +53,7 @@
     <Compile Include="Bots\KillMoveBot.cs" />
     <Compile Include="Bots\MonteCarloBot.cs" />
     <Compile Include="Bots\MonteCarloParameters.cs" />
+    <Compile Include="Models\RoundStatistics.cs" />
     <Compile Include="MonteCarlo\IMoveSimulator.cs" />
     <Compile Include="MonteCarlo\MonteCarloStatistics.cs" />
     <Compile Include="Bots\PassBot.cs" />

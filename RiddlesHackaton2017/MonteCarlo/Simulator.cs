@@ -22,7 +22,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 		/// Simulates the specified move a number of times using MonteCarlo simulation
 		/// </summary>
 		/// <returns>Score for this move</returns>
-		public MonteCarloStatistics SimulateMove(Move move)
+		public MonteCarloStatistics SimulateMove(Move move, int simulationCount)
 		{
 			var statistic = new MonteCarloStatistics() { Move = move };
 			if (StartBoard.OpponentPlayerFieldCount == 0)
@@ -30,26 +30,26 @@ namespace RiddlesHackaton2017.MonteCarlo
 				if (StartBoard.MyPlayerFieldCount == 0)
 				{
 					//Draw in 0
-					statistic.Count = Parameters.SimulationCount;
+					statistic.Count = simulationCount;
 					return statistic;
 				}
 				else
 				{
 					//Won in 0
-					statistic.Count = Parameters.SimulationCount;
-					statistic.Won = Parameters.SimulationCount;
+					statistic.Count = simulationCount;
+					statistic.Won = simulationCount;
 					return statistic;
 				}
 			}
 			if (StartBoard.MyPlayerFieldCount == 0)
 			{
 				//Lost in 0
-				statistic.Count = Parameters.SimulationCount;
-				statistic.Lost = Parameters.SimulationCount;
+				statistic.Count = simulationCount;
+				statistic.Lost = simulationCount;
 				return statistic;
 			}
 
-			for (int i = 0; i < Parameters.SimulationCount; i++)
+			for (int i = 0; i < simulationCount; i++)
 			{
 				var result = SimulateRestOfGame();
 

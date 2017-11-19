@@ -1,5 +1,4 @@
-﻿using RiddlesHackaton2017.Evaluation;
-using RiddlesHackaton2017.Models;
+﻿using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.MonteCarlo;
 using RiddlesHackaton2017.MoveGeneration;
 using RiddlesHackaton2017.Moves;
@@ -18,6 +17,8 @@ namespace RiddlesHackaton2017.Bots
 
 		private readonly IRandomGenerator Random;
 
+		private RoundStatistics RoundStatistics = new RoundStatistics();
+
 		public MonteCarloBot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
 		{
 			Random = Guard.NotNull(random, nameof(random));
@@ -31,17 +32,15 @@ namespace RiddlesHackaton2017.Bots
 		private TimeSpan GetMaxDuration(TimeSpan timeLimit)
 		{
 			if (Parameters.Debug) return Parameters.MaxDuration;
-			return new TimeSpan(Math.Min(timeLimit.Ticks / 4, Parameters.MaxDuration.Ticks));
+			return new TimeSpan(Math.Min((long)(Parameters.MaxRelativeDuration * timeLimit.Ticks), 
+				Parameters.MaxDuration.Ticks));
 		}
 
 		public override Move GetMove()
 		{
 			MonteCarloStatistics bestResult = new MonteCarloStatistics()
 			{
-				Count = Parameters.SimulationCount,
 				Won = -1,
-				Lost = Parameters.SimulationCount,
-				LostInGenerations = Parameters.SimulationCount,
 			};
 			Move bestMove = GetDirectWinMove();
 			if (bestMove != null)
@@ -51,7 +50,9 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			var stopwatch = Stopwatch.StartNew();
-			TimeSpan duration = GetMaxDuration(TimeLimit);
+			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
+			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount);
+
 			bool goOn = true;
 
 			var moveGeneratorStopwatch = Stopwatch.StartNew();
@@ -82,7 +83,7 @@ namespace RiddlesHackaton2017.Bots
 				var move = moveScore.Move;
 				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
 				var simulator = new Simulator(startBoard, Random, Parameters);
-				var result = simulator.SimulateMove(move);
+				var result = simulator.SimulateMove(move, simulationCount);
 
 				if (Parameters.LogLevel >= 2)
 				{
@@ -126,11 +127,13 @@ namespace RiddlesHackaton2017.Bots
 
 				count++;
 
-				goOn = stopwatch.Elapsed < duration && count < candidateMoves.Length;
+				goOn = stopwatch.Elapsed < maxDuration && count < candidateMoves.Length;
 			}
 
+			RoundStatistics.Add(new RoundStatistic() { MaxDuration = stopwatch.Elapsed, MoveCount = count, SimulationCount = simulationCount, Round = Board.Round });
+
 			//Log and return
-			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count} ({bestCount}), win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
+			LogMessage = $"{bestMove} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count} ({bestCount}), simulations = {simulationCount}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
 
 			return bestMove;
 		}

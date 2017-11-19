@@ -34,3 +34,6 @@ V28	19-11-2017, 11:56	New smart move simulator: applicable first 4 generations i
 						Pick best move, based on unrounded total number of wingenerations (rather than rounded average number)
 						Bugfix win/loose rounds
 						Max. simulations = 30: draw if relative difference is smaller than 2.0
+V29	19-11-2017, 14:34	Decrease simulation count if limited time
+						Use max. 20% of available timebank
+V30	19-11-2017, 15:21	Bugfix: don't exclude births with score <= 0

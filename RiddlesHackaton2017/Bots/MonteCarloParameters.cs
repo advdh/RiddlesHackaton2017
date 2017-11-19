@@ -5,8 +5,11 @@ namespace RiddlesHackaton2017.Bots
 {
 	public class MonteCarloParameters
 	{
-		/// <summary>Number of simulations per move</summary>
-		public int SimulationCount { get; set; } = 25;
+		/// <summary>Minimum number of simulations per move</summary>
+		public int MinSimulationCount { get; set; } = 5;
+
+		/// <summary>Maximum number of simulations per move</summary>
+		public int MaxSimulationCount { get; set; } = 25;
 
 		/// <summary>Number of moves</summary>
 		public int MoveCount { get; set; } = 100;
@@ -32,6 +35,9 @@ namespace RiddlesHackaton2017.Bots
 		/// Also for replaying, it's better to turn it off, because local bot is much faster than live bot
 		/// </remarks>
 		public TimeSpan MaxDuration { get; set; } = TimeSpan.FromMilliseconds(500);
+
+		/// <summary>Maximum fraction of timelimit to be used</summary>
+		public double MaxRelativeDuration { get; set; } = 0.2;
 
 		/// <summary>Set this to true for debugging the bot without any time limit constraints</summary>
 		public bool Debug { get; set; } = false;
@@ -75,10 +81,12 @@ namespace RiddlesHackaton2017.Bots
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-			sb.AppendLine($"SimulationCount = {SimulationCount}");
+			sb.AppendLine($"MinSimulationCount = {MinSimulationCount}");
+			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus)}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
+			sb.AppendLine($"MaxRelativeDuration = {MaxRelativeDuration:P0}");
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
 			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");

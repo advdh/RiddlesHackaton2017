@@ -39,3 +39,6 @@ v24, add5c6d3-cc84-47e9-88ec-477cf1a56929, Renegade
 v27, OIO, b29012e8-a732-4cce-ae10-bb1059e3b303: Why don't we win just after round 61?
 	Round 63: best move is especially good after 2 generations. 
 	TODO: give more winbonus for next generation than for nextnext generation
+
+v29, UnmanagedCode, c8d3239e-2688-4b02-99b9-888f17afc009
+	Round 17: should do a birth 10,0 11,0 12,0

@@ -67,10 +67,7 @@ namespace RiddlesHackaton2017.MoveGeneration
 				var neighbours2 = Board.NeighbourFields2[i];
 				afterMoveBoard.Field[i] = (short)Board.MyPlayer;
 				var score = CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
-				if (score > 0)
-				{
-					result.Add(i, score);
-				}
+				result.Add(i, score);
 				afterMoveBoard.Field[i] = 0;
 			}
 			return result;
