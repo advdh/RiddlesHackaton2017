@@ -73,6 +73,8 @@ namespace RiddlesHackaton2017.Bots
 
 			int count = 0;
 			int bestGain2 = 0;
+			int bestCount = 0;
+
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
@@ -93,6 +95,7 @@ namespace RiddlesHackaton2017.Bots
 					bestResult = result;
 					bestMove = move;
 					bestGain2 = moveScore.Gain2;
+					bestCount = count;
 				}
 				else if (result.Score == bestResult.Score)
 				{
@@ -105,6 +108,7 @@ namespace RiddlesHackaton2017.Bots
 							bestResult = result;
 							bestMove = move;
 							bestGain2 = moveScore.Gain2;
+							bestCount = count;
 						}
 					}
 					else
@@ -115,6 +119,7 @@ namespace RiddlesHackaton2017.Bots
 							bestResult = result;
 							bestMove = move;
 							bestGain2 = moveScore.Gain2;
+							bestCount = count;
 						}
 					}
 				}
@@ -125,7 +130,7 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			//Log and return
-			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
+			LogMessage = $"{bestMove} (gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count} ({bestCount}), win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
 
 			return bestMove;
 		}

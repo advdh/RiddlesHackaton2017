@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RiddlesHackaton2017.Bots;
-using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
@@ -29,7 +28,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						LogLevel = 1,
+						//LogLevel = 1,
+						//SimulationCount = 10,
 						//Debug = true,
 						//MaxDuration = TimeSpan.FromSeconds(1),
 						//MaxDuration = TimeSpan.FromDays(1)

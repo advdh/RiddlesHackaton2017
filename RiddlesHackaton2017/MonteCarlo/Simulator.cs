@@ -1,9 +1,7 @@
 ﻿using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
-using RiddlesHackaton2017.MoveGeneration;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.RandomGeneration;
-using System.Linq;
 
 namespace RiddlesHackaton2017.MonteCarlo
 {
@@ -71,6 +69,31 @@ namespace RiddlesHackaton2017.MonteCarlo
 			return statistic;
 		}
 
+		private IMoveSimulator _SmartMoveSimulator;
+		private IMoveSimulator SmartMoveSimulator
+		{
+			get
+			{
+				if (_SmartMoveSimulator == null)
+				{
+					_SmartMoveSimulator = new SmartMoveSimulator(Random, Parameters);
+				}
+				return _SmartMoveSimulator;
+			}
+		}
+
+		private IMoveSimulator _SimpleMoveSimulator;
+		private IMoveSimulator SimpleMoveSimulator
+		{
+			get
+			{
+				if (_SimpleMoveSimulator == null)
+				{
+					_SimpleMoveSimulator = new SimpleMoveSimulator(Random, Parameters);
+				}
+				return _SimpleMoveSimulator;
+			}
+		}
 
 		/// <summary>
 		/// Simulates one game to the end
@@ -81,12 +104,25 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			var player = board.OpponentPlayer;
 			int generationCount = 1;
-			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds)
+			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
 				//Bot play
-				Move move = GetRandomMove(board, player);
-				move.ApplyInline(board, player);
-				board = board.NextGeneration;
+				var simulator = generationCount < Parameters.SimulationMaxGenerationCount 
+					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount) 
+					? SmartMoveSimulator : SimpleMoveSimulator;
+				var tuple = simulator.GetRandomMove(board, player);
+				Move move = tuple.Item1;
+				Board nextBoard = tuple.Item2;
+				if (nextBoard == null)
+				{
+					move.ApplyInline(board, player);
+					board = board.NextGeneration;
+				}
+				else
+				{
+					board = nextBoard;
+					board.ResetNextGeneration();
+				}
 				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, generationCount: generationCount);
 				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, generationCount: generationCount);
 
@@ -95,119 +131,11 @@ namespace RiddlesHackaton2017.MonteCarlo
 				generationCount++;
 			}
 
-			return new SimulationResult(won: null, generationCount: generationCount);
+			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true
+				: board.OpponentPlayerFieldCount > 2 * board.MyPlayerFieldCount ? (bool?)false 
+				: null;
+			return new SimulationResult(won: won, generationCount: generationCount);
 		}
 
-		public Move GetRandomMove(Board board, Player player)
-		{
-			//If player has only a few cells left, then do a kill move
-			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
-			{
-				//Do a kill move
-				return GetRandomKillMove(board, player);
-			}
-			else
-			{
-				//Do a birth move
-				return GetRandomBirthMove(board, player);
-			}
-		}
-
-		public Move GetRandomKillMove(Board board, Player player)
-		{
-			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration;
-			var afterMoveBoard = new Board(board);
-			var afterMoveBoard1 = new Board(board1);
-			var opponentKillMoves = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player.Opponent(), player);
-			if (!opponentKillMoves.Any())
-			{
-				//No kill moves with positive gain: do a pass move
-				return new PassMove();
-			}
-			int value = Random.Next(opponentKillMoves.Last().Value);
-			int index = 0;
-			foreach (var kvp in opponentKillMoves)
-			{
-				if (value < kvp.Value)
-				{
-					index = kvp.Key;
-					break;
-				}
-			}
-			return new KillMove(index);
-		}
-
-		public Move GetRandomBirthMove(Board board, Player player)
-		{
-			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration;
-			if (board1.GetFieldCount(player.Opponent()) == 0)
-			{
-				//Pass leads to win
-				return new PassMove();
-			}
-			var afterMoveBoard = new Board(board);
-			var afterMoveBoard1 = new Board(board1);
-			var births = moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
-			if (!births.Any())
-			{
-				//Not enough births: do a kill move anyway
-				return GetRandomKillMove(board, player);
-			}
-			var myKills = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
-
-			if (myKills.Count < 2)
-			{
-				//Not enough own kills: do a kill move anyway
-				return GetRandomKillMove(board, player);
-			}
-
-			int birthValue = Random.Next(births.Last().Value);
-			int birthIndex = -1;
-			foreach (var kvp in births)
-			{
-				if (birthValue < kvp.Value)
-				{
-					birthIndex = kvp.Key;
-					break;
-				}
-			}
-			int myKill1 = Random.Next(myKills.Last().Value);
-			int killIndex1 = -1;
-			foreach (var kvp in myKills)
-			{
-				if (myKill1 < kvp.Value)
-				{
-					killIndex1 = kvp.Key;
-					break;
-				}
-			}
-			int myKill2 = Random.Next(myKills.Last().Value);
-			int killIndex2 = -1;
-			foreach (var kvp in myKills)
-			{
-				if (myKill2 < kvp.Value)
-				{
-					if (killIndex1 == kvp.Key)
-					{
-						if (killIndex1 == myKills.First().Key)
-						{
-							killIndex2 = myKills.ElementAt(1).Key;
-						}
-						else
-						{
-							killIndex2 = myKills.First().Key;
-						}
-					}
-					else
-					{
-						killIndex2 = kvp.Key;
-					}
-					break;
-				}
-			}
-			return new BirthMove(birthIndex, killIndex1, killIndex2);
-		}
 	}
 }

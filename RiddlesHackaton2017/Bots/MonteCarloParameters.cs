@@ -58,6 +58,20 @@ namespace RiddlesHackaton2017.Bots
 
 		public int LogLevel{ get; set; } = 0;
 
+		/// <summary>Maximum number of generations during MonteCarlo simulation</summary>
+		public int SimulationMaxGenerationCount { get; set; } = 30;
+
+		/// <summary>Number of generations in which we use the smart move simulator</summary>
+		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
+		public int SmartMoveGenerationCount { get; set; } = 4;
+
+		/// <summary>
+		/// Minimum field count for smart move simulator: 
+		/// below this number of field count for any of the players
+		/// we switch to the smart move simulator
+		/// </summary>
+		public int SmartMoveMinimumFieldCount { get; set; } = 15;
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -68,6 +82,9 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
 			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");
+			sb.AppendLine($"SimulationMaxGenerationCount = {SimulationMaxGenerationCount}");
+			sb.AppendLine($"SmartMoveSimulatorGenerationCount = {SmartMoveGenerationCount}");
+			sb.AppendLine($"SmartMoveMinimumFieldCount = {SmartMoveMinimumFieldCount}");
 			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");

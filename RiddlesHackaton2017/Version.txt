@@ -29,6 +29,8 @@ V26	13-11-2017, 18:59	MoveGenerator: two bugfixes in score calculation
 V27	14-11-2017, 22:10	Count generations rather than moves
 						Monte Carlo simulations performance improvement by applying move to the current board
 						Changed WinBonus: if me and/or opponent <= 13 cells left
-
-27.1 Pick best move, based on unrounded total number of wingenerations (rather than rounded average number)
-	win in / loose in was off by 1
+V28	19-11-2017, 11:56	New smart move simulator: applicable first 4 generations if at least one of the players
+						has at most 15 fields left
+						Pick best move, based on unrounded total number of wingenerations (rather than rounded average number)
+						Bugfix win/loose rounds
+						Max. simulations = 30: draw if relative difference is smaller than 2.0
