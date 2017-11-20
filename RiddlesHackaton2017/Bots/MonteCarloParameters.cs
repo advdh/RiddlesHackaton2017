@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace RiddlesHackaton2017.Bots
@@ -69,7 +70,7 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
-		public int SmartMoveGenerationCount { get; set; } = 0;
+		public int SmartMoveGenerationCount { get; set; } = 4;
 
 		/// <summary>
 		/// Minimum field count for smart move simulator: 
@@ -84,7 +85,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MinSimulationCount = {MinSimulationCount}");
 			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
-			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus)}");
+			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
 			sb.AppendLine($"MaxRelativeDuration = {MaxRelativeDuration:P0}");
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");

@@ -79,6 +79,7 @@ namespace RiddlesHackaton2017.Bots
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
+				var stopWatchSimulation = Stopwatch.StartNew();
 				var moveScore = candidateMoves[count];
 				var move = moveScore.Move;
 				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
@@ -87,7 +88,7 @@ namespace RiddlesHackaton2017.Bots
 
 				if (Parameters.LogLevel >= 2)
 				{
-					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}");
+					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
 				}
 
 				if (result.Score > bestResult.Score)

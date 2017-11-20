@@ -21,14 +21,15 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("449b838e-b3f7-4a47-b909-26de47696e6f"
-				//, rounds: new[] { 36 }
+			DoReplay("bdeb8b21-226a-4791-a531-66fa9703ff45"
+				, rounds: new[] { 34 }
 				//, action: Replay_OwnKillMoves
 				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						//LogLevel = 1,
+						LogLevel = 0,
+						//SmartMoveGenerationCount = 4,
 						//SimulationCount = 10,
 						//Debug = true,
 						//MaxDuration = TimeSpan.FromSeconds(1),

@@ -107,7 +107,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
 				//Bot play
-				var simulator = generationCount < Parameters.SimulationMaxGenerationCount 
+				var simulator = generationCount < Parameters.SmartMoveGenerationCount
 					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount) 
 					? SmartMoveSimulator : SimpleMoveSimulator;
 				var tuple = simulator.GetRandomMove(board, player);

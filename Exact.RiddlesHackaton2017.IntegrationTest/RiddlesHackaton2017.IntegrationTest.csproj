@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="PerformanceTest.cs" />
+    <Compile Include="RegressionTest.cs" />
     <Compile Include="Replayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
