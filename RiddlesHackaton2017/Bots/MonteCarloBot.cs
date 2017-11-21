@@ -53,8 +53,6 @@ namespace RiddlesHackaton2017.Bots
 			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
 			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount);
 
-			bool goOn = true;
-
 			var moveGeneratorStopwatch = Stopwatch.StartNew();
 			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
 			if (Parameters.LogLevel >= 1)
@@ -76,6 +74,7 @@ namespace RiddlesHackaton2017.Bots
 			int bestGain2 = 0;
 			int bestCount = 0;
 
+			bool goOn = true;
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
@@ -83,7 +82,7 @@ namespace RiddlesHackaton2017.Bots
 				var moveScore = candidateMoves[count];
 				var move = moveScore.Move;
 				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
-				var simulator = new Simulator(startBoard, Random, Parameters);
+				var simulator = new Simulator(startBoard, Random, Parameters, maxDuration);
 				var result = simulator.SimulateMove(move, simulationCount);
 
 				if (Parameters.LogLevel >= 2)

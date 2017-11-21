@@ -30,15 +30,11 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		public int MinimumFieldCountForBirthMoves { get; internal set; } = 10;
 
-		/// <summary>If true, then use fixed time (the life version), if false, then use fixed number of moves (MoveCount)</summary>
-		/// <remarks>
-		/// For debugging purposes, timebound should be turned off
-		/// Also for replaying, it's better to turn it off, because local bot is much faster than live bot
-		/// </remarks>
+		/// <summary>Maximum time to spend per turn</summary>
 		public TimeSpan MaxDuration { get; set; } = TimeSpan.FromMilliseconds(500);
 
 		/// <summary>Maximum fraction of timelimit to be used</summary>
-		public double MaxRelativeDuration { get; set; } = 0.2;
+		public double MaxRelativeDuration { get; set; } = 0.1;
 
 		/// <summary>Set this to true for debugging the bot without any time limit constraints</summary>
 		public bool Debug { get; set; } = false;
@@ -79,6 +75,9 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		public int SmartMoveMinimumFieldCount { get; set; } = 15;
 
+		/// <summary>Minimum allowed move duration in order to execute a smart move</summary>
+		public TimeSpan SmartMoveDurationThreshold { get; set; } = TimeSpan.FromMilliseconds(80);
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -88,6 +87,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
 			sb.AppendLine($"MaxRelativeDuration = {MaxRelativeDuration:P0}");
+			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
 			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");

@@ -2,6 +2,7 @@
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.RandomGeneration;
+using System;
 
 namespace RiddlesHackaton2017.MonteCarlo
 {
@@ -10,12 +11,15 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public Board StartBoard { get; private set; }
 		private readonly IRandomGenerator Random;
 		public MonteCarloParameters Parameters { get; private set; }
+		public TimeSpan MaxDuration { get; private set; }
 
-		public Simulator(Board startBoard, IRandomGenerator randomGenerator, MonteCarloParameters monteCarloParameters)
+		public Simulator(Board startBoard, IRandomGenerator randomGenerator, 
+			MonteCarloParameters monteCarloParameters, TimeSpan maxDuration)
 		{
 			StartBoard = Guard.NotNull(startBoard, nameof(startBoard));
 			Random = Guard.NotNull(randomGenerator, nameof(randomGenerator));
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
+			MaxDuration = maxDuration;
 		}
 
 		/// <summary>
@@ -109,6 +113,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				//Bot play
 				var simulator = generationCount < Parameters.SmartMoveGenerationCount
 					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount) 
+					&& MaxDuration > Parameters.SmartMoveDurationThreshold
 					? SmartMoveSimulator : SimpleMoveSimulator;
 				var tuple = simulator.GetRandomMove(board, player);
 				Move move = tuple.Item1;

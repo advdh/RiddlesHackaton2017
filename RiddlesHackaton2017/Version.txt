@@ -39,3 +39,4 @@ V29	19-11-2017, 14:34	Decrease simulation count if limited time
 V30	19-11-2017, 15:21	Bugfix: don't exclude births with score <= 0
 V31	19-11-2017, 17:24	Turn off smart simulation: it's too slow and therefore leads to timeouts
 V32	19-11-2017, 19:20	Bugfix simulator, and reenable SmartMove simulator with SmartMoveGenerationCount = 4 (previously it was effectively infinite)
+V33	21-11-2017, 22:08	Use max. 10% of remaining time + don't use SmartMoveSimulator if max. allowed duration < 80 ms (timebank < 800 ms)
