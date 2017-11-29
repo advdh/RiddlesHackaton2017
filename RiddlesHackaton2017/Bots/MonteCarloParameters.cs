@@ -78,6 +78,12 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Minimum allowed move duration in order to execute a smart move</summary>
 		public TimeSpan SmartMoveDurationThreshold { get; set; } = TimeSpan.FromMilliseconds(80);
 
+		/// <summary>Relative weight of difference of cellcounts in score calcultion</summary>
+		public int CellCountWeight { get; set; } = 10;
+
+		/// <summary>Relative weight of difference of cellcounts in score calcultion</summary>
+		public int WinBonusWeight { get; set; } = 10;
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -85,6 +91,8 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
+			sb.AppendLine($"CellCountWeight = {CellCountWeight}");
+			sb.AppendLine($"WinBonusWeight = {WinBonusWeight}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
 			sb.AppendLine($"MaxRelativeDuration = {MaxRelativeDuration:P0}");
 			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");

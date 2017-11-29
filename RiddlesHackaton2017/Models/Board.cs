@@ -1228,8 +1228,6 @@ namespace RiddlesHackaton2017.Models
 			new int[] {252,253,254,255,268,269,270,271,284,285,286,287 },
 			new int[] {253,254,255,269,270,271,285,286,287 },
 		};
-		private int v1;
-		private int v2;
 
 		#endregion
 

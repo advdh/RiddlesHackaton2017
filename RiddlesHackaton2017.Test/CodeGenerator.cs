@@ -95,6 +95,25 @@ namespace RiddlesHackaton2017.Test
 		}
 
 
+		[TestMethod]
+		public void GenerateFieldBonus()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("public static int[] FieldBonus = new[]");
+			sb.AppendLine("{");
+
+			for (int y = 0; y < Board.Height; y++)
+			{
+				for (int x = 0; x < Board.Width; x++)
+				{
+					sb.Append($"{Math.Min(x, Board.Width - 1 - x) + Math.Min(y, Board.Height - 1 - y)}, ");
+				}
+				sb.AppendLine();
+			}
+			sb.AppendLine("};");
+			Console.WriteLine(sb.ToString());
+		}
+
 		private int[][] RelativeNeighbours = new[]
 		{
 			new int[] {-1, -1 },

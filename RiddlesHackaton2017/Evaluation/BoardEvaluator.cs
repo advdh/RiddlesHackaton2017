@@ -15,7 +15,8 @@ namespace RiddlesHackaton2017.Evaluation
 		}
 
 		/// <returns>Tuple (my score, opponent score)</returns>
-		public static Tuple<int, int> Evaluate(Board board, IEnumerable<int> positions)
+		public static Tuple<int, int> Evaluate(Board board, IEnumerable<int> positions, 
+			int cellCountWeight)
 		{
 			int score1 = 0;
 			int score2 = 0;
@@ -23,8 +24,8 @@ namespace RiddlesHackaton2017.Evaluation
 			{
 				switch (board.Field[i])
 				{
-					case 1: score1++; break;
-					case 2: score2++; break;
+					case 1: score1 += cellCountWeight; break;
+					case 2: score2 += cellCountWeight; break;
 				}
 			}
 			return new Tuple<int, int>(board.MyPlayer == Player.Player1 ? score1 : score2,

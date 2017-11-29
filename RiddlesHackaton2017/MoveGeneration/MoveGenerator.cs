@@ -2,7 +2,7 @@
 using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
 using System.Collections.Generic;
-using System;
+using System.Linq;
 
 namespace RiddlesHackaton2017.MoveGeneration
 {
@@ -91,10 +91,10 @@ namespace RiddlesHackaton2017.MoveGeneration
 			afterMoveBoard1.GetNextGeneration(afterMoveBoard2, neighbours2);
 
 			//Calculate
-			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2);
+			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2, Parameters.CellCountWeight);
 			int myMoveScore = moveScore.Item1;
 			int opponentMoveScore = moveScore.Item2;
-			var score = BoardEvaluator.Evaluate(board2, neighbours2);
+			var score = BoardEvaluator.Evaluate(board2, neighbours2, Parameters.CellCountWeight);
 			int myScore = score.Item1;
 			int opponentScore = score.Item2;
 
@@ -117,7 +117,8 @@ namespace RiddlesHackaton2017.MoveGeneration
 			}
 			afterMoveBoard2.MyPlayerFieldCount = board2.MyPlayerFieldCount;
 			afterMoveBoard2.OpponentPlayerFieldCount = board2.OpponentPlayerFieldCount;
-			return myMoveScore - opponentMoveScore - (myScore - opponentScore) + winBonus;
+			return myMoveScore - opponentMoveScore - (myScore - opponentScore) 
+				+ Parameters.WinBonusWeight * winBonus;
 		}
 	}
 }

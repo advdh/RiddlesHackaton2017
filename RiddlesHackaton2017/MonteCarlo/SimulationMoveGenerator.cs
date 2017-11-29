@@ -72,10 +72,10 @@ namespace RiddlesHackaton2017.MonteCarlo
 			afterMoveBoard.GetNextGeneration(afterMoveBoard1, neighbours1AndThis);
 
 			//Calculate
-			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard1, neighbours1AndThis);
+			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard1, neighbours1AndThis, 1);
 			int myMoveScore = moveScore.Item1;
 			int opponentMoveScore = moveScore.Item2;
-			var score = BoardEvaluator.Evaluate(board1, neighbours1AndThis);
+			var score = BoardEvaluator.Evaluate(board1, neighbours1AndThis, 1);
 			int myScore = score.Item1;
 			int opponentScore = score.Item2;
 
