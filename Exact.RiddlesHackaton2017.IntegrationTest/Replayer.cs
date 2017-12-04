@@ -21,18 +21,42 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			DoReplay("38dac914-b664-44ce-96d9-6fcd4fc1b4ce"
-				//, rounds: new[] { 34 }
+			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
+				, rounds: new[] { 34 }
 				//, action: Replay_OwnKillMoves
-				, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
+				, bot: new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()))
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						//LogLevel = 2,
-						//Debug = true,
-						//MaxDuration = TimeSpan.FromDays(1)
+						LogLevel = 2,
+						Debug = true,
+						MaxDuration = TimeSpan.FromDays(1)
 					}
-				});
+				},
+				source: LogSource.GameDataPlayer2);
+		}
+
+		[TestMethod]
+		public void Test()
+		{
+			string[] linesData = File.ReadAllLines(@"c:\tmp\game.txt");
+			string[] linesLog = File.ReadAllLines(@"D:\Ad\Golad\Games\a734cae9-d395-4a00-8563-8bbb946d1bf3.txt")
+				.Where(l => l.StartsWith("update game field"))
+				.Select(s => s.Substring(18))
+				.ToArray();
+			string boardStringFromData = linesData.First();
+			string boardStringFromLog = linesLog.First();
+			Assert.AreEqual(boardStringFromLog, boardStringFromData, "Start board");
+			var boardFromData = new Board() { Field = BotParser.ParseBoard(boardStringFromData) };
+			for(int i = 0; i < 100; i++)
+			{
+				var move = Move.Parse(linesData[2 * i + 1]);
+				boardFromData = boardFromData.ApplyMoveAndNext(Player.Player1, move);
+				move = Move.Parse(linesData[2 * i + 2]);
+				boardFromData = boardFromData.ApplyMoveAndNext(Player.Player2, move);
+				var boardFromLog = new Board() { Field = BotParser.ParseBoard(linesLog[i + 1]) };
+				Assert.AreEqual(boardFromLog.HumanBoardString(), boardFromData.HumanBoardString(), @"Round {i}");
+			}
 		}
 
 		/// <summary>
@@ -52,7 +76,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				string gameId = Path.GetFileNameWithoutExtension(filename);
 				Console.WriteLine(gameId);
-				DoReplay(gameId, bot: new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()))
+				DoReplay(gameId, bot: new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()))
 				{
 					Parameters = new MonteCarloParameters() { MaxDuration = maxDuration }
 				});
@@ -68,19 +92,47 @@ namespace RiddlesHackaton2017.IntegrationTest
 		private void DoReplay(string gameId, bool differenceOnly = true,
 			Action<Board> action = null,
 			int[] rounds = null,
-			BaseBot bot = null)
+			BaseBot bot = null,
+			LogSource source = LogSource.File)
 		{
-			var filename = Path.Combine(Folder, gameId + ".txt");
 			if (rounds == null)
 			{
 				rounds = Enumerable.Range(0, Board.Size).ToArray();
 			}
 			if (bot == null)
 			{
-				bot = new MonteCarloBot(new TheConsole(), new RandomGenerator(new Random()));
+				bot = new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()));
 			}
-			var lines = File.ReadAllLines(filename);
+			var lines = GetLines(gameId, source);
 			DoReplayLines(lines, differenceOnly, action, rounds, bot);
+		}
+
+		private string[] GetLines(string gameId, LogSource logSource)
+		{
+			switch(logSource)
+			{
+				case LogSource.DatabaseLog:
+					using (var database = new Database())
+					{
+						database.Connect();
+						return database.GetGameLog(gameId).Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					}
+				case LogSource.GameDataPlayer1:
+					using (var database = new Database())
+					{
+						database.Connect();
+						return GameLogGenerator.GenerateCommandLines(database.GetGameData(gameId), Player.Player1).ToArray();
+					}
+				case LogSource.GameDataPlayer2:
+					using (var database = new Database())
+					{
+						database.Connect();
+						return GameLogGenerator.GenerateCommandLines(database.GetGameData(gameId), Player.Player2).ToArray();
+					}
+				default:
+					var filename = Path.Combine(Folder, gameId + ".txt");
+					return File.ReadAllLines(filename);
+			}
 		}
 
 		private void DoReplayLines(string[] lines, bool differenceOnly, 
@@ -165,6 +217,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 					board.MyPlayer = (Player)Enum.Parse(typeof(Player), (value + 1).ToString());
 					break;
 			}
+		}
+
+		private enum LogSource
+		{
+			File,
+			DatabaseLog,
+			GameDataPlayer1,
+			GameDataPlayer2,
 		}
 	}
 }

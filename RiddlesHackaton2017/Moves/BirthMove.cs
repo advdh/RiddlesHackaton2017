@@ -45,23 +45,26 @@ namespace RiddlesHackaton2017.Moves
 			return $"Birthmove {BirthPosition}, sacrifice = {SacrificePosition1} and {SacrificePosition2}";
 		}
 
-		public override Board Apply(Board board, Player player)
+		public override Board Apply(Board board, Player player, bool validate = true)
 		{
-			if (board.Field[BirthIndex] != 0)
+			if (validate)
 			{
-				throw new InvalidBirthMoveException($"Birth position must be empty: {BirthPosition}");
-			}
-			if (board.Field[SacrificeIndex1] != (short)player)
-			{
-				throw new InvalidBirthMoveException($"SacrificeIndex1 position must be owned by you: {SacrificePosition1}");
-			}
-			if (board.Field[SacrificeIndex2] != (short)player)
-			{
-				throw new InvalidBirthMoveException($"SacrificeIndex2 position must be owned by you: {SacrificePosition2}");
-			}
-			if (SacrificeIndex1 == SacrificeIndex2)
-			{
-				throw new InvalidBirthMoveException($"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}");
+				if (board.Field[BirthIndex] != 0)
+				{
+					throw new InvalidBirthMoveException($"Birth position must be empty: {BirthPosition}");
+				}
+				if (board.Field[SacrificeIndex1] != (short)player)
+				{
+					throw new InvalidBirthMoveException($"SacrificeIndex1 position must be owned by you: {SacrificePosition1}");
+				}
+				if (board.Field[SacrificeIndex2] != (short)player)
+				{
+					throw new InvalidBirthMoveException($"SacrificeIndex2 position must be owned by you: {SacrificePosition2}");
+				}
+				if (SacrificeIndex1 == SacrificeIndex2)
+				{
+					throw new InvalidBirthMoveException($"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}");
+				}
 			}
 
 			var result = new Board(board);

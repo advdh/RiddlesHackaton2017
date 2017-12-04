@@ -14,7 +14,7 @@ namespace RiddlesHackaton2017.Moves
 			}
 		}
 
-		public override Board Apply(Board board, Player player)
+		public override Board Apply(Board board, Player player, bool validate = true)
 		{
 			return board;
 		}

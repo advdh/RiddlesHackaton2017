@@ -24,6 +24,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 2).Index], "Killed field");
 			Assert.AreEqual(2, newBoard.Field[new Position(0, 3).Index], "not killed field");
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		/// <summary>
@@ -39,6 +41,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			Assert.AreEqual(1, newBoard.Field[new Position(0, 2).Index], "non-Killed field");
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 3).Index], "Killed field");
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		/// <summary>
@@ -51,6 +55,21 @@ namespace RiddlesHackaton2017.Test.Moves
 			var move = new KillMove(new Position(0, 0));
 
 			move.Apply(board, Player.Player1);
+		}
+
+		/// <summary>
+		/// Invalid kill move, but without validate: no exception
+		/// </summary>
+		[TestMethod]
+		public void Apply_KillEmptyField_TestWithoutValidate()
+		{
+			var board = InitBoard();
+			var move = new KillMove(new Position(0, 0));
+
+			var newBoard = move.Apply(board, Player.Player1, validate: false);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod]

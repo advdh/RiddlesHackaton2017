@@ -105,10 +105,10 @@ namespace RiddlesHackaton2017.Models
 		/// Applies move for player and applies next generation
 		/// </summary>
 		/// <returns>New board</returns>
-		public Board ApplyMoveAndNext(Player player, Move move)
+		public Board ApplyMoveAndNext(Player player, Move move, bool validateMove = true)
 		{
 			//Apply move and next generation
-			var newBoard = move.Apply(this, player).NextGeneration;
+			var newBoard = move.Apply(this, player, validateMove).NextGeneration;
 
 			//Increment round
 			newBoard.Round = Round + (player == Player.Player2 ? 1 : 0);

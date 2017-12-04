@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace RiddlesHackaton2017.Bots
 {
-	public class MonteCarloBot : BaseBot
+	public class Anila8Bot : BaseBot
 	{
 		public MonteCarloParameters Parameters { get; set; } = MonteCarloParameters.Default;
 
@@ -19,7 +19,7 @@ namespace RiddlesHackaton2017.Bots
 
 		private RoundStatistics RoundStatistics = new RoundStatistics();
 
-		public MonteCarloBot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
+		public Anila8Bot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
 		{
 			Random = Guard.NotNull(random, nameof(random));
 		}

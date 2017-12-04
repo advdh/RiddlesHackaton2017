@@ -12,7 +12,7 @@ namespace RiddlesHackaton2017
 	{
 		static Board Board = new Board();
 		static MonteCarloParameters Parameters = MonteCarloParameters.Life;
-		static BaseBot Bot = new MonteCarloBot(new ConsoleError(), new RandomGenerator(new Random()))
+		static BaseBot Bot = new Anila8Bot(new ConsoleError(), new RandomGenerator(new Random()))
 		{
 			Parameters = Parameters,
 		};

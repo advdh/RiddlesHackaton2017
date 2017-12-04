@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -51,6 +52,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Database.cs" />
+    <Compile Include="DataReaderExtensions.cs" />
+    <Compile Include="GameLogGenerator.cs" />
+    <Compile Include="GameLogGeneratorTest.cs" />
     <Compile Include="PerformanceTest.cs" />
     <Compile Include="RegressionTest.cs" />
     <Compile Include="Replayer.cs" />

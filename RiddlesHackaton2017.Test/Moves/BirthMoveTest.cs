@@ -23,6 +23,8 @@ namespace RiddlesHackaton2017.Test.Moves
 			Assert.AreEqual(0, newBoard.Field[sacrificePosition1.Index], "SacrificePosition1");
 			Assert.AreEqual(0, newBoard.Field[sacrificePosition2.Index], "SacrificePosition2");
 			Assert.AreEqual(2, newBoard.Field[new Position(0, 3).Index], "Unchanged position");
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -38,6 +40,21 @@ namespace RiddlesHackaton2017.Test.Moves
 			move.Apply(board, Player.Player1);
 		}
 
+		[TestMethod]
+		public void Apply_InvalidBirthPosition_TestWithoutValidate()
+		{
+			var board = InitBoard();
+			var birthPosition = new Position(0, 2);
+			var sacrificePosition1 = new Position(5, 0);
+			var sacrificePosition2 = new Position(11, 0);
+			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
+
+			var newBoard = move.Apply(board, Player.Player1, validate: false);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+		}
+
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
 		public void Apply_InvalidSacrificePosition1_Test()
 		{
@@ -49,6 +66,21 @@ namespace RiddlesHackaton2017.Test.Moves
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
 			move.Apply(board, Player.Player1);
+		}
+
+		[TestMethod]
+		public void Apply_InvalidSacrificePosition1_TestWithoutValidate()
+		{
+			var board = InitBoard();
+			var birthPosition = new Position(0, 0);
+			var sacrificePosition1 = new Position(0, 0);
+			var sacrificePosition2 = new Position(11, 0);
+			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
+
+			var newBoard = move.Apply(board, Player.Player1, validate: false);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -64,6 +96,21 @@ namespace RiddlesHackaton2017.Test.Moves
 			move.Apply(board, Player.Player1);
 		}
 
+		[TestMethod]
+		public void Apply_InvalidSacrificePosition2_TestWithoutValidate()
+		{
+			var board = InitBoard();
+			var birthPosition = new Position(0, 0);
+			var sacrificePosition1 = new Position(5, 0);
+			var sacrificePosition2 = new Position(0, 0);
+			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
+
+			var newBoard = move.Apply(board, Player.Player1, validate: false);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+		}
+
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
 		public void Apply_DuplicateSacrificePositions_Test()
 		{
@@ -75,6 +122,21 @@ namespace RiddlesHackaton2017.Test.Moves
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
 			move.Apply(board, Player.Player1);
+		}
+
+		[TestMethod]
+		public void Apply_DuplicateSacrificePositions_TestWithoutValidate()
+		{
+			var board = InitBoard();
+			var birthPosition = new Position(0, 0);
+			var sacrificePosition1 = new Position(5, 0);
+			var sacrificePosition2 = new Position(5, 0);
+			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
+
+			var newBoard = move.Apply(board, Player.Player1, validate: false);
+
+			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod]

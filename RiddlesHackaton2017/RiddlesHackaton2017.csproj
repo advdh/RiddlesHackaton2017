@@ -50,7 +50,7 @@
     <Compile Include="BotParser.cs" />
     <Compile Include="Bots\BaseBot.cs" />
     <Compile Include="Bots\KillMoveBot.cs" />
-    <Compile Include="Bots\MonteCarloBot.cs" />
+    <Compile Include="Bots\Anila8Bot.cs" />
     <Compile Include="Bots\MonteCarloParameters.cs" />
     <Compile Include="Models\RoundStatistics.cs" />
     <Compile Include="MonteCarlo\IMoveSimulator.cs" />

@@ -57,21 +57,21 @@ namespace RiddlesHackaton2017.Moves
 			return false;
 		}
 
-		public override Board Apply(Board board, Player player)
+		public override Board Apply(Board board, Player player, bool validate = true)
 		{
-			if (board.Field[Index] == 0)
+			if (validate)
 			{
-				throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
+				if (board.Field[Index] == 0)
+				{
+					throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
+				}
 			}
 
 			var result = new Board(board);
-			if (board.Field[Index] == (short)board.MyPlayer)
+			switch (board.Field[Index])
 			{
-				result.MyPlayerFieldCount--;
-			}
-			else
-			{
-				result.OpponentPlayerFieldCount--;
+				case 1: result.Player1FieldCount--; break;
+				case 2: result.Player2FieldCount--; break;
 			}
 			result.Field[Index] = 0;
 
