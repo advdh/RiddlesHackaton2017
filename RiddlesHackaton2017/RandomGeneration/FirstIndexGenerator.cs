@@ -5,6 +5,11 @@
 	/// </summary>
 	public class FirstIndexGenerator : IRandomGenerator
 	{
+		public IRandomGenerator Clone(int i)
+		{
+			return new FirstIndexGenerator();
+		}
+
 		public int Next(int maxValue)
 		{
 			return 0;

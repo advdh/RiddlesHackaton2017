@@ -7,5 +7,6 @@
 		/// </summary>
 		/// <param name="maxValue"></param>
 		int Next(int maxValue);
+		IRandomGenerator Clone(int i);
 	}
 }

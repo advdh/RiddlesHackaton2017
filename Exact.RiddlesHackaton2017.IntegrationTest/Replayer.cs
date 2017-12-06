@@ -22,18 +22,18 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
-				, rounds: new[] { 34 }
+				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()))
 				{
 					Parameters = new MonteCarloParameters()
 					{
-						LogLevel = 2,
-						Debug = true,
-						MaxDuration = TimeSpan.FromDays(1)
+						//LogLevel = 2,
+						//Debug = true,
+						//MaxDuration = TimeSpan.FromDays(1)
 					}
 				},
-				source: LogSource.GameDataPlayer2);
+				source: LogSource.File);
 		}
 
 		[TestMethod]

@@ -10,7 +10,11 @@ namespace RiddlesHackaton2017.Bots
 		public int MinSimulationCount { get; set; } = 5;
 
 		/// <summary>Maximum number of simulations per move</summary>
-		public int MaxSimulationCount { get; set; } = 25;
+		public int MaxSimulationCount { get; set; } = 50;
+
+		/// <summary>Initial number of simulations per move</summary>
+		public int StartSimulationCount { get; set; } = 25;
+
 
 		/// <summary>Number of moves</summary>
 		public int MoveCount { get; set; } = 100;
@@ -89,6 +93,7 @@ namespace RiddlesHackaton2017.Bots
 			var sb = new StringBuilder();
 			sb.AppendLine($"MinSimulationCount = {MinSimulationCount}");
 			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
+			sb.AppendLine($"StartSimulationCount = {StartSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
 			sb.AppendLine($"CellCountWeight = {CellCountWeight}");

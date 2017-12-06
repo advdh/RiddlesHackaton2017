@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Database.cs" />
     <Compile Include="DataReaderExtensions.cs" />
+    <Compile Include="GameLogAnalyzer.cs" />
     <Compile Include="GameLogGenerator.cs" />
     <Compile Include="GameLogGeneratorTest.cs" />
     <Compile Include="PerformanceTest.cs" />

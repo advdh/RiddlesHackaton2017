@@ -1,0 +1,87 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace RiddlesHackaton2017.IntegrationTest
+{
+	[TestClass]
+	public class GameLogAnalyzer
+	{
+		[TestMethod]
+		public void Test()
+		{
+			int maxRound = 10;
+
+			using (var database = new Database())
+			{
+				database.Connect();
+				var opponents = new Dictionary<string, Statistics>();
+				var games = database.GetGames();
+				foreach(var game in games)
+				{
+					var log = game.Log;
+					var result = GetGameStatistics(log, maxRound);
+					Statistics stats;
+					if (opponents.ContainsKey(game.Opponent))
+					{
+						stats = opponents[game.Opponent];
+					}
+					else
+					{
+						stats = new Statistics();
+						opponents.Add(game.Opponent, stats);
+					}
+					stats.GameCount++;
+					stats.TotalRoundCount += result[0];
+					stats.TotalMoveCount += result[1];
+					stats.TotalUsedMs += result[2];
+				}
+
+				foreach(var de in opponents.Where(s => s.Value.TotalUsedMs > 0))
+				{
+					var opponent = de.Key;
+					var stats = de.Value;
+					Console.WriteLine($"{opponent}: Games: {stats.GameCount} - {1000 * stats.TotalMoveCount / stats.TotalUsedMs}");
+				}
+			}
+		}
+
+		private int[] GetGameStatistics(string log, int maxRound)
+		{
+			var lines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+			int rounds = 0;
+			int movesCount = 0;
+			int usedMs = 0;
+			var pattern = @"Round\s(?<round>\d+).*\smoves\s=\s(?<moves>\d+).*\ssimulations\s=\s(?<simulations>\d+).*Used\s(?<used>\d+)";
+			var regex = new Regex(pattern);
+			foreach(var line in lines)
+			{
+				var match = regex.Match(line);
+				if (match.Success)
+				{
+					rounds++;
+					movesCount += int.Parse(match.Groups["moves"].Value) * int.Parse(match.Groups["simulations"].Value);
+					usedMs += int.Parse(match.Groups["used"].Value);
+					if (rounds >= maxRound)
+					{
+						return new int[] { rounds, movesCount, usedMs };
+					}
+				}
+			}
+			return new int[] { rounds, movesCount, usedMs };
+		}
+
+		private class Statistics
+		{
+			public string Opponent { get; set; }
+			public int GameCount { get; set; }
+			public int TotalRoundCount { get; set; }
+			public int TotalMoveCount { get; set; }
+			public int TotalUsedMs { get; set; }
+		}
+	}
+}

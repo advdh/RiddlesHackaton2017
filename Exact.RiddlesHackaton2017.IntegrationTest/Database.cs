@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace RiddlesHackaton2017.IntegrationTest
@@ -32,6 +33,31 @@ namespace RiddlesHackaton2017.IntegrationTest
 				}
 			}
 			return null;
+		}
+
+		public class Game
+		{
+			public string Opponent { get; set; }
+			public string Log { get; set; }
+		}
+
+		public IEnumerable<Game> GetGames()
+		{
+			string sql = "SELECT Opponent, Log FROM Anila8Games WHERE Log IS NOT NULL";
+			using (var command = new SqlCommand(sql, Connection))
+			{
+				using (var reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						yield return new Game()
+						{
+							Opponent = reader.GetString(0),
+							Log = reader.GetString(1),
+						};
+					}
+				}
+			}
 		}
 
 		public string GetGameData(string gameId)

@@ -3,31 +3,35 @@ using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.RandomGeneration;
 using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RiddlesHackaton2017.MonteCarlo
 {
 	public class Simulator
 	{
-		public Board StartBoard { get; private set; }
+		public Board StartBoard { get; set; }
 		private readonly IRandomGenerator Random;
 		public MonteCarloParameters Parameters { get; private set; }
-		public TimeSpan MaxDuration { get; private set; }
+		public TimeSpan MaxDuration { get; set; }
 
-		public Simulator(Board startBoard, IRandomGenerator randomGenerator, 
-			MonteCarloParameters monteCarloParameters, TimeSpan maxDuration)
+		public Simulator(IRandomGenerator randomGenerator, 
+			MonteCarloParameters monteCarloParameters)
 		{
-			StartBoard = Guard.NotNull(startBoard, nameof(startBoard));
 			Random = Guard.NotNull(randomGenerator, nameof(randomGenerator));
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
-			MaxDuration = maxDuration;
 		}
 
 		/// <summary>
 		/// Simulates the specified move a number of times using MonteCarlo simulation
 		/// </summary>
 		/// <returns>Score for this move</returns>
-		public MonteCarloStatistics SimulateMove(Move move, int simulationCount)
+		public MonteCarloStatistics SimulateMove(Board startBoard, TimeSpan maxDuration, Move move, int simulationCount)
 		{
+			StartBoard = startBoard;
+			MaxDuration = maxDuration;
+
 			var statistic = new MonteCarloStatistics() { Move = move };
 			if (StartBoard.OpponentPlayerFieldCount == 0)
 			{
@@ -53,56 +57,75 @@ namespace RiddlesHackaton2017.MonteCarlo
 				return statistic;
 			}
 
-			for (int i = 0; i < simulationCount; i++)
-			{
-				var result = SimulateRestOfGame();
-
-				statistic.Count++;
-				if (result.Won.HasValue && result.Won.Value)
-				{
-					statistic.Won++;
-					statistic.WonInGenerations += result.GenerationCount;
-				}
-				if (result.Won.HasValue && !result.Won.Value)
-				{
-					statistic.Lost++;
-					statistic.LostInGenerations += result.GenerationCount;
-				}
-			}
+			Parallel.ForEach(
+				Enumerable.Range(0, simulationCount), 
+				() => new MonteCarloStatistics() { Move = move }, 
+				DoSimulate,
+				localSum => Aggregate(statistic, localSum)
+			);
 
 			return statistic;
 		}
 
-		private IMoveSimulator _SmartMoveSimulator;
-		private IMoveSimulator SmartMoveSimulator
+		private MonteCarloStatistics DoSimulate(int i, ParallelLoopState state, MonteCarloStatistics statistic)
 		{
-			get
+			var result = SimulateRestOfGame(i);
+
+			statistic.Count++;
+			if (result.Won.HasValue && result.Won.Value)
 			{
-				if (_SmartMoveSimulator == null)
-				{
-					_SmartMoveSimulator = new SmartMoveSimulator(Random, Parameters);
-				}
-				return _SmartMoveSimulator;
+				statistic.Won++;
+				statistic.WonInGenerations += result.GenerationCount;
 			}
+			if (result.Won.HasValue && !result.Won.Value)
+			{
+				statistic.Lost++;
+				statistic.LostInGenerations += result.GenerationCount;
+			}
+			return statistic;
 		}
 
-		private IMoveSimulator _SimpleMoveSimulator;
-		private IMoveSimulator SimpleMoveSimulator
+		private void Aggregate(MonteCarloStatistics statistic, MonteCarloStatistics localSum)
 		{
-			get
+			Interlocked.Add(ref statistic.Count, localSum.Count);
+			Interlocked.Add(ref statistic.Won, localSum.Won);
+			Interlocked.Add(ref statistic.WonInGenerations, localSum.WonInGenerations);
+			Interlocked.Add(ref statistic.Lost, localSum.Lost);
+			Interlocked.Add(ref statistic.LostInGenerations, localSum.LostInGenerations);
+		}
+
+		private IMoveSimulator[] _SmartMoveSimulator;
+		private IMoveSimulator GetSmartMoveSimulator(int i)
+		{
+			if (_SmartMoveSimulator == null)
 			{
-				if (_SimpleMoveSimulator == null)
-				{
-					_SimpleMoveSimulator = new SimpleMoveSimulator(Random, Parameters);
-				}
-				return _SimpleMoveSimulator;
+				_SmartMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
 			}
+			if (_SmartMoveSimulator[i] == null)
+			{
+				_SmartMoveSimulator[i] = new SmartMoveSimulator(Random.Clone(i), Parameters);
+			}
+			return _SmartMoveSimulator[i];
+		}
+
+		private IMoveSimulator[] _SimpleMoveSimulator;
+		private IMoveSimulator GetSimpleMoveSimulator(int i)
+		{
+			if (_SimpleMoveSimulator == null)
+			{
+				_SimpleMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
+			}
+			if (_SimpleMoveSimulator[i] == null)
+			{
+				_SimpleMoveSimulator[i] = new SimpleMoveSimulator(Random.Clone(i), Parameters);
+			}
+			return _SimpleMoveSimulator[i];
 		}
 
 		/// <summary>
 		/// Simulates one game to the end
 		/// </summary>
-		public SimulationResult SimulateRestOfGame()
+		public SimulationResult SimulateRestOfGame(int i)
 		{
 			var board = new Board(StartBoard);
 
@@ -114,7 +137,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				var simulator = generationCount < Parameters.SmartMoveGenerationCount
 					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount) 
 					&& MaxDuration > Parameters.SmartMoveDurationThreshold
-					? SmartMoveSimulator : SimpleMoveSimulator;
+					? GetSmartMoveSimulator(i) : GetSimpleMoveSimulator(i);
 				var tuple = simulator.GetRandomMove(board, player);
 				Move move = tuple.Item1;
 				Board nextBoard = tuple.Item2;

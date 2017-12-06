@@ -36,6 +36,19 @@ namespace RiddlesHackaton2017.Bots
 				Parameters.MaxDuration.Ticks));
 		}
 
+		private Simulator _Simulator;
+		private Simulator Simulator
+		{
+			get
+			{
+				if (_Simulator == null)
+				{
+					_Simulator = new Simulator(randomGenerator: Random, monteCarloParameters: Parameters);
+				}
+				return _Simulator;
+			}
+		}
+
 		public override Move GetMove()
 		{
 			MonteCarloStatistics bestResult = new MonteCarloStatistics()
@@ -51,7 +64,7 @@ namespace RiddlesHackaton2017.Bots
 
 			var stopwatch = Stopwatch.StartNew();
 			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
-			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount);
+			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount, Parameters.StartSimulationCount);
 
 			var moveGeneratorStopwatch = Stopwatch.StartNew();
 			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
@@ -82,8 +95,7 @@ namespace RiddlesHackaton2017.Bots
 				var moveScore = candidateMoves[count];
 				var move = moveScore.Move;
 				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
-				var simulator = new Simulator(startBoard, Random, Parameters, maxDuration);
-				var result = simulator.SimulateMove(move, simulationCount);
+				var result = Simulator.SimulateMove(startBoard, maxDuration, move, simulationCount);
 
 				if (Parameters.LogLevel >= 2)
 				{

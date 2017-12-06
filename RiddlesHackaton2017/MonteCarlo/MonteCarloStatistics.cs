@@ -7,23 +7,23 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public Move Move { get; set; }
 
 		/// <summary>Number of played games</summary>
-		public int Count { get; set; }
+		public int Count;
 
 		/// <summary>Number of won games</summary>
-		public int Won { get; set; }
+		public int Won;
 
 		/// <summary>Number of lost games</summary>
-		public int Lost { get; set; }
+		public int Lost;
 
 		public int Draw { get { return Count - Won - Lost; } }
 
 		public double Score { get {  return (double)(2 * Won + Draw) / Count / 2; } }
 
 		/// <summary>Total number of generations of all won simlations</summary>
-		public int WonInGenerations { get; internal set; }
+		public int WonInGenerations;
 
 		/// <summary>Total number of generations of all lost simlations</summary>
-		public int LostInGenerations { get; internal set; }
+		public int LostInGenerations;
 
 		/// <summary>Average number of generations until we win</summary>
 		public double AverageWinGenerations { get { return Won > 0 ? (double)WonInGenerations / Won : double.PositiveInfinity; } }
