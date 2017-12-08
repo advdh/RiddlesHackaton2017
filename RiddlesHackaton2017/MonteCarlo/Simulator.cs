@@ -26,10 +26,10 @@ namespace RiddlesHackaton2017.MonteCarlo
 		/// <summary>
 		/// Simulates the specified move a number of times using MonteCarlo simulation
 		/// </summary>
-		/// <returns>Score for this move</returns>
+		/// <returns>Statistics object for this move</returns>
 		public MonteCarloStatistics SimulateMove(Board startBoard, TimeSpan maxDuration, Move move, int simulationCount)
 		{
-			StartBoard = startBoard;
+			StartBoard = Guard.NotNull(startBoard, nameof(startBoard));
 			MaxDuration = maxDuration;
 
 			var statistic = new MonteCarloStatistics() { Move = move };
@@ -57,13 +57,20 @@ namespace RiddlesHackaton2017.MonteCarlo
 				return statistic;
 			}
 
-			Parallel.ForEach(
-				Enumerable.Range(0, simulationCount), 
-				() => new MonteCarloStatistics() { Move = move }, 
-				DoSimulate,
-				localSum => Aggregate(statistic, localSum)
-			);
-
+			try
+			{
+				Parallel.ForEach(
+					Enumerable.Range(0, simulationCount),
+					() => new MonteCarloStatistics() { Move = move },
+					DoSimulate,
+					localSum => Aggregate(statistic, localSum)
+				);
+			}
+			catch(AggregateException ex)
+			{
+				//Log the exception and ignore it
+				Console.Error.WriteLine($"{ex.ToString()}");
+			}
 			return statistic;
 		}
 

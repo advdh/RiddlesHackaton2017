@@ -2,17 +2,51 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace RiddlesHackaton2017.IntegrationTest
 {
 	[TestClass]
 	public class GameLogAnalyzer
 	{
+		/// <summary>
+		/// Find exceptions in log files
+		/// </summary>
 		[TestMethod]
-		public void Test()
+		public void FindExceptions()
+		{
+			using (var database = new Database())
+			{
+				database.Connect();
+
+				var games = database.GetMyGames();
+				foreach (var game in games.Where(g => g.Version == 35))
+				{
+					var log = game.Log;
+					var lines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					bool writeNextLine = false;
+					foreach (var line in lines)
+					{
+						if (writeNextLine)
+						{
+							if (line.Contains("IO log")) break;
+							Console.WriteLine(line);
+						}
+						else if (line.Contains("Unhandled Exception"))
+						{
+							Console.WriteLine($"Game {game.Id}, my version {game.Version}");
+							writeNextLine = true;
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Analyzes which opponents steal my time
+		/// </summary>
+		[TestMethod]
+		public void AnalyzeOpponentsStealingTime()
 		{
 			int maxRound = 10;
 
@@ -20,8 +54,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				database.Connect();
 				var opponents = new Dictionary<string, Statistics>();
-				var games = database.GetGames();
-				foreach(var game in games)
+				var games = database.GetMyGames();
+				foreach (var game in games)
 				{
 					var log = game.Log;
 					var result = GetGameStatistics(log, maxRound);
@@ -41,7 +75,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 					stats.TotalUsedMs += result[2];
 				}
 
-				foreach(var de in opponents.Where(s => s.Value.TotalUsedMs > 0))
+				foreach (var de in opponents.Where(s => s.Value.TotalUsedMs > 0))
 				{
 					var opponent = de.Key;
 					var stats = de.Value;
@@ -58,7 +92,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			int usedMs = 0;
 			var pattern = @"Round\s(?<round>\d+).*\smoves\s=\s(?<moves>\d+).*\ssimulations\s=\s(?<simulations>\d+).*Used\s(?<used>\d+)";
 			var regex = new Regex(pattern);
-			foreach(var line in lines)
+			foreach (var line in lines)
 			{
 				var match = regex.Match(line);
 				if (match.Success)
