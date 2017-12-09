@@ -19,7 +19,12 @@ namespace RiddlesHackaton2017.Bots
 
 		private RoundStatistics RoundStatistics = new RoundStatistics();
 
-		public Anila8Bot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
+		public Anila8Bot(IConsole consoleError) : this(consoleError, new TroschuetzRandomGenerator(new Random()))
+		{
+
+		}
+
+		private Anila8Bot(IConsole consoleError, IRandomGenerator random) : base(consoleError)
 		{
 			Random = Guard.NotNull(random, nameof(random));
 		}

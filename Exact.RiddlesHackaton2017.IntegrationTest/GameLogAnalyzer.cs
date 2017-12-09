@@ -32,7 +32,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 							if (line.Contains("IO log")) break;
 							Console.WriteLine(line);
 						}
-						else if (line.Contains("Unhandled Exception"))
+						else if (line.Contains("Exception"))
 						{
 							Console.WriteLine($"Game {game.Id}, my version {game.Version}");
 							writeNextLine = true;

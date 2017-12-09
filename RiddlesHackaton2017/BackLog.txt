@@ -45,3 +45,7 @@ v29, UnmanagedCode, c8d3239e-2688-4b02-99b9-888f17afc009
 
 v30, UnmanagedCode, bdeb8b21-226a-4791-a531-66fa9703ff45
 	Round 34: timed out
+
+v36, UnmanagedCode, 74d8b916-47a4-4b72-8216-9c0987a8532c
+	Rounds 20, 21, 22, and others: even with parallel simulation, only time for one move
+	TODO: If UnmanageCode then use less time in the beginning

@@ -7,6 +7,7 @@ using RiddlesHackaton2017.RandomGeneration;
 using System;
 using System.IO;
 using System.Linq;
+using Troschuetz.Random.Generators;
 
 namespace RiddlesHackaton2017.IntegrationTest
 {
@@ -24,7 +25,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
 				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
-				, bot: new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()))
+				, bot: new Anila8Bot(new TheConsole())
 				{
 					Parameters = new MonteCarloParameters()
 					{
@@ -76,7 +77,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				string gameId = Path.GetFileNameWithoutExtension(filename);
 				Console.WriteLine(gameId);
-				DoReplay(gameId, bot: new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()))
+				DoReplay(gameId, bot: new Anila8Bot(new TheConsole())
 				{
 					Parameters = new MonteCarloParameters() { MaxDuration = maxDuration }
 				});
@@ -101,7 +102,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			}
 			if (bot == null)
 			{
-				bot = new Anila8Bot(new TheConsole(), new RandomGenerator(new Random()));
+				bot = new Anila8Bot(new TheConsole());
 			}
 			var lines = GetLines(gameId, source);
 			DoReplayLines(lines, differenceOnly, action, rounds, bot);
