@@ -27,12 +27,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
-					Parameters = new MonteCarloParameters()
-					{
-						//LogLevel = 2,
-						//Debug = true,
-						//MaxDuration = TimeSpan.FromDays(1)
-					}
+					Parameters = MonteCarloParameters.Life
 				},
 				source: LogSource.File);
 		}
