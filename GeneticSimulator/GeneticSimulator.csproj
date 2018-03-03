@@ -47,9 +47,9 @@
     <Compile Include="Analysis.cs" />
     <Compile Include="GameResult.cs" />
     <Compile Include="GameRunner.cs" />
-    <Compile Include="Generation.cs" />
-    <Compile Include="GenerationRandomizer.cs" />
-    <Compile Include="Generations.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ConfigurationGenerator.cs" />
+    <Compile Include="Configurations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

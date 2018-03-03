@@ -12,7 +12,7 @@ namespace GeneticSimulator
 		public void AnalyzeResults()
 		{
 			var path = @"d:\temp\GeneticSimulator_0.xml";
-			var results = Generations.Load(path)
+			var results = Configurations.Load(path)
 				.OrderByDescending(r => r.Won)
 				.ThenByDescending(r => r.Draw);
 			int ix = 1;

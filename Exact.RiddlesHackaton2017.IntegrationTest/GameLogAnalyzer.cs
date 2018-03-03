@@ -54,7 +54,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				database.Connect();
 				var opponents = new Dictionary<string, Statistics>();
-				var games = database.GetMyGames();
+				var games = database.GetMyGames().Where(g => g.PlayedDate > new DateTime(2017, 12, 12, 14, 0, 0));
 				foreach (var game in games)
 				{
 					var log = game.Log;

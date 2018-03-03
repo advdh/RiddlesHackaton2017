@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RiddlesHackaton2017.Models;
+using System;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
@@ -7,6 +8,11 @@ namespace RiddlesHackaton2017.Bots
 {
 	public class MonteCarloParameters
 	{
+		public MonteCarloParameters()
+		{
+			CalculateWinBonus();
+		}
+
 		/// <summary>Minimum number of simulations per move</summary>
 		public int MinSimulationCount { get; set; } = 5;
 
@@ -20,7 +26,38 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Number of moves</summary>
 		public int MoveCount { get; set; } = 100;
 
-		public int[] WinBonus { get; set; } = new[] { 128, 91, 64, 45, 32, 23, 16, 11, 8, 6, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		[XmlIgnore]
+		public int[] WinBonus { get; set; }
+
+		/// <summary>Maximum winbonus (for cellcount = 0)</summary>
+		public int MaxWinBonus
+		{
+			get { return _MaxWinBonus; }
+			set { _MaxWinBonus = value; CalculateWinBonus(); }
+		}
+		private int _MaxWinBonus = 128;
+
+		/// <summary>
+		/// Decrement factor of winbonus (winbonus for cellcount (n + 1) = WinBonusDecrementFactor * cellcount (n))
+		/// </summary>
+		/// <remarks>Typically between 0.0 and 1.0</remarks>
+		public double WinBonusDecrementFactor
+		{
+			get { return _WinBonusDecrementFactor; }
+			set { _WinBonusDecrementFactor = value; CalculateWinBonus();}
+		}
+		private double _WinBonusDecrementFactor = 0.707;
+
+		private void CalculateWinBonus()
+		{
+			WinBonus = new int[Board.Size];
+			double value = MaxWinBonus;
+			for (int i = 0; i < WinBonus.Length; i++)
+			{
+				WinBonus[i] = (int)value;
+				value *= WinBonusDecrementFactor;
+			}
+		}
 
 		/// <summary>Percentage of kill moves in random move and simulation</summary>
 		public int KillMovePercentage { get; set; } = 49;
@@ -68,27 +105,17 @@ namespace RiddlesHackaton2017.Bots
 			}
 		}
 
-		public static MonteCarloParameters Life => new MonteCarloParameters()
+		public static MonteCarloParameters Life
 		{
-			MinSimulationCount = 25,
-			MaxSimulationCount = 47,
-			StartSimulationCount = 26,
-			MoveCount = 46,
-			WinBonus = new[] {67, 58, 50, 44, 38, 33, 28, 25, 21, 19, 16, 14, 12, 10, 9, 8, 7, 6, 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-			CellCountWeight = 5,
-			WinBonusWeight = 5,
-			MaxDuration = TimeSpan.FromMilliseconds(1577),
-			MaxRelativeDuration = 0.09,
-			SmartMoveDurationThreshold = TimeSpan.FromMilliseconds(465),
-			PassMovePercentage = 39,
-			KillMovePercentage = 30,
-			SimulationMaxGenerationCount = 13,
-			SmartMoveGenerationCount = 58,
-			SmartMoveMinimumFieldCount = 10,
-			MinimumFieldCountForBirthMoves = 8,
-			Debug = false,
-			LogLevel = 0,
-		};
+			get
+			{
+				return new MonteCarloParameters()
+				{
+					MaxDuration = TimeSpan.FromMilliseconds(800),
+					MoveCount = 100,
+				};
+			}
+		}
 
 		public int LogLevel{ get; set; } = 0;
 
@@ -138,6 +165,8 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
 			sb.AppendLine($"StartSimulationCount = {StartSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
+			sb.AppendLine($"MaxWinBonus = {MaxWinBonus}");
+			sb.AppendLine($"WinBonusDecrementFactor = {WinBonusDecrementFactor:0.000}");
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
 			sb.AppendLine($"CellCountWeight = {CellCountWeight}");
 			sb.AppendLine($"WinBonusWeight = {WinBonusWeight}");
@@ -154,6 +183,29 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
+		}
+
+		public override int GetHashCode()
+		{
+			return MinSimulationCount.GetHashCode()
+				^ MaxSimulationCount.GetHashCode()
+				^ StartSimulationCount.GetHashCode()
+				^ MoveCount.GetHashCode()
+				^ MaxWinBonus.GetHashCode()
+				^ WinBonusDecrementFactor.GetHashCode()
+				^ CellCountWeight.GetHashCode()
+				^ WinBonusWeight.GetHashCode()
+				^ MaxDuration.GetHashCode()
+				^ MaxRelativeDuration.GetHashCode()
+				^ SmartMoveDurationThreshold.GetHashCode()
+				^ PassMovePercentage.GetHashCode()
+				^ KillMovePercentage.GetHashCode()
+				^ SimulationMaxGenerationCount.GetHashCode()
+				^ SmartMoveGenerationCount.GetHashCode()
+				^ SmartMoveMinimumFieldCount.GetHashCode()
+				^ MinimumFieldCountForBirthMoves.GetHashCode()
+				^ Debug.GetHashCode()
+				^ LogLevel.GetHashCode();
 		}
 	}
 }

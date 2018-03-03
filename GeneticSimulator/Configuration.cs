@@ -5,14 +5,14 @@ using System.Linq;
 
 namespace GeneticSimulator
 {
-	public class Generation
+	public class Configuration
 	{
-		public Generation()
+		public Configuration()
 		{
 
 		}
 
-		public Generation(MonteCarloParameters monteCarloParameters)
+		public Configuration(MonteCarloParameters monteCarloParameters)
 		{
 			Parameters = monteCarloParameters;
 		}

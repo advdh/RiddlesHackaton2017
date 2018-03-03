@@ -37,30 +37,29 @@ namespace GeneticSimulator
 			Board board = GetRandomBoard();
 
 			//Play
-			bool goOn = board.CalculatedPlayer1FieldCount > 0 && board.CalculatedPlayer2FieldCount > 0 && board.Round <= Board.MaxRounds;
+			bool goOn = true;
 			while (goOn)
 			{
 				//Player 1
 				board.MyPlayer = Player.Player1;
-				PlayerPlay(board, bot1, Player.Player1, timeLimit1, ref bot1Timeout);
-				goOn = board.CalculatedPlayer1FieldCount > 0 && board.CalculatedPlayer2FieldCount > 0 && board.Round <= Board.MaxRounds;
+				PlayerPlay(ref board, bot1, Player.Player1, ref timeLimit1, ref bot1Timeout);
+				goOn = board.CalculatedPlayer1FieldCount > 0 && board.CalculatedPlayer2FieldCount > 0;
 				if (!goOn)
 				{
-					return GetResult(board, timeLimit1, timeLimit2);
+					return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout);
 				}
 
 				//Player 2
 				board.MyPlayer = Player.Player2;
-				PlayerPlay(board, bot2, Player.Player2, timeLimit2, ref bot2Timeout);
+				PlayerPlay(ref board, bot2, Player.Player2, ref timeLimit2, ref bot2Timeout);
 				goOn = board.CalculatedPlayer1FieldCount > 0 && board.CalculatedPlayer2FieldCount > 0 && board.Round <= Board.MaxRounds;
 
-				board.Round++;
 			}
 
-			return GetResult(board, timeLimit1, timeLimit2);
+			return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout);
 		}
 
-		private void PlayerPlay(Board board, Anila8Bot bot, Player player, TimeSpan playerTimeBank, ref bool playerTimedOut)
+		private void PlayerPlay(ref Board board, Anila8Bot bot, Player player, ref TimeSpan playerTimeBank, ref bool playerTimedOut)
 		{
 			Move move = new PassMove();
 			if (!playerTimedOut)
@@ -79,9 +78,17 @@ namespace GeneticSimulator
 			board = board.ApplyMoveAndNext(player, move, true);
 		}
 
-		private GameResult GetResult(Board board, TimeSpan timeBank1, TimeSpan timeBank2)
+		private GameResult GetResult(Board board, TimeSpan timeBank1, TimeSpan timeBank2, bool bot1TimedOut, bool bot2TimedOut)
 		{
-			var result = new GameResult() { Winner = null, Rounds = Math.Min(board.Round, Board.MaxRounds), TimeBank1 = timeBank1, TimeBank2 = timeBank2 };
+			var result = new GameResult()
+			{
+				Winner = null,
+				Rounds = Math.Min(board.Round, Board.MaxRounds),
+				TimeBank1 = timeBank1,
+				TimeBank2 = timeBank2,
+				Bot1TimedOut = bot1TimedOut,
+				Bot2TimedOut = bot2TimedOut,
+			};
 			if (board.CalculatedPlayer1FieldCount == 0 && board.CalculatedPlayer2FieldCount > 0)
 			{
 				result.Winner = Player.Player2;
