@@ -28,6 +28,10 @@ namespace GeneticSimulator
 			return (max - min) * Random.NextDouble() + min;
 		}
 
+		/// <summary>
+		/// Generates a random set of MonteCarloParameters
+		/// </summary>
+		/// <remarks>Code duplication: TODO: reuse Vary method</remarks>
 		public MonteCarloParameters Generate()
 		{
 			var parameters = new MonteCarloParameters();
@@ -66,6 +70,159 @@ namespace GeneticSimulator
 			parameters.CellCountWeight = RangeRelative(0, 10);
 			parameters.WinBonusWeight = RangeRelative(0, 10);
 
+			return parameters;
+		}
+
+		public enum Parameters
+		{
+			MinSimulationCount,
+			MaxSimulationCount,
+			StartSimulationCount,
+			MoveCount,
+			WinBonusDecrementFactor,
+			MaxWinBonus,
+			KillMovePercentage,
+			PassMovePercentage,
+			MinimumFieldCountForBirthMoves,
+			MaxDuration,
+			MaxRelativeDuration,
+			SimulationMaxGenerationCount,
+			SmartMoveGenerationCount,
+			SmartMoveMinimumFieldCount,
+			SmartMoveDurationThreshold,
+			CellCountWeight,
+			WinBonusWeight,
+		}
+
+		/// <summary>
+		/// Generates a MonteCarloParameters object with speified one parameter randomly changed with respect to the specified MonteCarloParameters
+		/// </summary>
+		public MonteCarloParameters Vary(MonteCarloParameters original, Parameters varyingParameter)
+		{
+			var parameters = new MonteCarloParameters(original);
+
+			switch (varyingParameter)
+			{
+				case Parameters.MinSimulationCount:
+					parameters.MinSimulationCount = Range(1, 100);
+					break;
+				case Parameters.MaxSimulationCount:
+					parameters.MaxSimulationCount = Range(parameters.MinSimulationCount, 100);
+					break;
+				case Parameters.StartSimulationCount:
+					parameters.StartSimulationCount = Range(parameters.MinSimulationCount, parameters.MaxSimulationCount);
+					break;
+				case Parameters.MoveCount:
+					parameters.MoveCount = Range(1, 100);
+					break;
+				case Parameters.MaxWinBonus:
+					parameters.MaxWinBonus = Range(0, 100000);
+					break;
+				case Parameters.WinBonusDecrementFactor:
+					parameters.WinBonusDecrementFactor = Range(0.33, 1.0);
+					break;
+				case Parameters.KillMovePercentage:
+					parameters.KillMovePercentage = RangeRelative(0, 100);
+					break;
+				case Parameters.PassMovePercentage:
+					parameters.PassMovePercentage = RangeRelative(0, 100 - parameters.KillMovePercentage);
+					break;
+				case Parameters.MinimumFieldCountForBirthMoves:
+					parameters.MinimumFieldCountForBirthMoves = Range(2, 100);
+					break;
+				case Parameters.MaxDuration:
+					parameters.MaxDuration = TimeSpan.FromMilliseconds(Range(0, 10000));
+					break;
+				case Parameters.MaxRelativeDuration:
+					parameters.MaxRelativeDuration = Range(0.0, 1.0);
+					break;
+				case Parameters.SimulationMaxGenerationCount:
+					parameters.SimulationMaxGenerationCount = Range(0, 100);
+					break;
+				case Parameters.SmartMoveGenerationCount:
+					parameters.SmartMoveGenerationCount = Range(0, 100);
+					break;
+				case Parameters.SmartMoveMinimumFieldCount:
+					parameters.SmartMoveMinimumFieldCount = Range(0, 100);
+					break;
+				case Parameters.SmartMoveDurationThreshold:
+					parameters.SmartMoveDurationThreshold = TimeSpan.FromMilliseconds(Range(0, 1000));
+					break;
+				case Parameters.CellCountWeight:
+					parameters.CellCountWeight = RangeRelative(0, 10);
+					break;
+				case Parameters.WinBonusWeight:
+					parameters.WinBonusWeight = RangeRelative(0, 10);
+					break;
+				default:
+					throw new ArgumentException($"Vary: parameter not supported: {varyingParameter}");
+			}
+			return parameters;
+		}
+
+		/// <summary>
+		/// Generates a MonteCarloParameters object with speified one parameter value multiplied with the specified factor
+		/// </summary>
+		public MonteCarloParameters Vary(MonteCarloParameters original, Parameters varyingParameter, double factor)
+		{
+			var parameters = new MonteCarloParameters(original);
+
+			switch (varyingParameter)
+			{
+				case Parameters.MinSimulationCount:
+					parameters.MinSimulationCount = (int)(original.MinSimulationCount * factor);
+					break;
+				case Parameters.MaxSimulationCount:
+					parameters.MaxSimulationCount = (int)(original.MinSimulationCount * factor);
+					break;
+				case Parameters.StartSimulationCount:
+					parameters.StartSimulationCount = (int)(original.StartSimulationCount * factor);
+					break;
+				case Parameters.MoveCount:
+					parameters.MoveCount = (int)(original.MoveCount * factor);
+					break;
+				case Parameters.MaxWinBonus:
+					parameters.MaxWinBonus = (int)(original.MaxWinBonus * factor);
+					break;
+				case Parameters.WinBonusDecrementFactor:
+					parameters.WinBonusDecrementFactor = original.WinBonusDecrementFactor * factor;
+					break;
+				case Parameters.KillMovePercentage:
+					parameters.KillMovePercentage = (int)(original.KillMovePercentage * factor);
+					break;
+				case Parameters.PassMovePercentage:
+					parameters.PassMovePercentage = (int)(original.PassMovePercentage * factor);
+					break;
+				case Parameters.MinimumFieldCountForBirthMoves:
+					parameters.MinimumFieldCountForBirthMoves = (int)(original.MinimumFieldCountForBirthMoves* factor); ;
+					break;
+				case Parameters.MaxDuration:
+					parameters.MaxDuration = TimeSpan.FromMilliseconds(original.MaxDuration.TotalMilliseconds * factor);
+					break;
+				case Parameters.MaxRelativeDuration:
+					parameters.MaxRelativeDuration = (int)(original.MaxRelativeDuration * factor);
+					break;
+				case Parameters.SimulationMaxGenerationCount:
+					parameters.SimulationMaxGenerationCount = (int)(original.SimulationMaxGenerationCount * factor);
+					break;
+				case Parameters.SmartMoveGenerationCount:
+					parameters.SmartMoveGenerationCount = (int)(original.SmartMoveGenerationCount * factor); ;
+					break;
+				case Parameters.SmartMoveMinimumFieldCount:
+					parameters.SmartMoveMinimumFieldCount = (int)(original.SmartMoveMinimumFieldCount * factor);
+					break;
+				case Parameters.SmartMoveDurationThreshold:
+					parameters.SmartMoveDurationThreshold = TimeSpan.FromMilliseconds(original.SmartMoveDurationThreshold.TotalMilliseconds * factor);
+					break;
+				case Parameters.CellCountWeight:
+					parameters.CellCountWeight = (int)(original.CellCountWeight * factor);
+					break;
+				case Parameters.WinBonusWeight:
+					parameters.WinBonusWeight = (int)(original.WinBonusWeight* factor);
+					break;
+				default:
+					throw new ArgumentException($"Vary: parameter not supported: {varyingParameter}");
+			}
 			return parameters;
 		}
 

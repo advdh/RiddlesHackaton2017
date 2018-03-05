@@ -6,6 +6,11 @@ namespace GeneticSimulator
 {
 	public class GameResult
 	{
+		/// <summary>Hashcode of parameter1</summary>
+		public int Parameters1Hash { get; set; }
+		/// <summary>Hashcode of parameter2</summary>
+		public int Parameters2Hash { get; set; }
+
 		public Player? Winner { get; set; }
 		public int Rounds { get; set; }
 		[XmlIgnore]

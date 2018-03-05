@@ -13,6 +13,32 @@ namespace RiddlesHackaton2017.Bots
 			CalculateWinBonus();
 		}
 
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		public MonteCarloParameters(MonteCarloParameters original)
+		{
+			MinSimulationCount = original.MinSimulationCount;
+			MaxSimulationCount = original.MaxSimulationCount;
+			StartSimulationCount = original.StartSimulationCount;
+			MoveCount = original.MoveCount;
+			WinBonusDecrementFactor = original.WinBonusDecrementFactor;
+			MaxWinBonus = original.MaxWinBonus;
+			KillMovePercentage = original.KillMovePercentage;
+			PassMovePercentage = original.PassMovePercentage;
+			MinimumFieldCountForBirthMoves = original.MinimumFieldCountForBirthMoves;
+			MaxDuration = original.MaxDuration;
+			MaxRelativeDuration = original.MaxRelativeDuration;
+			Debug = original.Debug;
+			LogLevel = original.LogLevel;
+			SimulationMaxGenerationCount = original.SimulationMaxGenerationCount;
+			SmartMoveGenerationCount = original.SmartMoveGenerationCount;
+			SmartMoveMinimumFieldCount = original.SmartMoveMinimumFieldCount;
+			SmartMoveDurationThreshold = original.SmartMoveDurationThreshold;
+			CellCountWeight = original.CellCountWeight;
+			WinBonusWeight = original.WinBonusWeight;
+		}
+
 		/// <summary>Minimum number of simulations per move</summary>
 		public int MinSimulationCount { get; set; } = 5;
 
@@ -46,7 +72,7 @@ namespace RiddlesHackaton2017.Bots
 			get { return _WinBonusDecrementFactor; }
 			set { _WinBonusDecrementFactor = value; CalculateWinBonus();}
 		}
-		private double _WinBonusDecrementFactor = 0.707;
+		private double _WinBonusDecrementFactor = 0.916;
 
 		private void CalculateWinBonus()
 		{
@@ -183,6 +209,32 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType()) return false;
+
+			var p = (MonteCarloParameters)obj;
+			return MinSimulationCount == p.MinSimulationCount
+				&& MaxSimulationCount == p.MaxSimulationCount
+				&& StartSimulationCount == p.StartSimulationCount
+				&& MoveCount == p.MoveCount
+				&& MaxWinBonus == p.MaxWinBonus
+				&& WinBonusDecrementFactor == p.WinBonusDecrementFactor
+				&& CellCountWeight == p.CellCountWeight
+				&& WinBonusWeight == p.WinBonusWeight
+				&& MaxDuration == p.MaxDuration
+				&& MaxRelativeDuration == p.MaxRelativeDuration
+				&& SmartMoveDurationThreshold == p.SmartMoveDurationThreshold
+				&& PassMovePercentage == p.PassMovePercentage
+				&& KillMovePercentage == p.KillMovePercentage
+				&& SimulationMaxGenerationCount == p.SimulationMaxGenerationCount
+				&& SmartMoveGenerationCount == p.SmartMoveGenerationCount
+				&& SmartMoveMinimumFieldCount == p.SmartMoveMinimumFieldCount
+				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
+				&& Debug == p.Debug
+				&& LogLevel == p.LogLevel;
 		}
 
 		public override int GetHashCode()

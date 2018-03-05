@@ -46,7 +46,8 @@ namespace GeneticSimulator
 				goOn = board.CalculatedPlayer1FieldCount > 0 && board.CalculatedPlayer2FieldCount > 0;
 				if (!goOn)
 				{
-					return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout);
+					return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout, 
+						bot1Parameters.GetHashCode(), bot2Parameters.GetHashCode());
 				}
 
 				//Player 2
@@ -56,7 +57,8 @@ namespace GeneticSimulator
 
 			}
 
-			return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout);
+			return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout,
+						bot1Parameters.GetHashCode(), bot2Parameters.GetHashCode());
 		}
 
 		private void PlayerPlay(ref Board board, Anila8Bot bot, Player player, ref TimeSpan playerTimeBank, ref bool playerTimedOut)
@@ -78,7 +80,8 @@ namespace GeneticSimulator
 			board = board.ApplyMoveAndNext(player, move, true);
 		}
 
-		private GameResult GetResult(Board board, TimeSpan timeBank1, TimeSpan timeBank2, bool bot1TimedOut, bool bot2TimedOut)
+		private GameResult GetResult(Board board, TimeSpan timeBank1, TimeSpan timeBank2, bool bot1TimedOut, bool bot2TimedOut,
+			int hash1, int hash2)
 		{
 			var result = new GameResult()
 			{
@@ -88,6 +91,8 @@ namespace GeneticSimulator
 				TimeBank2 = timeBank2,
 				Bot1TimedOut = bot1TimedOut,
 				Bot2TimedOut = bot2TimedOut,
+				Parameters1Hash = hash1,
+				Parameters2Hash = hash2,
 			};
 			if (board.CalculatedPlayer1FieldCount == 0 && board.CalculatedPlayer2FieldCount > 0)
 			{
@@ -103,18 +108,15 @@ namespace GeneticSimulator
 		private Board GetRandomBoard()
 		{
 			var board = new Board() { Round = 1 };
-			for (short player = 1; player <= 2; player++)
+			for (int i = 0; i < 40; i++)
 			{
-				for (int i = 0; i < 25; i++)
+				Position position;
+				do
 				{
-					Position position;
-					do
-					{
-						position = new Position(Random.Next(Board.Width / 2), Random.Next(Board.Height));
-					} while (board.Field[position.Index] != 0);
-					board.Field[position.Index] = player;
-					board.Field[Board.Size - 1 - position.Index] = (short)(3 - player);
-				}
+					position = new Position(Random.Next(Board.Width), Random.Next(Board.Height / 2));
+				} while (board.Field[position.Index] != 0);
+				board.Field[position.Index] = 1;
+				board.Field[Board.Size - 1 - position.Index] = 2;
 			}
 			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
 			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
