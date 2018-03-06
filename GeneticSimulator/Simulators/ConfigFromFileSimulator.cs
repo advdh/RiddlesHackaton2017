@@ -3,7 +3,7 @@ using System.IO;
 
 namespace GeneticSimulator.Simulators
 {
-	public class ConfigFromFileSimulator : BaseSimulator, ISimulator
+	public class ConfigFromFileSimulator : BaseSimulator
 	{
 		public const string BasePath = @"d:\temp\GeneticSimulator";
 
@@ -18,7 +18,7 @@ namespace GeneticSimulator.Simulators
 			}
 		}
 
-		public Configurations Generate(ConfigurationGenerator generator, int populationSize)
+		public override Configurations Generate(ConfigurationGenerator generator, int populationSize)
 		{
 			return Configurations.Load(ConfigurationsFilename);
 		}

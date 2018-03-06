@@ -43,4 +43,5 @@ V33	21-11-2017, 22:08	Use max. 10% of remaining time + don't use SmartMoveSimula
 V35 06-12-2017, 23:17	Parallellized simulations + start with 25 simulations, increase max to 50
 V36 08-12-2017, 12:55	Catch and ignore aggregate exceptions in parallell part
 V37 09-12-2017, 13:50	Use Troschuetz random generator
-V37.1 05-03-2018, 08:30	Parameter WinBonusDecrementFactor = 0.916, based on simulations
+V37.1 05-03-2018, 08:30	Parameter WinBonusDecrementFactor = 0.916, based on simulation results
+V38	06-03-2018, 09:30	Parameter SimulationMaxGenerationCount = 5, based on simulation results

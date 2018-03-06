@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GeneticSimulator.Simulators
 {
-	public class VaryingOneSimulator : BaseSimulator, ISimulator
+	public class VaryingOneSimulator : BaseSimulator
 	{
 		private ConfigurationGenerator.Parameters VaryingParameter { get; }
 		private double? RelativeIncrease { get; }
@@ -28,7 +28,7 @@ namespace GeneticSimulator.Simulators
 			}
 		}
 
-		public Configurations Generate(ConfigurationGenerator generator, int populationSize)
+		public override Configurations Generate(ConfigurationGenerator generator, int populationSize)
 		{
 			var result = new Configurations
 			{

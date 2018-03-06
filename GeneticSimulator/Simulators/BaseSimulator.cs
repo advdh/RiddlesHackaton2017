@@ -5,7 +5,7 @@ namespace GeneticSimulator.Simulators
 {
 	public abstract class BaseSimulator
 	{
-		private const string Directory = @"D:\Temp\GeneticSimulator";
+		protected const string Directory = @"D:\Temp\GeneticSimulator";
 		protected string Filename { get; private set; }
 
 		protected BaseSimulator(string commandLine)
@@ -15,7 +15,9 @@ namespace GeneticSimulator.Simulators
 				DateTime.Now));
 		}
 
-		public void Simulate(Configurations configurations, int simulationCount)
+		public abstract Configurations Generate(ConfigurationGenerator generator, int populationSize);
+
+		public virtual void Simulate(Configurations configurations, int simulationCount)
 		{
 			configurations.Save(Filename);
 

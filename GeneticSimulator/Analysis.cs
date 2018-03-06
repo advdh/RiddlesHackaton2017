@@ -74,6 +74,79 @@ namespace GeneticSimulator
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
 		}
 
+		[TestMethod]
+		public void Results_MoveType()
+		{
+			AnalyzeResults("fromfile 0 100 ConfigurationsMoveType_xml 2018-03-05_11_35_21.xml",
+				new[] { ConfigurationGenerator.Parameters.KillMovePercentage, ConfigurationGenerator.Parameters.PassMovePercentage });
+		}
+
+		[TestMethod]
+		public void Results_MoveCount()
+		{
+			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCount_xml 2018-03-05_03_23_05.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount });
+		}
+
+		/// <summary>
+		/// MoveCount vs. SimulationCount
+		/// </summary>
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_676()
+		{
+			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCountVsSimulations676_xml 2018-03-05_04_28_09.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_324()
+		{
+			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCountVsSimulations324_xml 2018-03-05_07_08_11.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_144()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations144_xml 2018-03-05_09_18_06.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_072()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations72_xml 2018-03-05_09_48_23.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_036()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations36_xml 2018-03-05_10_00_14.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_018()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations18_xml 2018-03-05_10_13_39.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_SimulationMaxGenerationCount()
+		{
+			AnalyzeResults("fromfile 0 25 SimulationMaxGenerationCount_xml 2018-03-05_10_43_15.xml",
+				new[] { ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+		}
+
+		[TestMethod]
+		public void Results_SimulationMaxGenerationCount2()
+		{
+			AnalyzeResults("fromfile 0 25 SimulationMaxGenerationCount2_xml 2018-03-06_07_23_13.xml",
+				new[] { ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+		}
+
 		private void AnalyzeResults(string path)
 		{
 			string filename = Path.Combine(Directory, path);

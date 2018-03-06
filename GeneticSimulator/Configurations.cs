@@ -16,8 +16,17 @@ namespace GeneticSimulator
 			}
 		}
 
-		public static Configurations Load(string filename)
+		public static Configurations Load(string filename, bool createIfNotExists = false)
 		{
+			//Create empty file, if necessary
+			if (createIfNotExists && !File.Exists(filename))
+			{
+				var result = new Configurations();
+				result.Save(filename);
+				return result;
+			}
+
+			//Read existing file
 			using (var stream = new FileStream(filename, FileMode.Open))
 			{
 				var serializer = new XmlSerializer(typeof(Configurations));

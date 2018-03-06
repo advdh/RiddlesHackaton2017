@@ -22,12 +22,15 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
+			var parms = MonteCarloParameters.Life;
+			parms.SimulationMaxGenerationCount = 5;
+
 			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
 				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
-					Parameters = MonteCarloParameters.Life
+					Parameters = parms//MonteCarloParameters.Life
 				},
 				source: LogSource.File);
 		}

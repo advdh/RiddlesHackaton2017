@@ -8,7 +8,7 @@ namespace GeneticSimulator
 		static void Main(string[] args)
 		{
 			var generator = new ConfigurationGenerator(new Random());
-			ISimulator simulator = null;
+			BaseSimulator simulator = null;
 			int populationSize;
 			int simulationCount;
 

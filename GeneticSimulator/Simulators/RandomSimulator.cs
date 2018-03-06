@@ -2,13 +2,13 @@
 
 namespace GeneticSimulator.Simulators
 {
-	public class RandomSimulator : BaseSimulator, ISimulator
+	public class RandomSimulator : BaseSimulator
 	{
 		public RandomSimulator(string commandLine) : base(commandLine)
 		{
 		}
 
-		public Configurations Generate(ConfigurationGenerator generator, int populationSize)
+		public override Configurations Generate(ConfigurationGenerator generator, int populationSize)
 		{
 			var result = new Configurations
 			{

@@ -146,7 +146,7 @@ namespace RiddlesHackaton2017.Bots
 		public int LogLevel{ get; set; } = 0;
 
 		/// <summary>Maximum number of generations during MonteCarlo simulation</summary>
-		public int SimulationMaxGenerationCount { get; set; } = 30;
+		public int SimulationMaxGenerationCount { get; set; } = 5;
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
@@ -181,7 +181,7 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Relative weight of difference of cellcounts in score calcultion</summary>
 		public int CellCountWeight { get; set; } = 10;
 
-		/// <summary>Relative weight of difference of cellcounts in score calcultion</summary>
+		/// <summary>Relative weight of absolute cellcounts in score calcultion</summary>
 		public int WinBonusWeight { get; set; } = 10;
 
 		public override string ToString()
@@ -259,5 +259,8 @@ namespace RiddlesHackaton2017.Bots
 				^ Debug.GetHashCode()
 				^ LogLevel.GetHashCode();
 		}
+
+		private int _hashCode;
+		public int HashCode { get { return GetHashCode(); } set { _hashCode = value; } }
 	}
 }
