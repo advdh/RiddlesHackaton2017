@@ -38,6 +38,8 @@ namespace RiddlesHackaton2017.Bots
 			CellCountWeight = original.CellCountWeight;
 			WinBonusWeight = original.WinBonusWeight;
 			BinarySimulationResult = original.BinarySimulationResult;
+			SimulationDecrementScore2Factor = original.SimulationDecrementScore2Factor;
+			ParallelSimulation = original.ParallelSimulation;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -196,7 +198,9 @@ namespace RiddlesHackaton2017.Bots
 		/// Decrement factor, with which the number of fields adds to the score.
 		/// Example if factor = 0.9 then: generation 0: 100 fields = score 100; generation 1: 100 fields = score 90; generation 2; 100 fields = sore 81, etc.
 		/// </summary>
-		//public double SimulationResultFactor { get; set; } = 1.0;
+		public double SimulationDecrementScore2Factor { get; set; } = 1.0;
+
+		public bool ParallelSimulation { get; set; } = true;
 
 		public override string ToString()
 		{
@@ -221,6 +225,8 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"SmartMoveMinimumFieldCount = {SmartMoveMinimumFieldCount}");
 			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
 			sb.AppendLine($"BinarySimulationResult = {BinarySimulationResult}");
+			sb.AppendLine($"SimulationDecrementScore2Factor = {SimulationDecrementScore2Factor}");
+			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
@@ -250,7 +256,9 @@ namespace RiddlesHackaton2017.Bots
 				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
 				&& Debug == p.Debug
 				&& LogLevel == p.LogLevel
-				&& BinarySimulationResult == p.BinarySimulationResult;
+				&& BinarySimulationResult == p.BinarySimulationResult
+				&& SimulationDecrementScore2Factor == p.SimulationDecrementScore2Factor
+				&& ParallelSimulation == p.ParallelSimulation;
 		}
 
 		public override int GetHashCode()
@@ -274,7 +282,9 @@ namespace RiddlesHackaton2017.Bots
 				^ MinimumFieldCountForBirthMoves.GetHashCode()
 				^ Debug.GetHashCode()
 				^ LogLevel.GetHashCode()
-				^ BinarySimulationResult.GetHashCode();
+				^ BinarySimulationResult.GetHashCode()
+				^ SimulationDecrementScore2Factor.GetHashCode()
+				^ ParallelSimulation.GetHashCode();
 		}
 
 		private int _hashCode;

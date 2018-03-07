@@ -16,11 +16,16 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public MonteCarloParameters Parameters { get; private set; }
 		public TimeSpan MaxDuration { get; set; }
 
+		private readonly IMoveSimulator[] _SmartMoveSimulator;
+		private readonly IMoveSimulator[] _SimpleMoveSimulator;
+
 		public Simulator(IRandomGenerator randomGenerator, 
 			MonteCarloParameters monteCarloParameters)
 		{
 			Random = Guard.NotNull(randomGenerator, nameof(randomGenerator));
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
+			_SmartMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
+			_SimpleMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
 		}
 
 		/// <summary>
@@ -46,6 +51,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 					//Won in 0
 					statistic.Count = simulationCount;
 					statistic.Won = simulationCount;
+					statistic.MyScore = int.MaxValue;
 					return statistic;
 				}
 			}
@@ -54,27 +60,45 @@ namespace RiddlesHackaton2017.MonteCarlo
 				//Lost in 0
 				statistic.Count = simulationCount;
 				statistic.Lost = simulationCount;
+				statistic.OpponentScore = int.MaxValue;
 				return statistic;
 			}
 
-			try
+			if (Parameters.ParallelSimulation)
 			{
-				Parallel.ForEach(
-					Enumerable.Range(0, simulationCount),
-					() => new MonteCarloStatistics() { Move = move },
-					DoSimulate,
-					localSum => Aggregate(statistic, localSum)
-				);
+				try
+				{
+					Parallel.ForEach(
+						Enumerable.Range(0, simulationCount),
+						() => new MonteCarloStatistics() { Move = move },
+						DoSimulate,
+						localSum => Aggregate(statistic, localSum)
+					);
+				}
+				catch (AggregateException ex)
+				{
+					//Log the exception and ignore it
+					Console.Error.WriteLine($"{ex.ToString()}");
+				}
 			}
-			catch(AggregateException ex)
+			else
 			{
-				//Log the exception and ignore it
-				Console.Error.WriteLine($"{ex.ToString()}");
+				var localSum = new MonteCarloStatistics() { Move = move };
+				for (int i = 0; i < simulationCount; i++)
+				{
+					DoSimulate(0, localSum);
+				}
 			}
+
 			return statistic;
 		}
 
 		private MonteCarloStatistics DoSimulate(int i, ParallelLoopState state, MonteCarloStatistics statistic)
+		{
+			return DoSimulate(i, statistic);
+		}
+
+		private MonteCarloStatistics DoSimulate(int i, MonteCarloStatistics statistic)
 		{
 			var result = SimulateRestOfGame(i);
 
@@ -105,13 +129,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Interlocked.Add(ref statistic.OpponentScore, localSum.OpponentScore);
 		}
 
-		private IMoveSimulator[] _SmartMoveSimulator;
 		private IMoveSimulator GetSmartMoveSimulator(int i)
 		{
-			if (_SmartMoveSimulator == null)
-			{
-				_SmartMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
-			}
 			if (_SmartMoveSimulator[i] == null)
 			{
 				_SmartMoveSimulator[i] = new SmartMoveSimulator(Random.Clone(i), Parameters);
@@ -119,13 +138,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 			return _SmartMoveSimulator[i];
 		}
 
-		private IMoveSimulator[] _SimpleMoveSimulator;
 		private IMoveSimulator GetSimpleMoveSimulator(int i)
 		{
-			if (_SimpleMoveSimulator == null)
-			{
-				_SimpleMoveSimulator = new IMoveSimulator[Parameters.MaxSimulationCount];
-			}
 			if (_SimpleMoveSimulator[i] == null)
 			{
 				_SimpleMoveSimulator[i] = new SimpleMoveSimulator(Random.Clone(i), Parameters);
@@ -142,11 +156,12 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			var player = board.OpponentPlayer;
 			int generationCount = 1;
-			int myScore = 0;
-			int opponentScore = 0;
+			double myScore = 0;
+			double opponentScore = 0;
+			double scoreFactor = 1.0;
+
 			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
-				//Bot play
 				var simulator = generationCount < Parameters.SmartMoveGenerationCount
 					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount) 
 					&& MaxDuration > Parameters.SmartMoveDurationThreshold
@@ -164,32 +179,34 @@ namespace RiddlesHackaton2017.MonteCarlo
 					board = nextBoard;
 					board.ResetNextGeneration();
 				}
-				myScore += board.MyPlayerFieldCount;
-				opponentScore += board.OpponentPlayerFieldCount;
+				myScore += scoreFactor * board.MyPlayerFieldCount;
+				opponentScore += scoreFactor * board.OpponentPlayerFieldCount;
 
 				if (board.OpponentPlayerFieldCount == 0)
 				{
 					//Won
-					myScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					myScore += scoreFactor * (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: true, generationCount: generationCount, 
-						myScore: myScore, opponentScore: opponentScore);
+						myScore: (int)myScore, opponentScore: (int)opponentScore);
 				}
 				if (board.MyPlayerFieldCount == 0)
 				{
-					opponentScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					//Lost
+					opponentScore += scoreFactor * (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: false, generationCount: generationCount,
-						myScore: myScore, opponentScore: opponentScore);
+						myScore: (int)myScore, opponentScore: (int)opponentScore);
 				}
 
 				//Next player
 				player = player.Opponent();
 				generationCount++;
+				scoreFactor *= Parameters.SimulationDecrementScore2Factor;
 			}
 
 			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true
 				: board.OpponentPlayerFieldCount > 2 * board.MyPlayerFieldCount ? (bool?)false 
 				: null;
-			return new SimulationResult(won, generationCount, myScore, opponentScore);
+			return new SimulationResult(won, generationCount, (int)myScore, (int)opponentScore);
 		}
 
 	}

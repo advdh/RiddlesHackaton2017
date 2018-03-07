@@ -23,15 +23,17 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			var parms = MonteCarloParameters.Life;
-			parms.SimulationMaxGenerationCount = 5;
-			parms.BinarySimulationResult = false;
-
-			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
-				//, rounds: new[] { 1 }
+			parms.SimulationDecrementScore2Factor = 0.9;
+			parms.LogLevel = 0;
+			parms.Debug = true;
+			parms.ParallelSimulation = false;
+			parms.MaxDuration = TimeSpan.FromDays(1);
+			DoReplay("9b87a3e8-cafa-48cf-9380-3fd46bddc434"
+				, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
-					Parameters = parms//MonteCarloParameters.Life
+					Parameters = parms
 				},
 				source: LogSource.File);
 		}

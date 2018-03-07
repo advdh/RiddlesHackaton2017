@@ -93,6 +93,8 @@ namespace GeneticSimulator
 			CellCountWeight,
 			WinBonusWeight,
 			BinarySimulationResult,
+			ParallelSimulation,
+			SimulationDecrementScore2Factor,
 		}
 
 		/// <summary>

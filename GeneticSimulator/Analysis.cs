@@ -106,6 +106,13 @@ namespace GeneticSimulator
 		}
 
 		[TestMethod]
+		public void Results_MoveCountVsSimulations_216()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations216_xml 2018-03-05_10_20_33.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
 		public void Results_MoveCountVsSimulations_144()
 		{
 			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations144_xml 2018-03-05_09_18_06.xml",
@@ -159,6 +166,20 @@ namespace GeneticSimulator
 		{
 			AnalyzeResults("fromfile 0 25 BinarySimulationResult2_xml 2018-03-06_11_28_05.xml",
 				new[] { ConfigurationGenerator.Parameters.BinarySimulationResult, ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+		}
+
+		[TestMethod]
+		public void Results_ParallelSimulation()
+		{
+			AnalyzeResults("fromfile 0 25 ParallelSimulation_xml 2018-03-07_08_12_49.xml",
+				new[] { ConfigurationGenerator.Parameters.ParallelSimulation });
+		}
+
+		[TestMethod]
+		public void Results_SimulationDecrementScore2Factor()
+		{
+			AnalyzeResults("fromfile 0 10 SimulationDecrementScore2Factor_xml 2018-03-07_08_57_12.xml",
+				new[] { ConfigurationGenerator.Parameters.SimulationDecrementScore2Factor });
 		}
 
 		private void AnalyzeResults(string path)
