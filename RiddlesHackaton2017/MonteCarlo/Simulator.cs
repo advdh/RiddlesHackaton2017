@@ -79,6 +79,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 			var result = SimulateRestOfGame(i);
 
 			statistic.Count++;
+			statistic.MyScore += result.MyScore;
+			statistic.OpponentScore += result.OpponentScore;
 			if (result.Won.HasValue && result.Won.Value)
 			{
 				statistic.Won++;
@@ -99,6 +101,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Interlocked.Add(ref statistic.WonInGenerations, localSum.WonInGenerations);
 			Interlocked.Add(ref statistic.Lost, localSum.Lost);
 			Interlocked.Add(ref statistic.LostInGenerations, localSum.LostInGenerations);
+			Interlocked.Add(ref statistic.MyScore, localSum.MyScore);
+			Interlocked.Add(ref statistic.OpponentScore, localSum.OpponentScore);
 		}
 
 		private IMoveSimulator[] _SmartMoveSimulator;
@@ -138,6 +142,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			var player = board.OpponentPlayer;
 			int generationCount = 1;
+			int myScore = 0;
+			int opponentScore = 0;
 			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
 				//Bot play
@@ -158,8 +164,22 @@ namespace RiddlesHackaton2017.MonteCarlo
 					board = nextBoard;
 					board.ResetNextGeneration();
 				}
-				if (board.OpponentPlayerFieldCount == 0) return new SimulationResult(won: true, generationCount: generationCount);
-				if (board.MyPlayerFieldCount == 0) return new SimulationResult(won: false, generationCount: generationCount);
+				myScore += board.MyPlayerFieldCount;
+				opponentScore += board.OpponentPlayerFieldCount;
+
+				if (board.OpponentPlayerFieldCount == 0)
+				{
+					//Won
+					myScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					return new SimulationResult(won: true, generationCount: generationCount, 
+						myScore: myScore, opponentScore: opponentScore);
+				}
+				if (board.MyPlayerFieldCount == 0)
+				{
+					opponentScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					return new SimulationResult(won: false, generationCount: generationCount,
+						myScore: myScore, opponentScore: opponentScore);
+				}
 
 				//Next player
 				player = player.Opponent();
@@ -169,7 +189,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true
 				: board.OpponentPlayerFieldCount > 2 * board.MyPlayerFieldCount ? (bool?)false 
 				: null;
-			return new SimulationResult(won: won, generationCount: generationCount);
+			return new SimulationResult(won, generationCount, myScore, opponentScore);
 		}
 
 	}

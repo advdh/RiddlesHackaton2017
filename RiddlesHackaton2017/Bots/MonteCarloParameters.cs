@@ -37,6 +37,7 @@ namespace RiddlesHackaton2017.Bots
 			SmartMoveDurationThreshold = original.SmartMoveDurationThreshold;
 			CellCountWeight = original.CellCountWeight;
 			WinBonusWeight = original.WinBonusWeight;
+			BinarySimulationResult = original.BinarySimulationResult;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -146,7 +147,7 @@ namespace RiddlesHackaton2017.Bots
 		public int LogLevel{ get; set; } = 0;
 
 		/// <summary>Maximum number of generations during MonteCarlo simulation</summary>
-		public int SimulationMaxGenerationCount { get; set; } = 5;
+		public int SimulationMaxGenerationCount { get; set; } = 8;
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
@@ -184,6 +185,19 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Relative weight of absolute cellcounts in score calcultion</summary>
 		public int WinBonusWeight { get; set; } = 10;
 
+
+		/// <summary>
+		/// If true, then simulation result is based on won / lost games only;
+		/// If false, then simulation result is based on number of fields owned by both players during simulated rounds
+		/// </summary>
+		public bool BinarySimulationResult { get; set; } = false;
+
+		/// <summary>
+		/// Decrement factor, with which the number of fields adds to the score.
+		/// Example if factor = 0.9 then: generation 0: 100 fields = score 100; generation 1: 100 fields = score 90; generation 2; 100 fields = sore 81, etc.
+		/// </summary>
+		//public double SimulationResultFactor { get; set; } = 1.0;
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -206,6 +220,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"SmartMoveGenerationCount = {SmartMoveGenerationCount}");
 			sb.AppendLine($"SmartMoveMinimumFieldCount = {SmartMoveMinimumFieldCount}");
 			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
+			sb.AppendLine($"BinarySimulationResult = {BinarySimulationResult}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
@@ -234,7 +249,8 @@ namespace RiddlesHackaton2017.Bots
 				&& SmartMoveMinimumFieldCount == p.SmartMoveMinimumFieldCount
 				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
 				&& Debug == p.Debug
-				&& LogLevel == p.LogLevel;
+				&& LogLevel == p.LogLevel
+				&& BinarySimulationResult == p.BinarySimulationResult;
 		}
 
 		public override int GetHashCode()
@@ -257,7 +273,8 @@ namespace RiddlesHackaton2017.Bots
 				^ SmartMoveMinimumFieldCount.GetHashCode()
 				^ MinimumFieldCountForBirthMoves.GetHashCode()
 				^ Debug.GetHashCode()
-				^ LogLevel.GetHashCode();
+				^ LogLevel.GetHashCode()
+				^ BinarySimulationResult.GetHashCode();
 		}
 
 		private int _hashCode;

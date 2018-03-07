@@ -9,8 +9,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 {
 	public class SimpleMoveSimulator : IMoveSimulator
 	{
-		private IRandomGenerator Random;
-		private MonteCarloParameters Parameters;
+		private readonly IRandomGenerator Random;
+		private readonly MonteCarloParameters Parameters;
 
 		public SimpleMoveSimulator(IRandomGenerator randomGenerator, MonteCarloParameters monteCarloParameters)
 		{
@@ -29,17 +29,17 @@ namespace RiddlesHackaton2017.MonteCarlo
 			int rnd = Random.Next(100);
 			if (rnd < Parameters.PassMovePercentage)
 			{
-				//With probability 1% we do a pass move
+				//Pass move
 				return new Tuple<Move, Board>(new PassMove(), null);
 			}
 			else if (rnd < Parameters.PassMovePercentage + Parameters.KillMovePercentage)
 			{
-				//With probability 49% we do a kill move
+				//Kill move
 				return new Tuple<Move, Board>(GetRandomKillMove(board, player), null);
 			}
 			else
 			{
-				//With probability 50% we do a birth move
+				//Birth move
 				return new Tuple<Move, Board>(GetRandomBirthMove(board, player), null);
 			}
 		}

@@ -92,6 +92,7 @@ namespace GeneticSimulator
 			SmartMoveDurationThreshold,
 			CellCountWeight,
 			WinBonusWeight,
+			BinarySimulationResult,
 		}
 
 		/// <summary>

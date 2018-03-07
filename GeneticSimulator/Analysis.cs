@@ -147,6 +147,20 @@ namespace GeneticSimulator
 				new[] { ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
 		}
 
+		[TestMethod]
+		public void Results_BinarySimulationResult()
+		{
+			AnalyzeResults("fromfile 0 25 BinarySimulationResult_xml 2018-03-06_11_01_10.xml",
+				new[] { ConfigurationGenerator.Parameters.BinarySimulationResult });
+		}
+
+		[TestMethod]
+		public void Results_BinarySimulationResult2()
+		{
+			AnalyzeResults("fromfile 0 25 BinarySimulationResult2_xml 2018-03-06_11_28_05.xml",
+				new[] { ConfigurationGenerator.Parameters.BinarySimulationResult, ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+		}
+
 		private void AnalyzeResults(string path)
 		{
 			string filename = Path.Combine(Directory, path);

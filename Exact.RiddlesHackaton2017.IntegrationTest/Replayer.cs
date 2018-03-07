@@ -24,6 +24,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			var parms = MonteCarloParameters.Life;
 			parms.SimulationMaxGenerationCount = 5;
+			parms.BinarySimulationResult = false;
 
 			DoReplay("64290360-8630-4091-8310-92b82ebc7103"
 				//, rounds: new[] { 1 }

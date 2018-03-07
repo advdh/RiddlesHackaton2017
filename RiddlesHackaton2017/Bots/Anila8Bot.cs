@@ -59,6 +59,8 @@ namespace RiddlesHackaton2017.Bots
 			MonteCarloStatistics bestResult = new MonteCarloStatistics()
 			{
 				Won = -1,
+				MyScore = int.MinValue,
+				OpponentScore = 0,
 			};
 			Move bestMove = GetDirectWinMove();
 			if (bestMove != null)
@@ -104,41 +106,55 @@ namespace RiddlesHackaton2017.Bots
 
 				if (Parameters.LogLevel >= 2)
 				{
-					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
+					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
 				}
 
-				if (result.Score > bestResult.Score)
+				if (Parameters.BinarySimulationResult)
 				{
-					//Prefer higher score
-					bestResult = result;
-					bestMove = move;
-					bestGain2 = moveScore.Gain2;
-					bestCount = count;
-				}
-				else if (result.Score == bestResult.Score)
-				{
-					//Same score
-					if (result.Score >= 0.50)
+					if (result.Score > bestResult.Score)
 					{
-						//Prefer to win in less rounds
-						if (result.WonInGenerations < bestResult.WonInGenerations)
+						//Prefer higher score
+						bestResult = result;
+						bestMove = move;
+						bestGain2 = moveScore.Gain2;
+						bestCount = count;
+					}
+					else if (result.Score == bestResult.Score)
+					{
+						//Same score
+						if (result.Score >= 0.50)
 						{
-							bestResult = result;
-							bestMove = move;
-							bestGain2 = moveScore.Gain2;
-							bestCount = count;
+							//Prefer to win in less rounds
+							if (result.WonInGenerations < bestResult.WonInGenerations)
+							{
+								bestResult = result;
+								bestMove = move;
+								bestGain2 = moveScore.Gain2;
+								bestCount = count;
+							}
+						}
+						else
+						{
+							//Prefer to loose in more rounds
+							if (result.LostInGenerations > bestResult.LostInGenerations)
+							{
+								bestResult = result;
+								bestMove = move;
+								bestGain2 = moveScore.Gain2;
+								bestCount = count;
+							}
 						}
 					}
-					else
+				}
+				else
+				{
+					// Score based on total field counts
+					if (result.Score2 > bestResult.Score2)
 					{
-						//Prefer to loose in more rounds
-						if (result.LostInGenerations > bestResult.LostInGenerations)
-						{
-							bestResult = result;
-							bestMove = move;
-							bestGain2 = moveScore.Gain2;
-							bestCount = count;
-						}
+						bestResult = result;
+						bestMove = move;
+						bestGain2 = moveScore.Gain2;
+						bestCount = count;
 					}
 				}
 
@@ -150,7 +166,7 @@ namespace RiddlesHackaton2017.Bots
 			RoundStatistics.Add(new RoundStatistic() { MaxDuration = stopwatch.Elapsed, MoveCount = count, SimulationCount = simulationCount, Round = Board.Round });
 
 			//Log and return
-			LogMessage = $"{bestMove} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {bestGain2}): score = {bestResult.Score:P0}, moves = {count} ({bestCount}), simulations = {simulationCount}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
+			LogMessage = $"{bestMove} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {bestGain2}): score = {bestResult.Score:P0}, score2 = {bestResult.Score2}, moves = {count} ({bestCount}), simulations = {simulationCount}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
 
 			return bestMove;
 		}

@@ -45,3 +45,4 @@ V36 08-12-2017, 12:55	Catch and ignore aggregate exceptions in parallell part
 V37 09-12-2017, 13:50	Use Troschuetz random generator
 V37.1 05-03-2018, 08:30	Parameter WinBonusDecrementFactor = 0.916, based on simulation results
 V38	06-03-2018, 09:30	Parameter SimulationMaxGenerationCount = 5, based on simulation results
+V39	07-03-2018, 07:30	New Parameter BinarySimulationResult = false with SimulationMaxGenerationCount = 8, based on simulation results
