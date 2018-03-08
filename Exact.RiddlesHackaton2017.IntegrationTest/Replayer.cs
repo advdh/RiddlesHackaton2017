@@ -23,13 +23,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public void Replay_Test()
 		{
 			var parms = MonteCarloParameters.Life;
-			parms.SimulationDecrementScore2Factor = 0.9;
 			parms.LogLevel = 0;
-			parms.Debug = true;
-			parms.ParallelSimulation = false;
-			parms.MaxDuration = TimeSpan.FromDays(1);
+			parms.Debug = false;
+			//parms.StartSimulationCount = 13;
+			//parms.MinSimulationCount = 13;
+			//parms.MaxSimulationCount = 13;
+			//parms.MoveCount = 192;
 			DoReplay("9b87a3e8-cafa-48cf-9380-3fd46bddc434"
-				, rounds: new[] { 1 }
+				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{

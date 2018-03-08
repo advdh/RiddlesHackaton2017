@@ -156,9 +156,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			var player = board.OpponentPlayer;
 			int generationCount = 1;
-			double myScore = 0;
-			double opponentScore = 0;
-			double scoreFactor = 1.0;
+			int myScore = 0;
+			int opponentScore = 0;
 
 			while (StartBoard.Round + generationCount / 2 < Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
@@ -179,20 +178,20 @@ namespace RiddlesHackaton2017.MonteCarlo
 					board = nextBoard;
 					board.ResetNextGeneration();
 				}
-				myScore += scoreFactor * board.MyPlayerFieldCount;
-				opponentScore += scoreFactor * board.OpponentPlayerFieldCount;
+				myScore += board.MyPlayerFieldCount;
+				opponentScore += board.OpponentPlayerFieldCount;
 
 				if (board.OpponentPlayerFieldCount == 0)
 				{
 					//Won
-					myScore += scoreFactor * (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					myScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: true, generationCount: generationCount, 
 						myScore: (int)myScore, opponentScore: (int)opponentScore);
 				}
 				if (board.MyPlayerFieldCount == 0)
 				{
 					//Lost
-					opponentScore += scoreFactor * (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
+					opponentScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: false, generationCount: generationCount,
 						myScore: (int)myScore, opponentScore: (int)opponentScore);
 				}
@@ -200,7 +199,6 @@ namespace RiddlesHackaton2017.MonteCarlo
 				//Next player
 				player = player.Opponent();
 				generationCount++;
-				scoreFactor *= Parameters.SimulationDecrementScore2Factor;
 			}
 
 			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true

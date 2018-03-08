@@ -46,7 +46,7 @@ V37 09-12-2017, 13:50	Use Troschuetz random generator
 V37.1 05-03-2018, 08:30	Parameter WinBonusDecrementFactor = 0.916, based on simulation results
 V38	06-03-2018, 09:30	Parameter SimulationMaxGenerationCount = 5, based on simulation results
 V39	07-03-2018, 07:30	New Parameter BinarySimulationResult = false with SimulationMaxGenerationCount = 8, based on simulation results
-V39.1 07-03-2018		Bugfix Score2 calculation: Score2 was not calculated in case of immediate win or loose
-						New parameter SimulationDecrementScore2Factor
+V40 07-03-2018, 11:43	Bugfix Score2 calculation: Score2 was not calculated in case of immediate win or loose
+						Possible bugfix: possibly fixed NullReferenceException
 						New parameter ParallelSimulation
-
+						SimulationCount vs. MoveCount optimized based on simulations: 2-13, MinSimulationCount = 1, StartSimulationCount = 13, MaxSimulationCount in practice not used anymore

@@ -92,51 +92,65 @@ namespace GeneticSimulator
 		/// MoveCount vs. SimulationCount
 		/// </summary>
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_676()
+		public void Results_MoveCountVsSimulations_2500()
 		{
-			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCountVsSimulations676_xml 2018-03-05_04_28_09.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations2500_xml 2018-03-08_05_49_04.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_324()
+		public void Results_MoveCountVsSimulations_1200()
 		{
-			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCountVsSimulations324_xml 2018-03-05_07_08_11.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations1200_xml 2018-03-08_02_17_06.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_216()
+		public void Results_MoveCountVsSimulations_0676()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations216_xml 2018-03-05_10_20_33.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations676_xml 2018-03-08_01_39_49.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_144()
+		public void Results_MoveCountVsSimulations_0324()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations144_xml 2018-03-05_09_18_06.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations324_xml 2018-03-08_01_19_36.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_072()
+		public void Results_MoveCountVsSimulations_0216()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations72_xml 2018-03-05_09_48_23.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations216_xml 2018-03-08_12_51_34.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_036()
+		public void Results_MoveCountVsSimulations_0144()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations36_xml 2018-03-05_10_00_14.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations144_xml 2018-03-07_10_13_57.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
 		[TestMethod]
-		public void Results_MoveCountVsSimulations_018()
+		public void Results_MoveCountVsSimulations_0072()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations18_xml 2018-03-05_10_13_39.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations72_xml 2018-03-07_09_53_04.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_0036()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations36_xml 2018-03-07_09_47_09.xml",
+				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
+		}
+
+		[TestMethod]
+		public void Results_MoveCountVsSimulations_0018()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMoveCountVsSimulations18_xml 2018-03-07_09_43_36.xml",
 				new[] { ConfigurationGenerator.Parameters.MoveCount, ConfigurationGenerator.Parameters.StartSimulationCount });
 		}
 
@@ -186,7 +200,7 @@ namespace GeneticSimulator
 		{
 			string filename = Path.Combine(Directory, path);
 			var results = Configurations.Load(filename)
-				.OrderByDescending(r => 3 * r.Won + r.Draw)
+				.OrderByDescending(r => r.Won - r.Lost)
 				.ThenByDescending(r => r.Won);
 			int ix = 1;
 			foreach (var result in results)
@@ -200,7 +214,7 @@ namespace GeneticSimulator
 		{
 			string filename = Path.Combine(Directory, path);
 			var results = Configurations.Load(filename)
-				.OrderByDescending(r => 3 * r.Won + r.Draw)
+				.OrderByDescending(r => r.Won - r.Lost)
 				.ThenByDescending(r => r.Won);
 			int ix = 1;
 

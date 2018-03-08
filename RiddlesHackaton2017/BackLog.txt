@@ -1,2 +1,10 @@
 ﻿v39, 9b87a3e8-cafa-48cf-9380-3fd46bddc434, Shazbot
 Round 29: can win in one. Solved in V40
+
+v40, 8e0c9c9d-9fc3-4d2b-a631-bafe7a313f58, Ol0
+Round 78: pass? only one move?
+
+v40, 2a3aeb67-a1b5-4aa8-ac2a-f407c1f24719, Hakomo_bot
+Round 49: if we sacrifice (11,11), then win immediately
+
+General: Use Parameter.WinBonus (based on MaxWinBonus and WinBonusDecrementFactor) also for calculating Score2 after simulation
