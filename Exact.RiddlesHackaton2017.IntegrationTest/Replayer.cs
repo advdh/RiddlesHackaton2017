@@ -3,11 +3,9 @@ using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
-using RiddlesHackaton2017.RandomGeneration;
 using System;
 using System.IO;
 using System.Linq;
-using Troschuetz.Random.Generators;
 
 namespace RiddlesHackaton2017.IntegrationTest
 {
@@ -19,8 +17,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			//string gameId = "3c3dbc15-c316-434e-886b-fbad287e6d10";		//Player1
-			string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
+			string gameId = "3c3dbc15-c316-434e-886b-fbad287e6d10";		//Player1
+			//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
 			parms.ParallelSimulation = false;
 			parms.Debug = true;

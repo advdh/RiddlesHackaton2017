@@ -13,13 +13,13 @@ v41, a58372ac-071c-4f95-959e-c9fccf1cfdb4, a58372ac-071c-4f95-959e-c9fccf1cfdb4
 Round 56: PassMove (26-57, gain2 = 0): score = 6 %, score2 = -2419, moves = 1 (0), simulations = 8, win in Infinity, loose in 8.00 - Used 107 ms, Timelimit 946 ms, Start 39.711, End 39.818
 
 v41, 3c3dbc15-c316-434e-886b-fbad287e6d10, UnMangedCode
-ROund 100: passmove?
+ROund 100: passmove? Partly solved in v42. BUT: the only move which does not lead to loss is not in the move candidates!
 
 v41, 9d21efa0-453b-4951-87e5-0c0ed56b1248, Shazbot
 Round 91: should do killmove (13,14) to win in one instead of win in two
 
 v41, 58f5aa11-7a3e-4e76-a485-c8fbbb019b03, Kimiyuki_vot
-Round 100: passmove?
+Round 100: passmove? Solved in V42
 
 v41, c82c2d7d-7254-4178-8d17-cca4a7dd6e44, Hakomo_vot
 Round 65: should place a field next to opponent's square
