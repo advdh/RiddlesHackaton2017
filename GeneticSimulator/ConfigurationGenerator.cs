@@ -95,6 +95,8 @@ namespace GeneticSimulator
 			BinarySimulationResult,
 			ParallelSimulation,
 			SimulationDecrementScore2Factor,
+			HardcodedSimulationCounts,
+			SimulationFactor,
 		}
 
 		/// <summary>

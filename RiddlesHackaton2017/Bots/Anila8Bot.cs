@@ -71,7 +71,8 @@ namespace RiddlesHackaton2017.Bots
 
 			var stopwatch = Stopwatch.StartNew();
 			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
-			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount, Parameters.StartSimulationCount);
+			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount, Parameters.StartSimulationCount
+				, Parameters.SimulationFactor);
 
 			var moveGeneratorStopwatch = Stopwatch.StartNew();
 			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
@@ -109,53 +110,13 @@ namespace RiddlesHackaton2017.Bots
 					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
 				}
 
-				if (Parameters.BinarySimulationResult)
+				// Score based on total field counts
+				if (result.Score2 > bestResult.Score2)
 				{
-					if (result.Score > bestResult.Score)
-					{
-						//Prefer higher score
-						bestResult = result;
-						bestMove = move;
-						bestGain2 = moveScore.Gain2;
-						bestCount = count;
-					}
-					else if (result.Score == bestResult.Score)
-					{
-						//Same score
-						if (result.Score >= 0.50)
-						{
-							//Prefer to win in less rounds
-							if (result.WonInGenerations < bestResult.WonInGenerations)
-							{
-								bestResult = result;
-								bestMove = move;
-								bestGain2 = moveScore.Gain2;
-								bestCount = count;
-							}
-						}
-						else
-						{
-							//Prefer to loose in more rounds
-							if (result.LostInGenerations > bestResult.LostInGenerations)
-							{
-								bestResult = result;
-								bestMove = move;
-								bestGain2 = moveScore.Gain2;
-								bestCount = count;
-							}
-						}
-					}
-				}
-				else
-				{
-					// Score based on total field counts
-					if (result.Score2 > bestResult.Score2)
-					{
-						bestResult = result;
-						bestMove = move;
-						bestGain2 = moveScore.Gain2;
-						bestCount = count;
-					}
+					bestResult = result;
+					bestMove = move;
+					bestGain2 = moveScore.Gain2;
+					bestCount = count;
 				}
 
 				count++;

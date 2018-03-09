@@ -37,8 +37,8 @@ namespace RiddlesHackaton2017.Bots
 			SmartMoveDurationThreshold = original.SmartMoveDurationThreshold;
 			CellCountWeight = original.CellCountWeight;
 			WinBonusWeight = original.WinBonusWeight;
-			BinarySimulationResult = original.BinarySimulationResult;
 			ParallelSimulation = original.ParallelSimulation;
+			SimulationFactor = original.SimulationFactor;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -48,8 +48,10 @@ namespace RiddlesHackaton2017.Bots
 		public int MaxSimulationCount { get; set; } = 50;
 
 		/// <summary>Initial number of simulations per move</summary>
-		public int StartSimulationCount { get; set; } = 13;
+		public int StartSimulationCount { get; set; } = 25;
 
+		/// <summary>Multiplication factor to multiply available with before taking the square root to get simulation count</summary>
+		public double SimulationFactor { get; set; } = 1.0;
 
 		/// <summary>Number of moves</summary>
 		public int MoveCount { get; set; } = 100;
@@ -186,13 +188,6 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Relative weight of absolute cellcounts in score calcultion</summary>
 		public int WinBonusWeight { get; set; } = 10;
 
-
-		/// <summary>
-		/// If true, then simulation result is based on won / lost games only;
-		/// If false, then simulation result is based on number of fields owned by both players during simulated rounds
-		/// </summary>
-		public bool BinarySimulationResult { get; set; } = false;
-
 		public bool ParallelSimulation { get; set; } = true;
 
 		public override string ToString()
@@ -209,16 +204,16 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"WinBonusWeight = {WinBonusWeight}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
 			sb.AppendLine($"MaxRelativeDuration = {MaxRelativeDuration:P0}");
-			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
 			sb.AppendLine($"PassMovePercentage = {PassMovePercentage}");
 			sb.AppendLine($"KillMovePercentage = {KillMovePercentage}");
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");
+			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
 			sb.AppendLine($"SimulationMaxGenerationCount = {SimulationMaxGenerationCount}");
 			sb.AppendLine($"SmartMoveGenerationCount = {SmartMoveGenerationCount}");
 			sb.AppendLine($"SmartMoveMinimumFieldCount = {SmartMoveMinimumFieldCount}");
-			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
-			sb.AppendLine($"BinarySimulationResult = {BinarySimulationResult}");
+			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
 			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
+			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
@@ -248,8 +243,8 @@ namespace RiddlesHackaton2017.Bots
 				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
 				&& Debug == p.Debug
 				&& LogLevel == p.LogLevel
-				&& BinarySimulationResult == p.BinarySimulationResult
-				&& ParallelSimulation == p.ParallelSimulation;
+				&& ParallelSimulation == p.ParallelSimulation
+				&& SimulationFactor == p.SimulationFactor;
 		}
 
 		public override int GetHashCode()
@@ -273,8 +268,8 @@ namespace RiddlesHackaton2017.Bots
 				^ MinimumFieldCountForBirthMoves.GetHashCode()
 				^ Debug.GetHashCode()
 				^ LogLevel.GetHashCode()
-				^ BinarySimulationResult.GetHashCode()
-				^ ParallelSimulation.GetHashCode();
+				^ ParallelSimulation.GetHashCode()
+				^ SimulationFactor.GetHashCode();
 		}
 
 		private int _hashCode;

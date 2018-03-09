@@ -16,21 +16,20 @@ namespace RiddlesHackaton2017.IntegrationTest
 	{
 		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
-		/// <summary>
-		/// Round 63: Birthmove (2,2), sacrifice = (7,1) and (10,9) (gain2 = 91): score = 100 %, moves = 18, win in 1, loose in 2147483647 - Used 97 ms, Timelimit 371 ms, Start 54.922, End 55.018
-		/// </summary>
 		[TestMethod]
 		public void Replay_Test()
 		{
+			//string gameId = "3c3dbc15-c316-434e-886b-fbad287e6d10";		//Player1
+			string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
+			parms.ParallelSimulation = false;
+			parms.Debug = true;
 			parms.LogLevel = 0;
-			parms.Debug = false;
-			//parms.StartSimulationCount = 13;
-			//parms.MinSimulationCount = 13;
-			//parms.MaxSimulationCount = 13;
-			//parms.MoveCount = 192;
-			DoReplay("9b87a3e8-cafa-48cf-9380-3fd46bddc434"
-				//, rounds: new[] { 1 }
+			parms.MaxDuration = TimeSpan.FromDays(1);
+			parms.MoveCount = 1000;
+			parms.MaxRelativeDuration = 1.0;
+			DoReplay(gameId, differenceOnly: false
+				, rounds: new[] { 100 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
@@ -39,27 +38,29 @@ namespace RiddlesHackaton2017.IntegrationTest
 				source: LogSource.File);
 		}
 
+		private Board GetBoard(string gameId, int round)
+		{
+			var lines = GetLines(gameId, LogSource.File);
+			int ix = Enumerable.Range(0, lines.Count()).First(i => lines[i].StartsWith($"update game round {round}"));
+			var line = lines[ix + 1];
+			var board = new Board();
+			ParseBoard(line.Split(' '), board);
+			return board;
+		}
+
 		[TestMethod]
 		public void Test()
 		{
-			string[] linesData = File.ReadAllLines(@"c:\tmp\game.txt");
-			string[] linesLog = File.ReadAllLines(@"D:\Ad\Golad\Games\a734cae9-d395-4a00-8563-8bbb946d1bf3.txt")
-				.Where(l => l.StartsWith("update game field"))
-				.Select(s => s.Substring(18))
-				.ToArray();
-			string boardStringFromData = linesData.First();
-			string boardStringFromLog = linesLog.First();
-			Assert.AreEqual(boardStringFromLog, boardStringFromData, "Start board");
-			var boardFromData = new Board() { Field = BotParser.ParseBoard(boardStringFromData) };
-			for(int i = 0; i < 100; i++)
-			{
-				var move = Move.Parse(linesData[2 * i + 1]);
-				boardFromData = boardFromData.ApplyMoveAndNext(Player.Player1, move);
-				move = Move.Parse(linesData[2 * i + 2]);
-				boardFromData = boardFromData.ApplyMoveAndNext(Player.Player2, move);
-				var boardFromLog = new Board() { Field = BotParser.ParseBoard(linesLog[i + 1]) };
-				Assert.AreEqual(boardFromLog.HumanBoardString(), boardFromData.HumanBoardString(), @"Round {i}");
-			}
+			var board = GetBoard("3c3dbc15-c316-434e-886b-fbad287e6d10", 100);
+			board.UpdateFieldCounts();
+			Assert.AreEqual(4, board.MyPlayerFieldCount);
+			Assert.AreEqual(66, board.OpponentPlayerFieldCount);
+
+			var move = new BirthMove(new Position(4, 5).Index, new Position(4, 2).Index, new Position(7, 4).Index);
+			//var move = new KillMove(new Position(3,9).Index);
+			var newBoard = board.ApplyMoveAndNext(Player.Player1, move, validateMove: true);
+
+			Assert.AreEqual(4, newBoard.MyPlayerFieldCount);
 		}
 
 		/// <summary>

@@ -5,10 +5,16 @@ namespace RiddlesHackaton2017.IntegrationTest
 {
 	public static class DataReaderExtensions
 	{
-		public static Byte? GetNullableInt16(this IDataReader dataReader, int index)
+		public static bool? GetNullableBool(this IDataReader dataReader, int index)
 		{
 			if (dataReader.IsDBNull(index)) return null;
-			return dataReader.GetByte(index);
+			return dataReader.GetBoolean(index);
+		}
+
+		public static int? GetNullableInt32(this IDataReader dataReader, int index)
+		{
+			if (dataReader.IsDBNull(index)) return null;
+			return dataReader.GetInt32(index);
 		}
 
 		public static string GetNullableString(this IDataReader dataReader, int index)

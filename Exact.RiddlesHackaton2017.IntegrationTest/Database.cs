@@ -42,11 +42,23 @@ namespace RiddlesHackaton2017.IntegrationTest
 			public string Opponent { get; set; }
 			public string Log { get; set; }
 			public DateTime PlayedDate { get; set; }
+			public int? Won { get; set; }
+			public int Rounds { get; set; }
+
+			public string WonString
+			{
+				get
+				{
+					if (Won.HasValue && Won.Value == 1) return "Won";
+					if (Won.HasValue && Won.Value == 0) return "Lost";
+					return "Draw";
+				}
+			}
 		}
 
 		public IEnumerable<Game> GetMyGames()
 		{
-			string sql = "SELECT Id, Version, Opponent, Log, PlayedDate FROM Anila8Games WHERE Log IS NOT NULL";
+			string sql = "SELECT Id, Version, Opponent, Log, PlayedDate, Won, Rounds FROM Anila8Games WHERE Log IS NOT NULL";
 			using (var command = new SqlCommand(sql, Connection))
 			{
 				using (var reader = command.ExecuteReader())
@@ -60,6 +72,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 							Opponent = reader.GetString(2),
 							Log = reader.GetString(3),
 							PlayedDate = reader.GetDateTime(4),
+							Won = reader.GetNullableInt32(5),
+							Rounds = reader.GetInt16(6),
 						};
 					}
 				}

@@ -20,7 +20,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				database.Connect();
 
 				var games = database.GetMyGames();
-				foreach (var game in games.Where(g => g.Version == 35))
+				foreach (var game in games.Where(g => g.Version >= 38))
 				{
 					var log = game.Log;
 					var lines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
@@ -30,11 +30,11 @@ namespace RiddlesHackaton2017.IntegrationTest
 						if (writeNextLine)
 						{
 							if (line.Contains("IO log")) break;
-							Console.WriteLine(line);
+							//Console.WriteLine(line);
 						}
 						else if (line.Contains("Exception"))
 						{
-							Console.WriteLine($"Game {game.Id}, my version {game.Version}");
+							Console.WriteLine($"Game {game.Id}, my version {game.Version}, {game.Opponent}, {game.WonString}, {game.Rounds} rounds");
 							writeNextLine = true;
 						}
 					}

@@ -196,6 +196,34 @@ namespace GeneticSimulator
 				new[] { ConfigurationGenerator.Parameters.SimulationDecrementScore2Factor });
 		}
 
+		[TestMethod]
+		public void Results_HardcodedSimulationCounts()
+		{
+			AnalyzeResults("fromfile 0 25 HardCodedSimulationCounts_xml 2018-03-08_09_16_04.xml",
+				new[] { ConfigurationGenerator.Parameters.HardcodedSimulationCounts });
+		}
+
+		[TestMethod]
+		public void Results_SimulationFactor()
+		{
+			AnalyzeResults("fromfile 0 25 SimulationFactor_xml 2018-03-08_10_25_53.xml",
+				new[] { ConfigurationGenerator.Parameters.SimulationFactor });
+		}
+
+		[TestMethod]
+		public void Results_SmartMoveGenerationCount()
+		{
+			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-08_11_26_48.xml",
+				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
+		}
+
+		[TestMethod]
+		public void Results_MaxDuration()
+		{
+			AnalyzeResults("fromfile 0 25 ConfigurationsMaxDuration_xml 2018-03-09_12_14_40.xml",
+				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+		}
+
 		private void AnalyzeResults(string path)
 		{
 			string filename = Path.Combine(Directory, path);
