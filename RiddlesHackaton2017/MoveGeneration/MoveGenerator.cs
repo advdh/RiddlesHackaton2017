@@ -1,6 +1,7 @@
 ﻿using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -103,6 +104,18 @@ namespace RiddlesHackaton2017.MoveGeneration
 				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
 				+ Parameters.WinBonus[afterMoveBoard2.OpponentPlayerFieldCount]
 				- Parameters.WinBonus[afterMoveBoard2.MyPlayerFieldCount];
+
+			//bool isBirthMove = afterMoveBoard.Field[neighbours1AndThis.First()] != 0;
+			//if (isBirthMove)
+			//{
+			//	Console.WriteLine("{0}: scores = {1} - {2} = {3}, winbonus1 = -{4}, winbonus2 = -{5}, total = {6}",
+			//		new Position(neighbours1AndThis.First()),
+			//		myMoveScore - myScore, opponentMoveScore - opponentScore,
+			//		myMoveScore - myScore - (opponentMoveScore - opponentScore),
+			//		Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount],
+			//		Parameters.WinBonus[afterMoveBoard2.MyPlayerFieldCount],
+			//		myMoveScore - opponentMoveScore - (myScore - opponentScore)	+ Parameters.WinBonusWeight * winBonus);
+			//}
 
 			//Reset after move boards
 			foreach (int j in neighbours1AndThis)

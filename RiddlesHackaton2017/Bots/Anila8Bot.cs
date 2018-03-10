@@ -177,7 +177,11 @@ namespace RiddlesHackaton2017.Bots
 				}
 			}
 
-			result.Add(new MoveScore(new PassMove(), 0));
+			int winBonus = Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
+				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
+				+ Parameters.WinBonus[afterMoveBoard2.OpponentPlayerFieldCount]
+				- Parameters.WinBonus[afterMoveBoard2.MyPlayerFieldCount];
+			result.Add(new MoveScore(new PassMove(), winBonus));
 			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
 				for (int b = 0; b < i && b < myBirths.Count(); b++)

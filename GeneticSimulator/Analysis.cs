@@ -185,7 +185,14 @@ namespace GeneticSimulator
 		[TestMethod]
 		public void Results_ParallelSimulation()
 		{
-			AnalyzeResults("fromfile 0 25 ParallelSimulation_xml 2018-03-07_08_12_49.xml",
+			AnalyzeResults("fromfile 0 25 parallelsimulation_xml 2018-03-09_11_03_25.xml",
+				new[] { ConfigurationGenerator.Parameters.ParallelSimulation });
+		}
+
+		[TestMethod]
+		public void Test()
+		{
+			AnalyzeResults("fromfile 0 1 parallelsimulation_xml 2018-03-09_10_49_45.xml",
 				new[] { ConfigurationGenerator.Parameters.ParallelSimulation });
 		}
 
@@ -220,7 +227,7 @@ namespace GeneticSimulator
 		[TestMethod]
 		public void Results_MaxDuration()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMaxDuration_xml 2018-03-09_12_14_40.xml",
+			AnalyzeResults("fromfile 0 25 ConfigurationsMaxDuration_xml 2018-03-09_11_36_39.xml",
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
 		}
 
@@ -242,14 +249,13 @@ namespace GeneticSimulator
 		{
 			string filename = Path.Combine(Directory, path);
 			var results = Configurations.Load(filename)
-				.OrderByDescending(r => r.Won - r.Lost)
-				.ThenByDescending(r => r.Won);
+				.OrderByDescending(r => r.AverageScore1);
 			int ix = 1;
 
 			//Display results by total rank including the specified properties
 			foreach (var result in results)
 			{
-				Console.WriteLine($"{ix}.\tCount={result.Count}\tWon={result.Won}\tDraw={result.Draw}\tLost={result.Lost}");
+				Console.WriteLine($"{ix}.\tCount={result.Count}\tWon={result.Won}\tDraw={result.Draw}\tLost={result.Lost}\tTotalScore={result.TotalScore1:0.000}\tAverageScore={result.AverageScore1:0.000}");
 				foreach(var parm in varyingParameters)
 				{
 					var propertyValue = GetPropValue(result.Parameters, parm.ToString());
@@ -269,13 +275,15 @@ namespace GeneticSimulator
 					{
 						var games = result.Results1
 							.Where(r => r.Parameters2Hash == result2.Parameters.GetHashCode());
-						Console.WriteLine("{0} - {1} ({2}): {3} - {4} - {5}",
+						Console.WriteLine("{0} - {1} ({2}): {3} - {4} - {5} (score {6:0.000} = average {7:0.000})",
 							ix, 
 							ix2,
 							games.Count(),
 							games.Count(g => g.Winner == Player.Player1),
 							games.Count(g => g.Winner == null),
-							games.Count(g => g.Winner == Player.Player2));
+							games.Count(g => g.Winner == Player.Player2),
+							games.Sum(g => g.Player1Score),
+							games.Any() ? games.Average(g => g.Player1Score) : 0);
 					}
 					ix2++;
 				}

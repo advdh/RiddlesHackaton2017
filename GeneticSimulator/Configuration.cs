@@ -31,6 +31,12 @@ namespace GeneticSimulator
 		/// <summary>Number of drawn games</summary>
 		public int Draw { get { return Results1.Count(r => r.Winner == null) + Results2.Count(r => r.Winner == null); } }
 
+		public double TotalScore1 { get { return Results1.Sum(r => r.Player1Score) + Results2.Sum(r => r.Player2Score); } }
+		public double TotalScore2 { get { return Results1.Sum(r => r.Player2Score) + Results2.Sum(r => r.Player1Score); } }
+
+		public double AverageScore1 { get { return (Results1.Sum(r => r.Player1Score) + Results2.Sum(r => r.Player2Score)) / Count; } }
+		public double AverageScore2 { get { return (Results1.Sum(r => r.Player2Score) + Results2.Sum(r => r.Player1Score)) / Count; } }
+
 		/// <summary>Results of games as player 1</summary>
 		public List<GameResult> Results1 { get; } = new List<GameResult>();
 

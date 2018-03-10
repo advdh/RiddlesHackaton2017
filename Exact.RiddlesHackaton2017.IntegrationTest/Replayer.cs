@@ -22,10 +22,12 @@ namespace RiddlesHackaton2017.IntegrationTest
 			var parms = MonteCarloParameters.Life;
 			parms.ParallelSimulation = false;
 			parms.Debug = true;
-			parms.LogLevel = 0;
+			parms.LogLevel = 2;
 			parms.MaxDuration = TimeSpan.FromDays(1);
 			parms.MoveCount = 1000;
 			parms.MaxRelativeDuration = 1.0;
+			parms.CellCountWeight = 1;
+			parms.WinBonusWeight = 1;
 			DoReplay(gameId, differenceOnly: false
 				, rounds: new[] { 100 }
 				//, action: Replay_OwnKillMoves

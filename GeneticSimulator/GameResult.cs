@@ -12,6 +12,9 @@ namespace GeneticSimulator
 		public int Parameters2Hash { get; set; }
 
 		public Player? Winner { get; set; }
+		public double Player1Score { get; set; }
+		public double Player2Score { get; set; }
+
 		public int Rounds { get; set; }
 		[XmlIgnore]
 		public TimeSpan TimeBank1 { get; set; }
@@ -28,17 +31,19 @@ namespace GeneticSimulator
 
 			if (Winner == null)
 			{
-				return string.Format("Draw in {0}; timebanks {1}{2} / {3}{4}",
+				return string.Format("Draw in {0}; Scores {5:0.000} / {6:0.000}; timebanks {1}{2} / {3}{4}",
 					Rounds, 
 					TimeBank1ms, Bot1TimedOut ? " (timedout)" : "", 
-					TimeBank2ms, Bot2TimedOut ? " (timed out)" : "");
+					TimeBank2ms, Bot2TimedOut ? " (timed out)" : "",
+					Player1Score, Player2Score);
 			}
 			else
 			{
-				return string.Format("Won by {5} in {0}; timebanks {1}{2} / {3}{4}",
+				return string.Format("Won by {7} in {0}; Scores {5:0.000} / {6:0.000}; timebanks {1}{2} / {3}{4}",
 					Rounds,
 					TimeBank1ms, Bot1TimedOut ? " (timedout)" : "",
 					TimeBank2ms, Bot2TimedOut ? " (timed out)" : "",
+					Player1Score, Player2Score,
 					Winner);
 			}
 		}

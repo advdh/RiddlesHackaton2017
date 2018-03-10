@@ -55,3 +55,4 @@ V41 08-03-2018, 23:48	Removed parameter BinarySimulationResult, added parameter 
 V42 09-03-2018, 22:00	Bugfix round 100: Did always a pass in round 100
 						Bugfix score 2: include board score of candidate moves in score2
 						Bugfix non-parallel simulation: did not calculate score2
+V43 10-03-2018, 11:00	Bugfix move generation: for passmove the winbonus was not added to the score. Therefore in many cases, passmove was the first evaluated move
