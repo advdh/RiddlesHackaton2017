@@ -35,3 +35,7 @@ After solving that (v42): Best move is birthmove (4,5) (4,2) (7,4), but there ar
 - Even if the birthmove is added to the move candidates, then it is not getting the highest score of all move candidates.
 	That's because the simulator is not smart enough to generate winning moves for the opponent for other move candidates.
 	Solution: turn off smartsimulator (parms.SmartMoveGenerationCount = 0): only if we have few fields? or also if opponent has few fields?
+
+v44, 5b9cb1fb-d605-4539-9c99-3b6abf85facb, UnManagedCode
+Round 78: PassMove (21-85, gain2 = -152): score = 0 %, score2 = -4860, moves = 1 (0), simulations = 11, win in Infinity, loose in 8.00 - Used 223 ms, Timelimit 915 ms, Start 06.190, End 06.413
+PassMove?

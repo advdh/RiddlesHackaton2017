@@ -181,7 +181,7 @@ namespace RiddlesHackaton2017.Bots
 				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
 				+ Parameters.WinBonus2[afterMoveBoard2.OpponentPlayerFieldCount]
 				- Parameters.WinBonus2[afterMoveBoard2.MyPlayerFieldCount];
-			result.Add(new MoveScore(new PassMove(), winBonus));
+			result.Add(new MoveScore(new PassMove(), Parameters.WinBonusWeight * winBonus));
 			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
 				for (int b = 0; b < i && b < myBirths.Count(); b++)

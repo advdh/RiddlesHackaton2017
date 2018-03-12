@@ -227,14 +227,14 @@ namespace GeneticSimulator.Analysis
 		{
 			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-08_11_26_48.xml",
 				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
-			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-10_12_12_01.xml",
-				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
 		}
 
 		[TestMethod]
 		public void Results_MaxDuration()
 		{
-			AnalyzeResults("fromfile 0 25 ConfigurationsMaxDuration_xml 2018-03-09_11_36_39.xml",
+			AnalyzeResults("fromfile 0 25 MaxDuration_xml 2018-03-12_05_49_00.xml",
+				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+			AnalyzeResults("fromfile 0 25 MaxDuration2_xml 2018-03-12_06_20_04.xml",
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
 		}
 

@@ -59,3 +59,4 @@ V43 10-03-2018, 11:00	Bugfix move generation: for passmove the winbonus was not 
 V44	12-03-2018, 17:00	WinBonusDecrementFactor = 0.940, based on simulation results
 						Split MaxWinBonus and WinBonusDecrementFactor in two, but no changes
 						New parameter ScoreBasedOnWinBonus, but no changes
+V45	12-03-2018, 19:28	Bugfix (2) move generation: for passmove the winbonus was not multiplied with the WinBonusWeight. Therefore in many cases, passmove was still the first evaluated move
