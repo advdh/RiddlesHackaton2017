@@ -177,22 +177,33 @@ namespace RiddlesHackaton2017.MonteCarlo
 					board = nextBoard;
 					board.ResetNextGeneration();
 				}
-				myScore += board.MyPlayerFieldCount;
-				opponentScore += board.OpponentPlayerFieldCount;
+
+				if (Parameters.ScoreBasedOnWinBonus)
+				{
+					//Use winbonus for score calculation
+					myScore += Parameters.WinBonus[board.OpponentPlayerFieldCount];
+					opponentScore += Parameters.WinBonus[board.MyPlayerFieldCount];
+				}
+				else
+				{
+					//Use field counts for score calculation
+					myScore += board.MyPlayerFieldCount;
+					opponentScore += board.OpponentPlayerFieldCount;
+				}
 
 				if (board.OpponentPlayerFieldCount == 0)
 				{
 					//Won
 					myScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: true, generationCount: generationCount,
-						myScore: (int)myScore, opponentScore: (int)opponentScore);
+						myScore: myScore, opponentScore: opponentScore);
 				}
 				if (board.MyPlayerFieldCount == 0)
 				{
 					//Lost
 					opponentScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: false, generationCount: generationCount,
-						myScore: (int)myScore, opponentScore: (int)opponentScore);
+						myScore: myScore, opponentScore: opponentScore);
 				}
 
 				//Next player
@@ -203,7 +214,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true
 				: board.OpponentPlayerFieldCount > 2 * board.MyPlayerFieldCount ? (bool?)false
 				: null;
-			return new SimulationResult(won, generationCount, (int)myScore, (int)opponentScore);
+			return new SimulationResult(won, generationCount, myScore, opponentScore);
 		}
 
 	}

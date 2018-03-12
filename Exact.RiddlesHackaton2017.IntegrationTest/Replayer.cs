@@ -17,8 +17,32 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			string gameId = "3c3dbc15-c316-434e-886b-fbad287e6d10";		//Player1
-			//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
+			string gameId = "3c3dbc15-c316-434e-886b-fbad287e6d10";     //Player1, UnManagedCode
+																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
+			var parms = MonteCarloParameters.Life;
+			parms.ParallelSimulation = false;
+			parms.Debug = true;
+			parms.LogLevel = 0;
+			parms.MaxDuration = TimeSpan.FromDays(1);
+			parms.MoveCount = 1000;
+			parms.MaxRelativeDuration = 1.0;
+			parms.CellCountWeight = 1;
+			parms.WinBonusWeight = 1;
+			parms.SmartMoveGenerationCount = 0;
+			DoReplay(gameId, differenceOnly: false
+				, rounds: new[] { 100 }
+				//, action: Replay_OwnKillMoves
+				, bot: new Anila8Bot(new TheConsole())
+				{
+					Parameters = parms
+				},
+				source: LogSource.File);
+		}
+
+		[TestMethod]
+		public void Replay_Test_Shazbot()
+		{
+			string gameId = "9d21efa0-453b-4951-87e5-0c0ed56b1248";
 			var parms = MonteCarloParameters.Life;
 			parms.ParallelSimulation = false;
 			parms.Debug = true;
@@ -28,9 +52,9 @@ namespace RiddlesHackaton2017.IntegrationTest
 			parms.MaxRelativeDuration = 1.0;
 			parms.CellCountWeight = 1;
 			parms.WinBonusWeight = 1;
+			parms.SmartMoveGenerationCount = 4;
 			DoReplay(gameId, differenceOnly: false
-				, rounds: new[] { 100 }
-				//, action: Replay_OwnKillMoves
+				, rounds: new[] { 91 }
 				, bot: new Anila8Bot(new TheConsole())
 				{
 					Parameters = parms

@@ -10,27 +10,29 @@ namespace GeneticSimulator
 {
 	public class GameRunner
 	{
-		private TimeSpan StartTimeBank = TimeSpan.FromMilliseconds(10000);
 		private const int RoundTimeBank = 100;
 		private readonly Random Random;
+
+		private TimeSpan StartTimeBank { get; } = TimeSpan.FromMilliseconds(10000);
 
 		public GameRunner(Random random)
 		{
 			Random = random;
 		}
 
-		public GameResult Run(MonteCarloParameters bot1Parameters, MonteCarloParameters bot2Parameters)
+		public GameResult Run(MonteCarloParameters bot1Parameters, MonteCarloParameters bot2Parameters,
+			Board startBoard = null, Player? startPlayer = null, TimeSpan? startTimeBank = null)
 		{
 			//Initialize bots
 			var bot1 = new Anila8Bot(new NullConsole()) { Parameters = bot1Parameters };
-			TimeSpan timeLimit1 = StartTimeBank;
+			TimeSpan timeLimit1 = startTimeBank ?? StartTimeBank;
 			bool bot1Timeout = false;
 
 			//Wait a while before initializing bot2 in order to have indepedent random objects
 			Thread.Sleep(100);
 
 			var bot2 = new Anila8Bot(new NullConsole()) { Parameters = bot2Parameters };
-			TimeSpan timeLimit2 = StartTimeBank;
+			TimeSpan timeLimit2 = startTimeBank ?? StartTimeBank;
 			bool bot2Timeout = false;
 
 			//Total number of fields of players of all rounds
@@ -38,24 +40,28 @@ namespace GeneticSimulator
 			int score2 = 0;
 
 			//Initialize board
-			Board board = GetRandomBoard();
+			Board board = startBoard ?? GetRandomBoard();
 
 			//Play
 			bool goOn = true;
+			bool skipPlayer1 = startPlayer.HasValue && startPlayer.Value == Player.Player2;
 			while (goOn)
 			{
 				//Player 1
-				board.MyPlayer = Player.Player1;
-				PlayerPlay(ref board, bot1, Player.Player1, ref timeLimit1, ref bot1Timeout);
-				board.UpdateFieldCounts();
-				score1 += board.Player1FieldCount;
-				score2 += board.Player2FieldCount;
-				goOn = board.Player1FieldCount > 0 && board.Player2FieldCount > 0;
-				if (!goOn)
+				if (!skipPlayer1)
 				{
-					return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout, 
-						bot1Parameters.GetHashCode(), bot2Parameters.GetHashCode(),
-						score1, score2);
+					board.MyPlayer = Player.Player1;
+					PlayerPlay(ref board, bot1, Player.Player1, ref timeLimit1, ref bot1Timeout);
+					board.UpdateFieldCounts();
+					score1 += board.Player1FieldCount;
+					score2 += board.Player2FieldCount;
+					goOn = board.Player1FieldCount > 0 && board.Player2FieldCount > 0;
+					if (!goOn)
+					{
+						return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout,
+							bot1Parameters.GetHashCode(), bot2Parameters.GetHashCode(),
+							score1, score2);
+					}
 				}
 
 				//Player 2
@@ -65,6 +71,7 @@ namespace GeneticSimulator
 				score1 += board.Player1FieldCount;
 				score2 += board.Player2FieldCount;
 				goOn = board.Player1FieldCount > 0 && board.Player2FieldCount > 0 && board.Round <= Board.MaxRounds;
+				skipPlayer1 = false;
 			}
 
 			return GetResult(board, timeLimit1, timeLimit2, bot1Timeout, bot2Timeout,
@@ -106,6 +113,7 @@ namespace GeneticSimulator
 				Parameters2Hash = hash2,
 				Player1Score = 2.0 * score1 / (score1 + score2) - 1.0,
 				Player2Score = 2.0 * score2 / (score1 + score2) - 1.0,
+				Board = board,
 			};
 			if (board.Player1FieldCount == 0 && board.Player2FieldCount > 0)
 			{

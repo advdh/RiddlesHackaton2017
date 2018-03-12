@@ -14,7 +14,7 @@ namespace RiddlesHackaton2017.Moves
 		/// <summary>
 		/// Applies the move for the specified player to the current Board
 		/// </summary>
-		public virtual void ApplyInline(Board board, Player player)
+		public virtual void ApplyInline(Board board, Player player, bool validate = true)
 		{
 
 		}

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace GeneticSimulator
+namespace GeneticSimulator.Analysis
 {
 	[TestClass]
-	public class Analysis
+	public class FromFileAnalysis
 	{
 		private const string Directory = @"D:\Temp\GeneticSimulator";
 
@@ -27,14 +27,19 @@ namespace GeneticSimulator
 		[TestMethod]
 		public void Results_WinBonusDecrementFactor_2()
 		{
-			AnalyzeResults(@"varyone 9 100 WinBonusDecrementFactor 1_09 2018-03-04_10_37_43.xml");
+			AnalyzeResults(@"varyone 9 100 WinBonusDecrementFactor 1_09 2018-03-04_10_37_43.xml",
+				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor },
+				sortByScore: true);
 		}
 
 		[TestMethod]
-		public void Results_FromFile_128_2048_0707_916()
+		public void Results_MaxWinBonus2()
 		{
-			AnalyzeResults(@"fromfile 1282048 100 Configurations_xml 2018-03-04_02_50_57.xml",
-				new[] { ConfigurationGenerator.Parameters.MaxWinBonus, ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+			AnalyzeResults(@"fromfile 0 25 MaxWinBonus2_xml 2018-03-11_06_02_51.xml",
+				new[] { ConfigurationGenerator.Parameters.MaxWinBonus,
+					ConfigurationGenerator.Parameters.WinBonusDecrementFactor,
+					ConfigurationGenerator.Parameters.MaxWinBonus2,
+					ConfigurationGenerator.Parameters.WinBonusDecrementFactor2});
 		}
 
 		/// <summary>
@@ -222,6 +227,8 @@ namespace GeneticSimulator
 		{
 			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-08_11_26_48.xml",
 				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
+			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-10_12_12_01.xml",
+				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
 		}
 
 		[TestMethod]
@@ -229,6 +236,51 @@ namespace GeneticSimulator
 		{
 			AnalyzeResults("fromfile 0 25 ConfigurationsMaxDuration_xml 2018-03-09_11_36_39.xml",
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+		}
+
+		[TestMethod]
+		public void Results_ScoreBasedOnWinBonus()
+		{
+			AnalyzeResults("fromfile 0 25 ScoreBasedOnWinBonus_xml 2018-03-11_07_28_53.xml",
+				new[] { ConfigurationGenerator.Parameters.ScoreBasedOnWinBonus });
+		}
+
+		[TestMethod]
+		public void Results_MaxWinBonus2_64_128()
+		{
+			AnalyzeResults("fromfile 0 25 MaxWinBonus2_xml 2018-03-11_08_32_42.xml",
+				new[] { ConfigurationGenerator.Parameters.MaxWinBonus,
+					ConfigurationGenerator.Parameters.WinBonusDecrementFactor,
+					ConfigurationGenerator.Parameters.MaxWinBonus2,
+					ConfigurationGenerator.Parameters.WinBonusDecrementFactor2});
+		}
+
+		[TestMethod]
+		public void Results_WinBonusDecrementFactor_3()
+		{
+			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-11_10_46_55.xml",
+				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+		}
+
+		[TestMethod]
+		public void Results_WinBonusDecrementFactor_93_94()
+		{
+			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_03_35_48.xml",
+				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+		}
+
+		[TestMethod]
+		public void Results_WinBonusDecrementFactor_94_95()
+		{
+			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_04_06_19.xml",
+				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+		}
+
+		[TestMethod]
+		public void Results_WinBonusDecrementFactor_95_96()
+		{
+			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_04_37_26.xml",
+				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
 		}
 
 		private void AnalyzeResults(string path)
@@ -245,11 +297,15 @@ namespace GeneticSimulator
 			}
 		}
 
-		private void AnalyzeResults(string path, IEnumerable<ConfigurationGenerator.Parameters> varyingParameters)
+		private void AnalyzeResults(string path, IEnumerable<ConfigurationGenerator.Parameters> varyingParameters, bool sortByScore = false)
 		{
 			string filename = Path.Combine(Directory, path);
-			var results = Configurations.Load(filename)
-				.OrderByDescending(r => r.AverageScore1);
+			var results = Configurations.Load(filename).OrderByDescending(r => r.AverageScore1);
+			if (sortByScore)
+			{
+				results = results.OrderByDescending(r => r.Won - r.Lost);
+			}
+
 			int ix = 1;
 
 			//Display results by total rank including the specified properties

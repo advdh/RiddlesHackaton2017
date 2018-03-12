@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 
 namespace RiddlesHackaton2017.IntegrationTest
 {
@@ -15,6 +14,12 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			if (dataReader.IsDBNull(index)) return null;
 			return dataReader.GetInt32(index);
+		}
+
+		public static int? GetNullableTinyint(this IDataReader dataReader, int index)
+		{
+			if (dataReader.IsDBNull(index)) return null;
+			return dataReader.GetByte(index);
 		}
 
 		public static string GetNullableString(this IDataReader dataReader, int index)

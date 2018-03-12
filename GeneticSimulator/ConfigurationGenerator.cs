@@ -79,8 +79,10 @@ namespace GeneticSimulator
 			MaxSimulationCount,
 			StartSimulationCount,
 			MoveCount,
-			WinBonusDecrementFactor,
 			MaxWinBonus,
+			WinBonusDecrementFactor,
+			MaxWinBonus2,
+			WinBonusDecrementFactor2,
 			KillMovePercentage,
 			PassMovePercentage,
 			MinimumFieldCountForBirthMoves,
@@ -97,6 +99,7 @@ namespace GeneticSimulator
 			SimulationDecrementScore2Factor,
 			HardcodedSimulationCounts,
 			SimulationFactor,
+			ScoreBasedOnWinBonus,
 		}
 
 		/// <summary>

@@ -35,30 +35,67 @@ namespace RiddlesHackaton2017.IntegrationTest
 			return null;
 		}
 
-		public class Game
+		public IEnumerable<Anila8Game> GetMyGames(int top, string where, string orderBy)
 		{
-			public string Id { get; set; }
-			public int Version { get; set; }
-			public string Opponent { get; set; }
-			public string Log { get; set; }
-			public DateTime PlayedDate { get; set; }
-			public int? Won { get; set; }
-			public int Rounds { get; set; }
+			string sql = $"SELECT TOP {top} {SelectAnila8} FROM Anila8Games WHERE {where} ORDER BY {orderBy}";
+			return GetMyGames(sql);
+		}
 
-			public string WonString
+		public IEnumerable<Anila8Game> GetMyGames(string where, string orderBy)
+		{
+			string sql = $"SELECT {SelectAnila8} FROM Anila8Games WHERE {where} ORDER BY {orderBy}";
+			return GetMyGames(sql);
+		}
+
+		public IEnumerable<Anila8Game> GetMyGames()
+		{
+			string sql = $"SELECT {SelectAnila8} FROM Anila8Games WHERE Log IS NOT NULL";
+			return GetMyGames(sql);
+		}
+
+		private string SelectAnila8 { get { return " Id, Version, Opponent, Log, PlayedDate, Won, Rounds, GameData, Player "; } }
+
+		private IEnumerable<Anila8Game> GetMyGames(string sql)
+		{
+			using (var command = new SqlCommand(sql, Connection))
 			{
-				get
+				using (var reader = command.ExecuteReader())
 				{
-					if (Won.HasValue && Won.Value == 1) return "Won";
-					if (Won.HasValue && Won.Value == 0) return "Lost";
-					return "Draw";
+					while (reader.Read())
+					{
+						yield return new Anila8Game()
+						{
+							Id = reader.GetString(0),
+							Version = reader.GetInt16(1),
+							Opponent = reader.GetString(2),
+							Log = reader.GetString(3),
+							PlayedDate = reader.GetDateTime(4),
+							Won = reader.GetNullableInt32(5),
+							Rounds = reader.GetInt16(6),
+							GameData = reader.GetString(7),
+							Player = reader.GetInt32(8),
+						};
+					}
 				}
 			}
 		}
 
-		public IEnumerable<Game> GetMyGames()
+		public IEnumerable<Game> GetGames(int top, string where, string orderBy)
 		{
-			string sql = "SELECT Id, Version, Opponent, Log, PlayedDate, Won, Rounds FROM Anila8Games WHERE Log IS NOT NULL";
+			string sql = $"SELECT TOP {top} {Select} FROM Games WHERE {where} ORDER BY {orderBy}";
+			return GetGames(sql);
+		}
+
+		public IEnumerable<Game> GetGames(string where, string orderBy)
+		{
+			string sql = $"SELECT {Select} FROM Games WHERE {where} ORDER BY {orderBy}";
+			return GetGames(sql);
+		}
+
+		private string Select { get { return " Id, PlayedDate, Rounds, Winner, Player0, Version0, Player1, Version1, GameData "; } }
+
+		private IEnumerable<Game> GetGames(string sql)
+		{
 			using (var command = new SqlCommand(sql, Connection))
 			{
 				using (var reader = command.ExecuteReader())
@@ -67,13 +104,15 @@ namespace RiddlesHackaton2017.IntegrationTest
 					{
 						yield return new Game()
 						{
-							Id  = reader.GetString(0),
-							Version = reader.GetInt16(1),
-							Opponent = reader.GetString(2),
-							Log = reader.GetString(3),
-							PlayedDate = reader.GetDateTime(4),
-							Won = reader.GetNullableInt32(5),
-							Rounds = reader.GetInt16(6),
+							Id = reader.GetString(0),
+							PlayedDate = reader.GetDateTime(1),
+							Rounds = reader.GetInt16(2),
+							Winner = reader.GetNullableTinyint(3),
+							Player0 = reader.GetString(4),
+							Version0 = reader.GetInt16(5),
+							Player1 = reader.GetString(6),
+							Version1 = reader.GetInt16(7),
+							GameData = reader.GetString(8),
 						};
 					}
 				}

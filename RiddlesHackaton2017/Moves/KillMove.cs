@@ -59,42 +59,56 @@ namespace RiddlesHackaton2017.Moves
 
 		public override Board Apply(Board board, Player player, bool validate = true)
 		{
-			if (validate)
-			{
-				if (board.Field[Index] == 0)
-				{
-					throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
-				}
-			}
-
 			var result = new Board(board);
-			switch (board.Field[Index])
+
+			var errorMessage = ValidateMove(board);
+			if (errorMessage == null)
 			{
-				case 1: result.Player1FieldCount--; break;
-				case 2: result.Player2FieldCount--; break;
+				//Valid move
+				switch (board.Field[Index])
+				{
+					case 1: result.Player1FieldCount--; break;
+					case 2: result.Player2FieldCount--; break;
+				}
+				result.Field[Index] = 0;
 			}
-			result.Field[Index] = 0;
+			else if (validate)
+			{
+				throw new InvalidKillMoveException(errorMessage);
+			}
+			//else silently apply pass move because invalid move
 
 			return result;
 		}
 
-		public override void ApplyInline(Board board, Player player)
+		public override void ApplyInline(Board board, Player player, bool validate = true)
+		{
+			var errorMessage = ValidateMove(board);
+			if (errorMessage == null)
+			{
+				//Valid move
+				switch (board.Field[Index])
+				{
+					case 1: board.Player1FieldCount--; break;
+					case 2: board.Player2FieldCount--; break;
+				}
+				board.Field[Index] = 0;
+				board.ResetNextGeneration();
+			}
+			else if (validate)
+			{
+				throw new InvalidKillMoveException(errorMessage);
+			}
+			//else silently apply pass move because invalid move
+		}
+
+		private string ValidateMove(Board board)
 		{
 			if (board.Field[Index] == 0)
 			{
-				throw new InvalidKillMoveException($"Kill move position must not be empty: {Position}");
+				return $"Kill move position must not be empty: {Position}";
 			}
-
-			if (board.Field[Index] == (short)board.MyPlayer)
-			{
-				board.MyPlayerFieldCount--;
-			}
-			else
-			{
-				board.OpponentPlayerFieldCount--;
-			}
-			board.Field[Index] = 0;
-			board.ResetNextGeneration();
+			return null;
 		}
 	}
 }

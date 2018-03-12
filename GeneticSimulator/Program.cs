@@ -51,6 +51,9 @@ namespace GeneticSimulator
 						case "fromfile":
 							simulator = new ConfigFromFileSimulator(commandLine);
 							break;
+						case "endgame":
+							simulator = new EndGameSimulator(commandLine);
+							break;
 						default:
 							Console.WriteLine($"unknown command {command}");
 							break;

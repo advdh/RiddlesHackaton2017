@@ -26,6 +26,9 @@ namespace GeneticSimulator
 		public bool Bot1TimedOut { get; set; }
 		public bool Bot2TimedOut { get; set; }
 
+		[XmlIgnore]
+		public Board Board { get; set; }
+
 		public override string ToString()
 		{
 

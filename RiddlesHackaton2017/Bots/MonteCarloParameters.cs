@@ -22,8 +22,10 @@ namespace RiddlesHackaton2017.Bots
 			MaxSimulationCount = original.MaxSimulationCount;
 			StartSimulationCount = original.StartSimulationCount;
 			MoveCount = original.MoveCount;
-			WinBonusDecrementFactor = original.WinBonusDecrementFactor;
 			MaxWinBonus = original.MaxWinBonus;
+			WinBonusDecrementFactor = original.WinBonusDecrementFactor;
+			MaxWinBonus2 = original.MaxWinBonus2;
+			WinBonusDecrementFactor2 = original.WinBonusDecrementFactor2;
 			KillMovePercentage = original.KillMovePercentage;
 			PassMovePercentage = original.PassMovePercentage;
 			MinimumFieldCountForBirthMoves = original.MinimumFieldCountForBirthMoves;
@@ -39,6 +41,7 @@ namespace RiddlesHackaton2017.Bots
 			WinBonusWeight = original.WinBonusWeight;
 			ParallelSimulation = original.ParallelSimulation;
 			SimulationFactor = original.SimulationFactor;
+			ScoreBasedOnWinBonus = original.ScoreBasedOnWinBonus;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -59,7 +62,7 @@ namespace RiddlesHackaton2017.Bots
 		[XmlIgnore]
 		public int[] WinBonus { get; set; }
 
-		/// <summary>Maximum winbonus (for cellcount = 0)</summary>
+		/// <summary>Maximum winbonus1 (for cellcount = 0)</summary>
 		public int MaxWinBonus
 		{
 			get { return _MaxWinBonus; }
@@ -68,17 +71,45 @@ namespace RiddlesHackaton2017.Bots
 		private int _MaxWinBonus = 128;
 
 		/// <summary>
-		/// Decrement factor of winbonus (winbonus for cellcount (n + 1) = WinBonusDecrementFactor * cellcount (n))
+		/// Decrement factor of winbonus1 (winbonus1 for cellcount (n + 1) = WinBonusDecrementFactor1 * cellcount (n))
 		/// </summary>
 		/// <remarks>Typically between 0.0 and 1.0</remarks>
 		public double WinBonusDecrementFactor
 		{
 			get { return _WinBonusDecrementFactor; }
-			set { _WinBonusDecrementFactor = value; CalculateWinBonus();}
+			set { _WinBonusDecrementFactor = value; CalculateWinBonus(); }
 		}
-		private double _WinBonusDecrementFactor = 0.916;
+		private double _WinBonusDecrementFactor = 0.940;
+
+		[XmlIgnore]
+		public int[] WinBonus2 { get; set; }
+
+		/// <summary>Maximum winbonus (for cellcount = 0)</summary>
+		public int MaxWinBonus2
+		{
+			get { return _MaxWinBonus2; }
+			set { _MaxWinBonus2 = value; CalculateWinBonus(); }
+		}
+		private int _MaxWinBonus2 = 128;
+
+		/// <summary>
+		/// Decrement factor of winbonus2 (winbonus2 for cellcount (n + 1) = WinBonusDecrementFactor2 * cellcount (n))
+		/// </summary>
+		/// <remarks>Typically between 0.0 and 1.0</remarks>
+		public double WinBonusDecrementFactor2
+		{
+			get { return _WinBonusDecrementFactor2; }
+			set { _WinBonusDecrementFactor2 = value; CalculateWinBonus(); }
+		}
+		private double _WinBonusDecrementFactor2 = 0.941;
 
 		private void CalculateWinBonus()
+		{
+			CalculateWinBonus1();
+			CalculateWinBonus2();
+		}
+
+		private void CalculateWinBonus1()
 		{
 			WinBonus = new int[Board.Size];
 			double value = MaxWinBonus;
@@ -86,6 +117,17 @@ namespace RiddlesHackaton2017.Bots
 			{
 				WinBonus[i] = (int)value;
 				value *= WinBonusDecrementFactor;
+			}
+		}
+
+		private void CalculateWinBonus2()
+		{
+			WinBonus2 = new int[Board.Size];
+			double value = MaxWinBonus2;
+			for (int i = 0; i < WinBonus2.Length; i++)
+			{
+				WinBonus2[i] = (int)value;
+				value *= WinBonusDecrementFactor2;
 			}
 		}
 
@@ -190,6 +232,11 @@ namespace RiddlesHackaton2017.Bots
 
 		public bool ParallelSimulation { get; set; } = true;
 
+		/// <summary>
+		/// If true, then use winbonus for score calculation; if false, then use field counts for score calculation
+		/// </summary>
+		public bool ScoreBasedOnWinBonus { get; set; } = false;
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -200,6 +247,9 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MaxWinBonus = {MaxWinBonus}");
 			sb.AppendLine($"WinBonusDecrementFactor = {WinBonusDecrementFactor:0.000}");
 			sb.AppendLine($"WinBonus = {string.Join(", ", WinBonus.Where(i => i > 0))}");
+			sb.AppendLine($"MaxWinBonus2 = {MaxWinBonus2}");
+			sb.AppendLine($"WinBonusDecrementFactor2 = {WinBonusDecrementFactor2:0.000}");
+			sb.AppendLine($"WinBonus2 = {string.Join(", ", WinBonus2.Where(i => i > 0))}");
 			sb.AppendLine($"CellCountWeight = {CellCountWeight}");
 			sb.AppendLine($"WinBonusWeight = {WinBonusWeight}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
@@ -214,6 +264,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
 			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
 			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
+			sb.AppendLine($"ScoreBasedOnWinBonus = {ScoreBasedOnWinBonus}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
@@ -230,6 +281,8 @@ namespace RiddlesHackaton2017.Bots
 				&& MoveCount == p.MoveCount
 				&& MaxWinBonus == p.MaxWinBonus
 				&& WinBonusDecrementFactor == p.WinBonusDecrementFactor
+				&& MaxWinBonus2 == p.MaxWinBonus2
+				&& WinBonusDecrementFactor2 == p.WinBonusDecrementFactor2
 				&& CellCountWeight == p.CellCountWeight
 				&& WinBonusWeight == p.WinBonusWeight
 				&& MaxDuration == p.MaxDuration
@@ -244,7 +297,8 @@ namespace RiddlesHackaton2017.Bots
 				&& Debug == p.Debug
 				&& LogLevel == p.LogLevel
 				&& ParallelSimulation == p.ParallelSimulation
-				&& SimulationFactor == p.SimulationFactor;
+				&& SimulationFactor == p.SimulationFactor
+				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus;
 		}
 
 		public override int GetHashCode()
@@ -255,6 +309,8 @@ namespace RiddlesHackaton2017.Bots
 				^ MoveCount.GetHashCode()
 				^ MaxWinBonus.GetHashCode()
 				^ WinBonusDecrementFactor.GetHashCode()
+				^ MaxWinBonus2.GetHashCode()
+				^ WinBonusDecrementFactor2.GetHashCode()
 				^ CellCountWeight.GetHashCode()
 				^ WinBonusWeight.GetHashCode()
 				^ MaxDuration.GetHashCode()
@@ -269,10 +325,12 @@ namespace RiddlesHackaton2017.Bots
 				^ Debug.GetHashCode()
 				^ LogLevel.GetHashCode()
 				^ ParallelSimulation.GetHashCode()
-				^ SimulationFactor.GetHashCode();
+				^ SimulationFactor.GetHashCode()
+				^ ScoreBasedOnWinBonus.GetHashCode();
 		}
 
 		private int _hashCode;
 		public int HashCode { get { return GetHashCode(); } set { _hashCode = value; } }
+
 	}
 }

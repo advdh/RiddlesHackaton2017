@@ -47,58 +47,64 @@ namespace RiddlesHackaton2017.Moves
 
 		public override Board Apply(Board board, Player player, bool validate = true)
 		{
-			if (validate)
-			{
-				if (board.Field[BirthIndex] != 0)
-				{
-					throw new InvalidBirthMoveException($"Birth position must be empty: {BirthPosition}");
-				}
-				if (board.Field[SacrificeIndex1] != (short)player)
-				{
-					throw new InvalidBirthMoveException($"SacrificeIndex1 position must be owned by you: {SacrificePosition1}");
-				}
-				if (board.Field[SacrificeIndex2] != (short)player)
-				{
-					throw new InvalidBirthMoveException($"SacrificeIndex2 position must be owned by you: {SacrificePosition2}");
-				}
-				if (SacrificeIndex1 == SacrificeIndex2)
-				{
-					throw new InvalidBirthMoveException($"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}");
-				}
-			}
-
 			var result = new Board(board);
-			result.Field[BirthIndex] = (short)player;
-			result.Field[SacrificeIndex1] = 0;
-			result.Field[SacrificeIndex2] = 0;
-			result.MyPlayerFieldCount--;
+
+			string errorMessage = ValidateMove(board, player);
+			if (errorMessage == null)
+			{
+				result.Field[BirthIndex] = (short)player;
+				result.Field[SacrificeIndex1] = 0;
+				result.Field[SacrificeIndex2] = 0;
+				result.MyPlayerFieldCount--;
+			}
+			else if (validate)
+			{
+				throw new InvalidBirthMoveException(errorMessage);
+			}
+			//else silently apply pass move because invalid move
 			return result;
 		}
 
-		public override void ApplyInline(Board board, Player player)
+		public override void ApplyInline(Board board, Player player, bool validate = true)
+		{
+			string errorMessage = ValidateMove(board, player);
+			if (errorMessage == null)
+			{
+				board.Field[BirthIndex] = (short)player;
+				board.Field[SacrificeIndex1] = 0;
+				board.Field[SacrificeIndex2] = 0;
+				board.MyPlayerFieldCount--;
+				board.ResetNextGeneration();
+			}
+			else if (validate)
+			{
+				throw new InvalidBirthMoveException(errorMessage);
+			}
+			//else silently apply pass move because invalid move
+		}
+
+		/// <summary>
+		/// Returns errorstring if move is invalid, null if valid
+		/// </summary>
+		private string ValidateMove(Board board, Player player)
 		{
 			if (board.Field[BirthIndex] != 0)
 			{
-				throw new InvalidBirthMoveException($"Birth position must be empty: {BirthPosition}");
+				return $"Birth position must be empty: {BirthPosition}";
 			}
 			if (board.Field[SacrificeIndex1] != (short)player)
 			{
-				throw new InvalidBirthMoveException($"SacrificeIndex1 position must be owned by you: {SacrificePosition1}");
+				return $"SacrificeIndex1 position must be owned by you: {SacrificePosition1}";
 			}
 			if (board.Field[SacrificeIndex2] != (short)player)
 			{
-				throw new InvalidBirthMoveException($"SacrificeIndex2 position must be owned by you: {SacrificePosition2}");
+				return $"SacrificeIndex2 position must be owned by you: {SacrificePosition2}";
 			}
 			if (SacrificeIndex1 == SacrificeIndex2)
 			{
-				throw new InvalidBirthMoveException($"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}");
+				return $"SacrificeIndex2 position must not be equals to Sacrifice1 position: {SacrificePosition1}";
 			}
-
-			board.Field[BirthIndex] = (short)player;
-			board.Field[SacrificeIndex1] = 0;
-			board.Field[SacrificeIndex2] = 0;
-			board.MyPlayerFieldCount--;
-			board.ResetNextGeneration();
+			return null;
 		}
 
 		public override string ToOutputString()
