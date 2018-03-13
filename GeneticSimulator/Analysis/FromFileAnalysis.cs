@@ -13,6 +13,13 @@ namespace GeneticSimulator.Analysis
 		private const string Directory = @"D:\Temp\GeneticSimulator";
 
 		[TestMethod]
+		public void Results_DoubleWinBonusCount()
+		{
+			AnalyzeResults(@"fromfile 0 25 DoubleWinBonusCount_xml 2018-03-13_10_11_15.xml",
+				new[] { ConfigurationGenerator.Parameters.DoubleWinBonusCount });
+		}
+
+		[TestMethod]
 		public void Results_MaxWinBonus()
 		{
 			AnalyzeResults(@"varyone 9 1000 MaxWinBonus 2 2018-03-03_02_21_13.xml");
@@ -225,7 +232,18 @@ namespace GeneticSimulator.Analysis
 		[TestMethod]
 		public void Results_SmartMoveGenerationCount()
 		{
-			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-08_11_26_48.xml",
+			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-13_08_12_11.xml",
+				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount,
+					ConfigurationGenerator.Parameters.SmartMoveMinimumFieldCount});
+			AnalyzeResults("fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-13_10_45_51.xml",
+				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount,
+					ConfigurationGenerator.Parameters.SmartMoveMinimumFieldCount});
+		}
+
+		[TestMethod]
+		public void Results_Identical()
+		{
+			AnalyzeResults("fromfile 0 25 Identical_xml 2018-03-13_08_49_13.xml",
 				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
 		}
 
@@ -235,6 +253,8 @@ namespace GeneticSimulator.Analysis
 			AnalyzeResults("fromfile 0 25 MaxDuration_xml 2018-03-12_05_49_00.xml",
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
 			AnalyzeResults("fromfile 0 25 MaxDuration2_xml 2018-03-12_06_20_04.xml",
+				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+			AnalyzeResults("fromfile 0 25 MaxDuration2_xml 2018-03-12_07_39_53.xml",
 				new[] { ConfigurationGenerator.Parameters.MaxDuration });
 		}
 

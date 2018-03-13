@@ -164,7 +164,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 					&& (StartBoard.Player1FieldCount < Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount < Parameters.SmartMoveMinimumFieldCount)
 					&& MaxDuration > Parameters.SmartMoveDurationThreshold
 					? GetSmartMoveSimulator(i) : GetSimpleMoveSimulator(i);
-				var tuple = simulator.GetRandomMove(board, player);
+				var tuple = simulator.GetRandomMove(board, player, first: generationCount == 1);
 				Move move = tuple.Item1;
 				Board nextBoard = tuple.Item2;
 				if (nextBoard == null)

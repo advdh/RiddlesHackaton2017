@@ -220,13 +220,13 @@ namespace RiddlesHackaton2017.Bots
 				if (result.Count >= maxCount) break;
 			}
 
-			//Kill moves
+			//Own kill moves
 			foreach (var killMove in myKills)
 			{
 				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
 			}
 
-			//Kill moves
+			//Opponent kill moves
 			foreach (var killMove in opponentKills)
 			{
 				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));

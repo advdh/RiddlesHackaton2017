@@ -103,6 +103,16 @@ namespace RiddlesHackaton2017.Bots
 		}
 		private double _WinBonusDecrementFactor2 = 0.941;
 
+		/// <summary>
+		/// First number of win bonuses, which use double decrement factor
+		/// </summary>
+		public int DoubleWinBonusCount
+		{
+			get { return _DoubleWinBonusCount; }
+			set { _DoubleWinBonusCount = value; CalculateWinBonus(); }
+		}
+		private int _DoubleWinBonusCount = 0;
+
 		private void CalculateWinBonus()
 		{
 			CalculateWinBonus1();
@@ -118,6 +128,10 @@ namespace RiddlesHackaton2017.Bots
 				WinBonus[i] = (int)value;
 				value *= WinBonusDecrementFactor;
 			}
+			for (int i = DoubleWinBonusCount - 1; i >= 0; i--)
+			{
+				WinBonus[i] = (int)(WinBonus[i + 1] / WinBonusDecrementFactor / WinBonusDecrementFactor);
+			}
 		}
 
 		private void CalculateWinBonus2()
@@ -128,6 +142,10 @@ namespace RiddlesHackaton2017.Bots
 			{
 				WinBonus2[i] = (int)value;
 				value *= WinBonusDecrementFactor2;
+			}
+			for (int i = DoubleWinBonusCount - 1; i >= 0; i--)
+			{
+				WinBonus2[i] = (int)(WinBonus2[i + 1] / WinBonusDecrementFactor / WinBonusDecrementFactor);
 			}
 		}
 

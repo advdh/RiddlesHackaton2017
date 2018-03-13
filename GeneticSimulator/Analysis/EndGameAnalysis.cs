@@ -26,6 +26,8 @@ namespace GeneticSimulator.Analysis
 			AnalyzeResults(8, @"endgame 8 1000 SmartMoveGenerationCount_xml 2018-03-12_01_51_27.xml", varyingParameters);
 			AnalyzeResults(9, @"endgame 9 1000 SmartMoveGenerationCount_xml 2018-03-12_03_24_04.xml", varyingParameters);
 			AnalyzeResults(10, @"endgame 10 1000 SmartMoveGenerationCount_xml 2018-03-12_05_44_13.xml", varyingParameters);
+			AnalyzeResults(11, @"endgame 11 1000 SmartMoveGenerationCount_xml 2018-03-12_11_49_46.xml", varyingParameters);
+			AnalyzeResults(12, @"endgame 12 1000 SmartMoveGenerationCount_xml 2018-03-13_03_19_06.xml", varyingParameters);
 		}
 
 		private void AnalyzeResults(int loosingFieldCount, string path, IEnumerable<ConfigurationGenerator.Parameters> varyingParameters)

@@ -13,6 +13,9 @@ namespace GeneticSimulator.Analysis
 	[TestClass]
 	public class OpponentAnalysis
 	{
+		/// <summary>
+		/// Generates a matrix of opponents x opponents with average scores, including draw scores
+		/// </summary>
 		[TestMethod]
 		public void AggregateScores_All()
 		{
@@ -68,6 +71,9 @@ namespace GeneticSimulator.Analysis
 			Console.WriteLine(sb);
 		}
 
+		/// <summary>
+		/// Generates a matrix of average scores by opponents by my versions
+		/// </summary>
 		[TestMethod]
 		public void AggregateScores_Anila8()
 		{

@@ -100,6 +100,7 @@ namespace GeneticSimulator
 			HardcodedSimulationCounts,
 			SimulationFactor,
 			ScoreBasedOnWinBonus,
+			DoubleWinBonusCount,
 		}
 
 		/// <summary>

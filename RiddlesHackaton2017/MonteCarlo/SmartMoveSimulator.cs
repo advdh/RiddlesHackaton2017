@@ -4,13 +4,14 @@ using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.RandomGeneration;
 using RiddlesHackaton2017.Bots;
+using System.Collections.Generic;
 
 namespace RiddlesHackaton2017.MonteCarlo
 {
 	public class SmartMoveSimulator : IMoveSimulator
 	{
-		private IRandomGenerator Random;
-		private MonteCarloParameters Parameters;
+		private readonly IRandomGenerator Random;
+		private readonly MonteCarloParameters Parameters;
 
 		public SmartMoveSimulator(IRandomGenerator randomGenerator, MonteCarloParameters monteCarloParameters)
 		{
@@ -18,28 +19,36 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
 		}
 
-		public Tuple<Move, Board> GetRandomMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomMove(Board board, Player player, bool first)
 		{
+			if (first)
+			{
+				_firstKillsForPlayer = GetKills(board, player);
+				_firstKillsForOpponent = GetKills(board, player.Opponent());
+				_firstBirths = GetBirths(board, player);
+			}
+
 			//If player has only a few cells left, then do a kill move
 			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
 			{
 				//Do a kill move
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board, player, first);
 			}
 			else
 			{
 				//Do a birth move
-				return GetRandomBirthMove(board, player);
+				return GetRandomBirthMove(board, player, first);
 			}
 		}
 
-		public Tuple<Move, Board> GetRandomKillMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomKillMove(Board board, Player player, bool first)
 		{
-			var moveGenerator = new SimulationMoveGenerator(board);
+			var opponentKillMoves = first ? _firstKillsForOpponent : GetKills(board, player.Opponent());
+
 			var board1 = board.NextGeneration;
 			var afterMoveBoard = new Board(board);
 			var afterMoveBoard1 = new Board(board1);
-			var opponentKillMoves = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player.Opponent(), player);
+
 			if (!opponentKillMoves.Any())
 			{
 				//No kill moves with positive gain: do a pass move
@@ -61,9 +70,33 @@ namespace RiddlesHackaton2017.MonteCarlo
 			return new Tuple<Move, Board>(move, afterMoveBoard1);
 		}
 
-		public Tuple<Move, Board> GetRandomBirthMove(Board board, Player player)
+		private Dictionary<int, int> _firstKillsForPlayer;
+		private Dictionary<int, int> _firstKillsForOpponent;
+		private Dictionary<int, int> _firstBirths;
+
+		private Dictionary<int, int> GetKills(Board board, Player player)
 		{
 			var moveGenerator = new SimulationMoveGenerator(board);
+			var board1 = board.NextGeneration;
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+			return moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
+		}
+
+		private Dictionary<int, int> GetBirths(Board board, Player player)
+		{
+			var moveGenerator = new SimulationMoveGenerator(board);
+			var board1 = board.NextGeneration;
+			var afterMoveBoard = new Board(board);
+			var afterMoveBoard1 = new Board(board1);
+			return moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
+		}
+
+		public Tuple<Move, Board> GetRandomBirthMove(Board board, Player player, bool first)
+		{
+			var births = first ? _firstBirths : GetBirths(board, player);
+			var myKills = first ? _firstKillsForPlayer : GetKills(board, player);
+
 			var board1 = board.NextGeneration;
 			if (board1.GetFieldCount(player.Opponent()) == 0)
 			{
@@ -72,18 +105,17 @@ namespace RiddlesHackaton2017.MonteCarlo
 			}
 			var afterMoveBoard = new Board(board);
 			var afterMoveBoard1 = new Board(board1);
-			var births = moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
+
 			if (!births.Any())
 			{
 				//Not enough births: do a kill move anyway
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board, player, first);
 			}
-			var myKills = moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
 
 			if (myKills.Count < 2)
 			{
 				//Not enough own kills: do a kill move anyway
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board, player, first);
 			}
 
 			int birthValue = Random.Next(births.Last().Value);
