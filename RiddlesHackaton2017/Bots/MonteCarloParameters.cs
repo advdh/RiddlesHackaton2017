@@ -26,6 +26,7 @@ namespace RiddlesHackaton2017.Bots
 			WinBonusDecrementFactor = original.WinBonusDecrementFactor;
 			MaxWinBonus2 = original.MaxWinBonus2;
 			WinBonusDecrementFactor2 = original.WinBonusDecrementFactor2;
+			DoubleWinBonusCount = original.DoubleWinBonusCount;
 			KillMovePercentage = original.KillMovePercentage;
 			PassMovePercentage = original.PassMovePercentage;
 			MinimumFieldCountForBirthMoves = original.MinimumFieldCountForBirthMoves;
@@ -111,7 +112,7 @@ namespace RiddlesHackaton2017.Bots
 			get { return _DoubleWinBonusCount; }
 			set { _DoubleWinBonusCount = value; CalculateWinBonus(); }
 		}
-		private int _DoubleWinBonusCount = 0;
+		private int _DoubleWinBonusCount = 2;
 
 		private void CalculateWinBonus()
 		{
@@ -214,14 +215,14 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
-		public int SmartMoveGenerationCount { get; set; } = 4;
+		public int SmartMoveGenerationCount { get; set; } = 1;
 
 		/// <summary>
 		/// Minimum field count for smart move simulator: 
 		/// below this number of field count for any of the players
 		/// we switch to the smart move simulator
 		/// </summary>
-		public int SmartMoveMinimumFieldCount { get; set; } = 15;
+		public int SmartMoveMinimumFieldCount { get; set; } = 100;
 
 		/// <summary>Minimum allowed move duration in order to execute a smart move</summary>
 		[XmlIgnore]
@@ -268,6 +269,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MaxWinBonus2 = {MaxWinBonus2}");
 			sb.AppendLine($"WinBonusDecrementFactor2 = {WinBonusDecrementFactor2:0.000}");
 			sb.AppendLine($"WinBonus2 = {string.Join(", ", WinBonus2.Where(i => i > 0))}");
+			sb.AppendLine($"DoubleWinBonusCount = {DoubleWinBonusCount}");
 			sb.AppendLine($"CellCountWeight = {CellCountWeight}");
 			sb.AppendLine($"WinBonusWeight = {WinBonusWeight}");
 			sb.AppendLine($"MaxDuration = {MaxDuration.TotalMilliseconds:0} ms");
@@ -301,6 +303,7 @@ namespace RiddlesHackaton2017.Bots
 				&& WinBonusDecrementFactor == p.WinBonusDecrementFactor
 				&& MaxWinBonus2 == p.MaxWinBonus2
 				&& WinBonusDecrementFactor2 == p.WinBonusDecrementFactor2
+				&& DoubleWinBonusCount == p.DoubleWinBonusCount
 				&& CellCountWeight == p.CellCountWeight
 				&& WinBonusWeight == p.WinBonusWeight
 				&& MaxDuration == p.MaxDuration
@@ -329,6 +332,7 @@ namespace RiddlesHackaton2017.Bots
 				^ WinBonusDecrementFactor.GetHashCode()
 				^ MaxWinBonus2.GetHashCode()
 				^ WinBonusDecrementFactor2.GetHashCode()
+				^ DoubleWinBonusCount.GetHashCode()
 				^ CellCountWeight.GetHashCode()
 				^ WinBonusWeight.GetHashCode()
 				^ MaxDuration.GetHashCode()

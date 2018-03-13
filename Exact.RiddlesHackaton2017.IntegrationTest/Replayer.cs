@@ -21,15 +21,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
 			parms.LogLevel = 0;
-			parms.CellCountWeight = 1;
-			parms.WinBonusWeight = 1;
-			parms.LogLevel = 0;
-			parms.DoubleWinBonusCount = 3;
-			parms.SmartMoveGenerationCount = 3;
-			parms.SmartMoveMinimumFieldCount = 100;
 			parms.ParallelSimulation = false;
+			parms.DoubleWinBonusCount = 2;
 			DoReplay(gameId, differenceOnly: false
-				, rounds: new[] { 32 }
+				//, rounds: new[] { 32 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
