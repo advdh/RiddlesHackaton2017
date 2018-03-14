@@ -4,4 +4,4 @@
 [assembly: AssemblyProduct("Anila8")]
 [assembly: AssemblyCopyright("Copyright © 2018")]
 
-[assembly: AssemblyVersion("47.0.0.0")]
+[assembly: AssemblyVersion("48.0.0.0")]

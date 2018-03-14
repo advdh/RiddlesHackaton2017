@@ -1,4 +1,5 @@
-﻿using RiddlesHackaton2017.Moves;
+﻿using RiddlesHackaton2017.MonteCarlo;
+using RiddlesHackaton2017.Moves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +66,22 @@ namespace RiddlesHackaton2017.Models
 		/// <summary>Me</summary>
 		public Player MyPlayer { get; set; }
 
+		Dictionary<int, int> _mykills;
+		Dictionary<int, int> _opponentKills;
+		Dictionary<int, int> _myBirths;
+
+		public Dictionary<int, int> MyKills { get { return _mykills; } }
+		public Dictionary<int, int> OpponentKills { get { return _opponentKills; } }
+		public Dictionary<int, int> MyBirths { get { return _myBirths; } }
+
+		/// <remarks>MyKills gets kills for the opponent because we use it in the context of the opponent player</remarks>
+		public void InitializeSmartMoves()
+		{
+			_mykills = SmartMoveSimulator.GetKills(this, OpponentPlayer);
+			_opponentKills = SmartMoveSimulator.GetKills(this, MyPlayer);
+			_myBirths = SmartMoveSimulator.GetBirths(this, OpponentPlayer);
+		}
+
 		/// <summary>Opponent</summary>
 		public Player OpponentPlayer { get { return MyPlayer.Opponent(); } }
 
@@ -88,11 +105,17 @@ namespace RiddlesHackaton2017.Models
 			Round = board.Round;
 			Player1FieldCount = board.Player1FieldCount;
 			Player2FieldCount = board.Player2FieldCount;
+			_mykills = board._mykills;
+			_opponentKills = board._opponentKills;
+			_myBirths = board._myBirths;
 		}
 
 		public void ResetNextGeneration()
 		{
 			_NextGeneration = null;
+			_mykills = null;
+			_opponentKills = null;
+			_myBirths = null;
 		}
 
 		public void SetField(short[] v)

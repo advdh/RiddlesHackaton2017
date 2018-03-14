@@ -62,3 +62,4 @@ V44	12-03-2018, 17:00	WinBonusDecrementFactor = 0.940, based on simulation resul
 V45	12-03-2018, 19:28	Bugfix (2) move generation: for passmove the winbonus was not multiplied with the WinBonusWeight. Therefore in many cases, passmove was still the first evaluated move
 V47 13-03-2018, 23:29	SmartMoveGenerationCount = 1, and SmartMoveMinimumFieldCount = 100 (infinity) (and do smart move if generation <= SmartMoveGenerationCount instead of generation < SmartMoveGenerationCount)
 						New parameter DoubleWinBonusCount (set to 2) to force move generator to add kill-in-one moves at the top of the list
+V48	14-03-2018, 22:17	50% performance improvement of SmartMoveGenerationCount = 1

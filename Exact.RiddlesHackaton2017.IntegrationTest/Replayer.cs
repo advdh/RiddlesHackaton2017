@@ -21,8 +21,9 @@ namespace RiddlesHackaton2017.IntegrationTest
 																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
 			parms.LogLevel = 0;
-			parms.ParallelSimulation = false;
+			parms.ParallelSimulation = true;
 			parms.DoubleWinBonusCount = 2;
+			parms.SmartMoveGenerationCount = 2;
 			DoReplay(gameId, differenceOnly: false
 				//, rounds: new[] { 32 }
 				//, action: Replay_OwnKillMoves

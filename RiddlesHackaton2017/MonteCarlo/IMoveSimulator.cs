@@ -6,6 +6,6 @@ namespace RiddlesHackaton2017.MonteCarlo
 {
 	public interface IMoveSimulator
 	{
-		Tuple<Move, Board> GetRandomMove(Board board, Player player, bool first);
+		Tuple<Move, Board> GetRandomMove(Board board, Player player);
 	}
 }

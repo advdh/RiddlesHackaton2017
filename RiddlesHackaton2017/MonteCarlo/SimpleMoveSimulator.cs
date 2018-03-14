@@ -18,7 +18,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
 		}
 
-		public Tuple<Move, Board> GetRandomMove(Board board, Player player, bool first)
+		public Tuple<Move, Board> GetRandomMove(Board board, Player player)
 		{
 			//If player has only a few cells left, then do only kill moves
 			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)

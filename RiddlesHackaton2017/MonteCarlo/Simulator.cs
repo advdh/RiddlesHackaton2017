@@ -35,6 +35,10 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public MonteCarloStatistics SimulateMove(Board startBoard, TimeSpan maxDuration, Move move, int simulationCount)
 		{
 			StartBoard = Guard.NotNull(startBoard, nameof(startBoard));
+			if (Parameters.SmartMoveGenerationCount > 0)
+			{
+				StartBoard.InitializeSmartMoves();
+			}
 			MaxDuration = maxDuration;
 
 			var statistic = new MonteCarloStatistics() { Move = move };
@@ -160,11 +164,15 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			while (StartBoard.Round + generationCount / 2 <= Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
-				var simulator = generationCount <= Parameters.SmartMoveGenerationCount
+				var simulator = GetSimpleMoveSimulator(i);
+				if (generationCount <= Parameters.SmartMoveGenerationCount
 					&& (StartBoard.Player1FieldCount <= Parameters.SmartMoveMinimumFieldCount || StartBoard.Player2FieldCount <= Parameters.SmartMoveMinimumFieldCount)
-					&& MaxDuration > Parameters.SmartMoveDurationThreshold
-					? GetSmartMoveSimulator(i) : GetSimpleMoveSimulator(i);
-				var tuple = simulator.GetRandomMove(board, player, first: generationCount == 1);
+					&& MaxDuration > Parameters.SmartMoveDurationThreshold)
+				{
+					simulator = GetSmartMoveSimulator(i);
+				}
+
+				var tuple = simulator.GetRandomMove(board, player);
 				Move move = tuple.Item1;
 				Board nextBoard = tuple.Item2;
 				if (nextBoard == null)
