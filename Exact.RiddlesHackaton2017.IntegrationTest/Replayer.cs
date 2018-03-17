@@ -19,7 +19,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		/// <summary>
 		/// Should play kill moves in last 4 rounds
 		/// </summary>
-		/// <remarks>TODO: fails if we use board.NextGeneration2 instead of board.NextGeneration</remarks>
 		[TestMethod]
 		public void Regression_KillMovesToWin()
 		{

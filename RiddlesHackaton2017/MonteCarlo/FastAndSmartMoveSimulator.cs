@@ -44,14 +44,14 @@ namespace RiddlesHackaton2017.MonteCarlo
 				move = GetRandomBirthMove(board, player);
 			}
 			move.ApplyInline(board, player);
-			return new Tuple<Move, Board>(move, board.NextGeneration2);
+			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
 		public Move GetRandomKillMove(Board board, Player player)
 		{
 			//Select an opponent cell, which would not be killed anyway in the next turn
 			var opponentCells = board.GetCells(player.Opponent())
-				.Where(i => board.NextGeneration2.Field[i] == board.Field[i])
+				.Where(i => board.NextGeneration.Field[i] == board.Field[i])
 				.ToArray();
 			if (opponentCells.Length == 0) return new PassMove();
 			//var positions = opponentCells.Select(c => new Position(c)).ToArray();
@@ -76,7 +76,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				.ToArray();
 			short opponent = (short)(board.OpponentPlayer == Player.Player1 ? 1 : 2);
 			var opponentBirthCells = empty
-				.Where(i => board.NextGeneration2.Field[i] == opponent)
+				.Where(i => board.NextGeneration.Field[i] == opponent)
 				.ToArray();
 			//var birthPositions = opponentBirthCells.Select(c => new Position(c)).ToArray();
 			if (opponentBirthCells.Length == 0) return GetRandomKillMove(board, player);
@@ -85,7 +85,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 			//Pick two cells of my own to sacrifice: pick cells which would die anyway
 			var dyingOwnCells = mine
-				.Where(i => board.NextGeneration2.Field[i] == 0)
+				.Where(i => board.NextGeneration.Field[i] == 0)
 				.ToArray();
 			//var positions = dyingOwnCells.Select(c => new Position(c)).ToArray();
 			if (dyingOwnCells.Length < 2) return GetRandomKillMove(board, player);

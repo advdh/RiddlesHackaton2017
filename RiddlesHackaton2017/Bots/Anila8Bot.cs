@@ -141,8 +141,8 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var result = new List<MoveScore>();
 
-			var board1 = Board.NextGeneration2;
-			var board2 = board1.NextGeneration2;
+			var board1 = Board.NextGeneration;
+			var board2 = board1.NextGeneration;
 			var afterMoveBoard = new Board(Board);
 			var afterMoveBoard1 = new Board(board1);
 			var afterMoveBoard2 = new Board(board2);

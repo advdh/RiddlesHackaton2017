@@ -101,7 +101,7 @@ namespace RiddlesHackaton2017.Models
 					foreach (int i in Board.NeighbourFields[index])
 					{
 						Neighbours1[i]--;
-						SetNextGeneration2Field(this, NextGeneration2, i);
+						SetNextGenerationField(this, NextGeneration, i);
 					}
 				}
 				else
@@ -109,7 +109,7 @@ namespace RiddlesHackaton2017.Models
 					foreach (int i in Board.NeighbourFields[index])
 					{
 						Neighbours2[i]--;
-						SetNextGeneration2Field(this, NextGeneration2, i);
+						SetNextGenerationField(this, NextGeneration, i);
 					}
 				}
 			}
@@ -134,7 +134,7 @@ namespace RiddlesHackaton2017.Models
 					foreach (int i in Board.NeighbourFields[index])
 					{
 						Neighbours1[i]++;
-						SetNextGeneration2Field(this, NextGeneration2, i);
+						SetNextGenerationField(this, NextGeneration, i);
 					}
 				}
 				else
@@ -142,7 +142,7 @@ namespace RiddlesHackaton2017.Models
 					foreach (int i in Board.NeighbourFields[index])
 					{
 						Neighbours2[i]++;
-						SetNextGeneration2Field(this, NextGeneration2, i);
+						SetNextGenerationField(this, NextGeneration, i);
 					}
 				}
 			}
@@ -192,11 +192,10 @@ namespace RiddlesHackaton2017.Models
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ResetNextGeneration()
 		{
-			_NextGeneration = null;
 			_mykills = null;
 			_opponentKills = null;
 			_myBirths = null;
-			_NextGeneration2 = null;
+			_NextGeneration = null;
 			Neighbours1 = null;
 			Neighbours2 = null;
 		}
@@ -216,53 +215,10 @@ namespace RiddlesHackaton2017.Models
 		public Board ApplyMoveAndNext(Player player, Move move, bool validateMove = true)
 		{
 			//Apply move and next generation
-			var newBoard = move.Apply(this, player, validateMove).NextGeneration2;
+			var newBoard = move.Apply(this, player, validateMove).NextGeneration;
 
 			//Increment round
 			newBoard.Round = Round + (player == Player.Player2 ? 1 : 0);
-
-			return newBoard;
-		}
-
-		private Board _NextGeneration;
-
-		/// <summary>
-		/// Moves to the next generation
-		/// </summary>
-		/// <returns>New board</returns>
-		public Board NextGeneration
-		{
-			get
-			{
-				if (_NextGeneration == null)
-				{
-					_NextGeneration = GetNextGeneration(AllCells);
-				}
-				return _NextGeneration;
-			}
-		}
-
-		/// <summary>
-		/// Moves to the next generation
-		/// </summary>
-		/// <returns>New board</returns>
-		public Board GetNextGeneration(IEnumerable<int> affectedFields)
-		{
-			var newBoard = new Board() { MyPlayer = MyPlayer };
-
-			foreach (int i in affectedFields)
-			{
-				newBoard.Field[i] = NextGenerationForField(i);
-				switch (newBoard.Field[i])
-				{
-					case 1:
-						newBoard.Player1FieldCount++;
-						break;
-					case 2:
-						newBoard.Player2FieldCount++;
-						break;
-				}
-			}
 
 			return newBoard;
 		}
@@ -1328,39 +1284,39 @@ namespace RiddlesHackaton2017.Models
 		}
 
 		/// <summary>
-		/// Same as NextGeneration, but based on Neighbours1 and Neighbours2
+		/// Returns the next generation of the current board
 		/// </summary>
-		public Board NextGeneration2
+		public Board NextGeneration
 		{
 			get
 			{
-				if (_NextGeneration2 == null)
+				if (_NextGeneration == null)
 				{
 					CalculateNeighbours();
 
-					_NextGeneration2 = new Board()
+					_NextGeneration = new Board()
 					{
 						MyPlayer = MyPlayer,
 						Round = Round + (MyPlayer == Player.Player2 ? 1 : 0),
 					};
 					for (int i = 0; i < Size; i++)
 					{
-						SetNextGeneration2Field(this, _NextGeneration2, i);
+						SetNextGenerationField(this, _NextGeneration, i);
 					}
 				}
-				return _NextGeneration2;
+				return _NextGeneration;
 			}
 		}
 
 		/// <summary>
-		/// Sets next generation2 field for the new board for position i
+		/// Sets next generation field for the new board for position i
 		/// </summary>
 		/// <param name="board">Current board</param>
 		/// <param name="nextBoard">Next board</param>
 		/// <param name="i">Position</param>
-		private static void SetNextGeneration2Field(Board board, Board nextBoard, int i)
+		private static void SetNextGenerationField(Board board, Board nextBoard, int i)
 		{
-			SetNextGeneration2Field(board, nextBoard, i, 0, 0);
+			SetNextGenerationField(board, nextBoard, i, 0, 0);
 		}
 
 		/// <summary>
@@ -1369,7 +1325,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="board">Current board</param>
 		/// <param name="nextBoard">Next board</param>
 		/// <param name="i">Position</param>
-		private static void SetNextGeneration2Field(Board board, Board nextBoard, int i, 
+		private static void SetNextGenerationField(Board board, Board nextBoard, int i, 
 			int deltaNeighbours1, int deltaNeighbours2)
 		{
 			switch (board.Neighbours1[i] + deltaNeighbours1 + board.Neighbours2[i] + deltaNeighbours2)
@@ -1403,8 +1359,6 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
-		private Board _NextGeneration2;
-
-
+		private Board _NextGeneration;
 	}
 }

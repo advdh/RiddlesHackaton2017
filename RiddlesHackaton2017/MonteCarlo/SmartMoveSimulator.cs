@@ -41,7 +41,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			if (!opponentKills.Any())
 			{
 				//No kill moves with positive gain: do a pass move
-				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration2);
+				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration);
 			}
 			int value = Random.Next(opponentKills.Last().Value);
 			int index = 0;
@@ -55,7 +55,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			}
 			var move = new KillMove(index);
 			move.ApplyInline(board, player);
-			return new Tuple<Move, Board>(move, board.NextGeneration2);
+			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
 		public Tuple<Move, Board> GetRandomBirthMove(Board board, Player player)
@@ -63,10 +63,10 @@ namespace RiddlesHackaton2017.MonteCarlo
 			var births = board.MyBirths ?? GetBirths(board, player);
 			var myKills = board.MyKills ?? GetKills(board, player);
 
-			if (board.NextGeneration2.GetFieldCount(player.Opponent()) == 0)
+			if (board.NextGeneration.GetFieldCount(player.Opponent()) == 0)
 			{
 				//Pass leads to win
-				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration2);
+				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration);
 			}
 
 			if (!births.Any())
@@ -127,13 +127,13 @@ namespace RiddlesHackaton2017.MonteCarlo
 			}
 			var move = new BirthMove(birthIndex, killIndex1, killIndex2);
 			move.ApplyInline(board, player);
-			return new Tuple<Move, Board>(move, board.NextGeneration2);
+			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
 		public static Dictionary<int, int> GetKills(Board board, Player player)
 		{
 			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration2;
+			var board1 = board.NextGeneration;
 			var afterMoveBoard = new Board(board);
 			var afterMoveBoard1 = new Board(board1);
 			return moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
@@ -142,7 +142,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public static Dictionary<int, int> GetBirths(Board board, Player player)
 		{
 			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration2;
+			var board1 = board.NextGeneration;
 			var afterMoveBoard = new Board(board);
 			var afterMoveBoard1 = new Board(board1);
 			return moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);

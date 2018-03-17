@@ -196,7 +196,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				if (nextBoard == null)
 				{
 					move.ApplyInline(board, player);
-					board = board.NextGeneration2;
+					board = board.NextGeneration;
 				}
 				else
 				{
