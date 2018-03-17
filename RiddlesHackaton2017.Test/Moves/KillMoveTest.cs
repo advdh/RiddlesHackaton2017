@@ -24,8 +24,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 2).Index], "Killed field");
 			Assert.AreEqual(2, newBoard.Field[new Position(0, 3).Index], "not killed field");
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		/// <summary>
@@ -41,8 +41,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			Assert.AreEqual(1, newBoard.Field[new Position(0, 2).Index], "non-Killed field");
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 3).Index], "Killed field");
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		/// <summary>
@@ -68,8 +68,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var newBoard = move.Apply(board, Player.Player1, validate: false);
 
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod]

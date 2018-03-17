@@ -39,13 +39,13 @@ namespace RiddlesHackaton2017.IntegrationTest
 				round = (ix + 1) / 2;
 				result.Add($"update game round {round}");
 				result.Add($"update game field {board.BoardString()}");
-				result.Add($"update player0 living_cells {board.CalculatedPlayer1FieldCount}");
+				result.Add($"update player0 living_cells {board.GetCalculatedPlayerFieldCount(Player.Player1)}");
 				var move = Move.Parse(rawLines[ix]);
 
 				result.AddRange(MoveString(move, Player.Player1, player, timeBank));
 
 				board = board.ApplyMoveAndNext(Player.Player1, move, validateMove:false);
-				result.Add($"update player1 living_cells {board.CalculatedPlayer2FieldCount}");
+				result.Add($"update player1 living_cells {board.GetCalculatedPlayerFieldCount(Player.Player2)}");
 				if (ix + 1 < rawLines.Length)
 				{
 					move = Move.Parse(rawLines[ix + 1]);

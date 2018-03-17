@@ -22,7 +22,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 		public Tuple<Move, Board> GetRandomMove(Board board, Player player)
 		{
 			//If player has only a few cells left, then do a kill move
-			if (board.GetFieldCount(player) < Parameters.MinimumFieldCountForBirthMoves)
+			if (board.PlayerFieldCount[player.Value()] < Parameters.MinimumFieldCountForBirthMoves)
 			{
 				//Do a kill move
 				return GetRandomKillMove(board, player);
@@ -63,7 +63,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			var births = board.MyBirths ?? GetBirths(board, player);
 			var myKills = board.MyKills ?? GetKills(board, player);
 
-			if (board.NextGeneration.GetFieldCount(player.Opponent()) == 0)
+			if (board.NextGeneration.PlayerFieldCount[player.Opponent().Value()] == 0)
 			{
 				//Pass leads to win
 				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration);

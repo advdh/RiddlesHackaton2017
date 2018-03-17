@@ -23,8 +23,8 @@ namespace RiddlesHackaton2017.Test.Moves
 			Assert.AreEqual(0, newBoard.Field[sacrificePosition1.Index], "SacrificePosition1");
 			Assert.AreEqual(0, newBoard.Field[sacrificePosition2.Index], "SacrificePosition2");
 			Assert.AreEqual(2, newBoard.Field[new Position(0, 3).Index], "Unchanged position");
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -51,8 +51,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var newBoard = move.Apply(board, Player.Player1, validate: false);
 
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -79,8 +79,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var newBoard = move.Apply(board, Player.Player1, validate: false);
 
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -107,8 +107,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var newBoard = move.Apply(board, Player.Player1, validate: false);
 
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod, ExpectedException(typeof(InvalidBirthMoveException))]
@@ -135,8 +135,8 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var newBoard = move.Apply(board, Player.Player1, validate: false);
 
-			Assert.AreEqual(newBoard.CalculatedPlayer1FieldCount, newBoard.Player1FieldCount, "Player1FieldCount");
-			Assert.AreEqual(newBoard.CalculatedPlayer2FieldCount, newBoard.Player2FieldCount, "Player2FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
 		}
 
 		[TestMethod]

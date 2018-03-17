@@ -148,8 +148,7 @@ namespace GeneticSimulator
 				board.Field[position.Index] = 1;
 				board.Field[Board.Size - 1 - position.Index] = 2;
 			}
-			board.Player1FieldCount = board.CalculatedPlayer1FieldCount;
-			board.Player2FieldCount = board.CalculatedPlayer2FieldCount;
+			board.UpdateFieldCounts();
 			return board;
 		}
 	}

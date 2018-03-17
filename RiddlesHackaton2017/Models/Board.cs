@@ -19,13 +19,20 @@ namespace RiddlesHackaton2017.Models
 
 		public int Round { get; set; }
 
-		public int Player1FieldCount { get; set; }
-		public int Player2FieldCount { get; set; }
+		public int[] PlayerFieldCount = new int[3];
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int GetFieldCount(Player player)
+		public int Player1FieldCount {
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get { return PlayerFieldCount[1]; }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			set { PlayerFieldCount[1] = value; }
+		}
+		public int Player2FieldCount
 		{
-			return player == Player.Player1 ? Player1FieldCount : Player2FieldCount;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get { return PlayerFieldCount[2]; }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			set { PlayerFieldCount[2] = value; }
 		}
 
 		public int MyPlayerFieldCount
@@ -33,15 +40,12 @@ namespace RiddlesHackaton2017.Models
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
-				return MyPlayer == Player.Player1 ? Player1FieldCount : Player2FieldCount;
+				return PlayerFieldCount[MyPlayer.Value()];
 			}
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
-				if (MyPlayer == Player.Player1)
-					Player1FieldCount = value;
-				else
-					Player2FieldCount = value;
+				PlayerFieldCount[MyPlayer.Value()] = value;
 			}
 		}
 
@@ -50,23 +54,28 @@ namespace RiddlesHackaton2017.Models
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
-				return MyPlayer == Player.Player1 ? Player2FieldCount : Player1FieldCount;
+				return PlayerFieldCount[OpponentPlayer.Value()];
 			}
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
-				if (MyPlayer == Player.Player1)
-					Player2FieldCount = value;
-				else
-					Player1FieldCount = value;
+				PlayerFieldCount[OpponentPlayer.Value()] = value;
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void UpdateFieldCounts()
 		{
-			Player1FieldCount = CalculatedPlayer1FieldCount;
-			Player2FieldCount = CalculatedPlayer2FieldCount;
+			foreach(var player in AllPlayers)
+			{
+				PlayerFieldCount[player.Value()] = GetCalculatedPlayerFieldCount(player);
+			}
+		}
+
+		public IEnumerable<Player> AllPlayers
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get { return new[] { Player.Player1, Player.Player2 }; }
 		}
 
 		public short[] Field = new short[Size];
@@ -88,11 +97,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="index">Index which is killed</param>
 		internal void ApplyKill(Player player, int index)
 		{
-			switch (player.Value())
-			{
-				case 1: Player1FieldCount--; break;
-				case 2: Player2FieldCount--; break;
-			}
+			PlayerFieldCount[player.Value()]--;
 			Field[index] = 0;
 			if (Neighbours != null)
 			{
@@ -110,11 +115,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="index">Index which is born</param>
 		internal void ApplyBirth(Player player, int index)
 		{
-			switch (player.Value())
-			{
-				case 1: Player1FieldCount++; break;
-				case 2: Player2FieldCount++; break;
-			}
+			PlayerFieldCount[player.Value()]++;
 			Field[index] = player.Value();
 			if (Neighbours != null)
 			{
@@ -160,8 +161,8 @@ namespace RiddlesHackaton2017.Models
 			}
 			MyPlayer = board.MyPlayer;
 			Round = board.Round;
-			Player1FieldCount = board.Player1FieldCount;
-			Player2FieldCount = board.Player2FieldCount;
+			PlayerFieldCount[1] = board.PlayerFieldCount[1];
+			PlayerFieldCount[2] = board.PlayerFieldCount[2];
 			_mykills = board._mykills;
 			_opponentKills = board._opponentKills;
 			_myBirths = board._myBirths;
@@ -209,17 +210,9 @@ namespace RiddlesHackaton2017.Models
 		{
 			foreach (int i in affectedFields)
 			{
-				switch(board.Field[i])
-				{
-					case 1: board.Player1FieldCount--; break;
-					case 2: board.Player2FieldCount--; break;
-				}
+				board.PlayerFieldCount[board.Field[i]]--;
 				board.Field[i] = NextGenerationForField(i);
-				switch (board.Field[i])
-				{
-					case 1: board.Player1FieldCount++; break;
-					case 2: board.Player2FieldCount++; break;
-				}
+				board.PlayerFieldCount[board.Field[i]]++;
 			}
 		}
 
@@ -276,8 +269,8 @@ namespace RiddlesHackaton2017.Models
 						copy.Field[i] = (short)(3 - Field[i]);
 					}
 				}
-				copy.Player2FieldCount = Player1FieldCount;
-				copy.Player1FieldCount = Player2FieldCount;
+				copy.PlayerFieldCount[2] = PlayerFieldCount[1];
+				copy.PlayerFieldCount[1] = PlayerFieldCount[2];
 				return copy;
 			}
 		}
@@ -293,8 +286,11 @@ namespace RiddlesHackaton2017.Models
 		public IEnumerable<int> OpponentCells { get { return AllCells.Where(i => Field[i] == OpponentPlayer.Value()); } }
 		public IEnumerable<int> EmptyCells { get { return AllCells.Where(i => Field[i] == 0); } }
 
-		public int CalculatedPlayer1FieldCount { get { return AllCells.Count(i => Field[i] == Player.Player1.Value()); } }
-		public int CalculatedPlayer2FieldCount { get { return AllCells.Count(i => Field[i] == Player.Player2.Value()); } }
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int GetCalculatedPlayerFieldCount(Player player)
+		{
+			return AllCells.Count(i => Field[i] == player.Value());
+		}
 
 		public override string ToString() => $"Round {Round}, {MyPlayer}: my count: {MyPlayerFieldCount}; his count: {OpponentPlayerFieldCount}";
 
@@ -1239,7 +1235,7 @@ namespace RiddlesHackaton2017.Models
 		{
 			Neighbours = new short[3, Size];
 
-			foreach(var player in new[] { Player.Player1, Player.Player2})
+			foreach(var player in AllPlayers)
 			{
 				foreach (int i in GetCells(player))
 				{
@@ -1309,19 +1305,18 @@ namespace RiddlesHackaton2017.Models
 						if (board.Neighbours[1, i] + deltaNeighbours1 >= 2)
 						{
 							nextBoard.Field[i] = Player.Player1.Value();
-							nextBoard.Player1FieldCount++;
+							nextBoard.PlayerFieldCount[1]++;
 						}
 						else
 						{
 							nextBoard.Field[i] = Player.Player2.Value();
-							nextBoard.Player2FieldCount++;
+							nextBoard.PlayerFieldCount[2]++;
 						}
 					}
 					else
 					{
 						nextBoard.Field[i] = board.Field[i];
-						if (board.Field[i] == 1) nextBoard.Player1FieldCount++;
-						else nextBoard.Player2FieldCount++;
+						nextBoard.PlayerFieldCount[board.Field[i]]++;
 					}
 					break;
 			}
