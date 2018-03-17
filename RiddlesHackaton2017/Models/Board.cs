@@ -94,23 +94,12 @@ namespace RiddlesHackaton2017.Models
 				case 2: Player2FieldCount--; break;
 			}
 			Field[index] = 0;
-			if (Neighbours1 != null)
+			if (Neighbours != null)
 			{
-				if (player == Player.Player1)
+				foreach (int i in Board.NeighbourFields[index])
 				{
-					foreach (int i in Board.NeighbourFields[index])
-					{
-						Neighbours1[i]--;
-						SetNextGenerationField(this, NextGeneration, i);
-					}
-				}
-				else
-				{
-					foreach (int i in Board.NeighbourFields[index])
-					{
-						Neighbours2[i]--;
-						SetNextGenerationField(this, NextGeneration, i);
-					}
+					Neighbours[player.Value(), i]--;
+					SetNextGenerationField(this, NextGeneration, i);
 				}
 			}
 		}
@@ -127,23 +116,12 @@ namespace RiddlesHackaton2017.Models
 				case 2: Player2FieldCount++; break;
 			}
 			Field[index] = player.Value();
-			if (Neighbours1 != null)
+			if (Neighbours != null)
 			{
-				if (player == Player.Player1)
+				foreach (int i in Board.NeighbourFields[index])
 				{
-					foreach (int i in Board.NeighbourFields[index])
-					{
-						Neighbours1[i]++;
-						SetNextGenerationField(this, NextGeneration, i);
-					}
-				}
-				else
-				{
-					foreach (int i in Board.NeighbourFields[index])
-					{
-						Neighbours2[i]++;
-						SetNextGenerationField(this, NextGeneration, i);
-					}
+					Neighbours[player.Value(), i]++;
+					SetNextGenerationField(this, NextGeneration, i);
 				}
 			}
 		}
@@ -196,8 +174,7 @@ namespace RiddlesHackaton2017.Models
 			_opponentKills = null;
 			_myBirths = null;
 			_NextGeneration = null;
-			Neighbours1 = null;
-			Neighbours2 = null;
+			Neighbours = null;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1256,29 +1233,20 @@ namespace RiddlesHackaton2017.Models
 		/// <summary>
 		/// Neighbours1[i] = number of neighbours of player1 of Field[i]
 		/// </summary>
-		public short[] Neighbours1 = null;
-		/// <summary>
-		/// Neighbours2[i] = number of neighbours of player2 of Field[i]
-		/// </summary>
-		public short[] Neighbours2 = null;
+		public short[,] Neighbours = null;
 
 		public void CalculateNeighbours()
 		{
-			Neighbours1 = new short[Size];
-			Neighbours2 = new short[Size];
+			Neighbours = new short[3, Size];
 
-			foreach (int i in GetCells(Player.Player1))
+			foreach(var player in new[] { Player.Player1, Player.Player2})
 			{
-				foreach (int j in NeighbourFields[i])
+				foreach (int i in GetCells(player))
 				{
-					Neighbours1[j]++;
-				}
-			}
-			foreach (int i in GetCells(Player.Player2))
-			{
-				foreach (int j in NeighbourFields[i])
-				{
-					Neighbours2[j]++;
+					foreach (int j in NeighbourFields[i])
+					{
+						Neighbours[player.Value(), j]++;
+					}
 				}
 			}
 		}
@@ -1328,7 +1296,7 @@ namespace RiddlesHackaton2017.Models
 		private static void SetNextGenerationField(Board board, Board nextBoard, int i, 
 			int deltaNeighbours1, int deltaNeighbours2)
 		{
-			switch (board.Neighbours1[i] + deltaNeighbours1 + board.Neighbours2[i] + deltaNeighbours2)
+			switch (board.Neighbours[1, i] + deltaNeighbours1 + board.Neighbours[2, i] + deltaNeighbours2)
 			{
 				case 2:
 					nextBoard.Field[i] = board.Field[i];
@@ -1338,7 +1306,7 @@ namespace RiddlesHackaton2017.Models
 				case 3:
 					if (board.Field[i] == 0)
 					{
-						if (board.Neighbours1[i] + deltaNeighbours1 >= 2)
+						if (board.Neighbours[1, i] + deltaNeighbours1 >= 2)
 						{
 							nextBoard.Field[i] = Player.Player1.Value();
 							nextBoard.Player1FieldCount++;
