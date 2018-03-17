@@ -5,7 +5,7 @@ namespace GeneticSimulator
 {
 	public class ConfigurationGenerator
 	{
-		private Random Random;
+		private readonly Random Random;
 
 		public ConfigurationGenerator(Random random)
 		{
@@ -101,6 +101,7 @@ namespace GeneticSimulator
 			SimulationFactor,
 			ScoreBasedOnWinBonus,
 			DoubleWinBonusCount,
+			UseFastAndSmartMoveSimulator,
 		}
 
 		/// <summary>

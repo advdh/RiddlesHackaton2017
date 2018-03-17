@@ -87,13 +87,7 @@ namespace RiddlesHackaton2017.Moves
 			if (errorMessage == null)
 			{
 				//Valid move
-				switch (board.Field[Index])
-				{
-					case 1: board.Player1FieldCount--; break;
-					case 2: board.Player2FieldCount--; break;
-				}
-				board.Field[Index] = 0;
-				board.ResetNextGeneration();
+				board.ApplyKill(player, Index);
 			}
 			else if (validate)
 			{

@@ -13,6 +13,53 @@ namespace GeneticSimulator.Analysis
 		private const string Directory = @"D:\Temp\GeneticSimulator";
 
 		[TestMethod]
+		public void Results_UseFastAndSmartMoveSimulator()
+		{
+			AnalyzeResults(@"fromfile 0 25 UseFastAndSmartMoveSimulator_xml 2018-03-16_11_37_12.xml",
+				ConfigurationGenerator.Parameters.UseFastAndSmartMoveSimulator);
+		}
+
+		[TestMethod]
+		public void Results_1603()
+		{
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-16_08_04_00.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+			AnalyzeResults(@"fromfile 0 25 DoubleWinBonusCount_xml 2018-03-16_01_38_27.xml",
+				ConfigurationGenerator.Parameters.DoubleWinBonusCount);
+			AnalyzeResults(@"fromfile 0 25 SimulationFactor_xml 2018-03-16_02_09_51.xml",
+				ConfigurationGenerator.Parameters.SimulationFactor);
+			AnalyzeResults(@"fromfile 0 25 WinBonusWeight_xml 2018-03-16_01_06_57.xml",
+				ConfigurationGenerator.Parameters.WinBonusWeight);
+			AnalyzeResults(@"fromfile 0 25 CellCountWeight_xml 2018-03-16_12_35_59.xml",
+				ConfigurationGenerator.Parameters.CellCountWeight);
+			AnalyzeResults(@"fromfile 0 25 SmartMoveGenerationCount_xml 2018-03-16_12_04_30.xml",
+				ConfigurationGenerator.Parameters.SmartMoveGenerationCount);
+			AnalyzeResults(@"fromfile 0 25 MaxSimulationCount_xml 2018-03-15_10_11_13.xml",
+				ConfigurationGenerator.Parameters.MaxSimulationCount);
+			AnalyzeResults(@"fromfile 0 25 MoveCount_xml 2018-03-15_10_31_40.xml",
+				ConfigurationGenerator.Parameters.MoveCount);
+			AnalyzeResults(@"fromfile 0 25 SimulationMaxGenerationCount_xml 2018-03-15_11_33_09.xml",
+				ConfigurationGenerator.Parameters.SimulationMaxGenerationCount);
+			AnalyzeResults(@"fromfile 0 25 MaxWinBonus_xml 2018-03-15_11_01_53.xml",
+				ConfigurationGenerator.Parameters.MaxWinBonus);
+		}
+
+		[TestMethod]
+		public void Results_MaxDuration()
+		{
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-17_01_26_09.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-16_08_18_57.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-16_07_47_11.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-15_07_18_30.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+			AnalyzeResults(@"fromfile 0 25 MaxDuration_xml 2018-03-16_08_04_00.xml",
+				ConfigurationGenerator.Parameters.MaxDuration);
+		}
+
+		[TestMethod]
 		public void Results_MaxWinBonus()
 		{
 			AnalyzeResults(@"varyone 9 1000 MaxWinBonus 2 2018-03-03_02_21_13.xml");
@@ -28,7 +75,7 @@ namespace GeneticSimulator.Analysis
 		public void Results_WinBonusDecrementFactor_2()
 		{
 			AnalyzeResults(@"varyone 9 100 WinBonusDecrementFactor 1_09 2018-03-04_10_37_43.xml",
-				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor },
+				ConfigurationGenerator.Parameters.WinBonusDecrementFactor,
 				sortByScore: true);
 		}
 
@@ -49,7 +96,7 @@ namespace GeneticSimulator.Analysis
 		public void Results_Battle_128_2048_916()
 		{
 			AnalyzeResults(@"fromfile 0 100 ConfigurationsMaxWinBonus_xml 2018-03-04_04_35_39.xml", 
-				new[] { ConfigurationGenerator.Parameters.MaxWinBonus });
+				ConfigurationGenerator.Parameters.MaxWinBonus);
 		}
 
 		/// <summary>
@@ -59,7 +106,7 @@ namespace GeneticSimulator.Analysis
 		public void Results_Battle_128_256_512_1024_2048_916()
 		{
 			AnalyzeResults(@"fromfile 0 100 ConfigurationsMaxWinBonus0916_xml 2018-03-04_05_01_54.xml", 
-				new[] { ConfigurationGenerator.Parameters.MaxWinBonus });
+				ConfigurationGenerator.Parameters.MaxWinBonus);
 		}
 
 		/// <summary>
@@ -69,14 +116,14 @@ namespace GeneticSimulator.Analysis
 		public void Results_Battle_64_128_916()
 		{
 			AnalyzeResults(@"fromfile 0 100 ConfigurationsMaxWinBonus0916_64_xml 2018-03-04_09_58_47.xml",
-				new[] { ConfigurationGenerator.Parameters.MaxWinBonus });
+				ConfigurationGenerator.Parameters.MaxWinBonus);
 		}
 
 		[TestMethod]
 		public void Results_MaxDuration_200tm1000()
 		{
 			AnalyzeResults("fromfile 0 100 ConfigurationsMaxDuration_xml 2018-03-04_11_03_09.xml",
-				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+				ConfigurationGenerator.Parameters.MaxDuration);
 		}
 
 		[TestMethod]
@@ -90,7 +137,7 @@ namespace GeneticSimulator.Analysis
 		public void Results_MoveCount()
 		{
 			AnalyzeResults("fromfile 0 100 ConfigurationsMoveCount_xml 2018-03-05_03_23_05.xml",
-				new[] { ConfigurationGenerator.Parameters.MoveCount });
+				ConfigurationGenerator.Parameters.MoveCount);
 		}
 
 		/// <summary>
@@ -163,21 +210,21 @@ namespace GeneticSimulator.Analysis
 		public void Results_SimulationMaxGenerationCount()
 		{
 			AnalyzeResults("fromfile 0 25 SimulationMaxGenerationCount_xml 2018-03-05_10_43_15.xml",
-				new[] { ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+				ConfigurationGenerator.Parameters.SimulationMaxGenerationCount);
 		}
 
 		[TestMethod]
 		public void Results_SimulationMaxGenerationCount2()
 		{
 			AnalyzeResults("fromfile 0 25 SimulationMaxGenerationCount2_xml 2018-03-06_07_23_13.xml",
-				new[] { ConfigurationGenerator.Parameters.SimulationMaxGenerationCount });
+				ConfigurationGenerator.Parameters.SimulationMaxGenerationCount);
 		}
 
 		[TestMethod]
 		public void Results_BinarySimulationResult()
 		{
 			AnalyzeResults("fromfile 0 25 BinarySimulationResult_xml 2018-03-06_11_01_10.xml",
-				new[] { ConfigurationGenerator.Parameters.BinarySimulationResult });
+				ConfigurationGenerator.Parameters.BinarySimulationResult);
 		}
 
 		[TestMethod]
@@ -191,35 +238,35 @@ namespace GeneticSimulator.Analysis
 		public void Results_ParallelSimulation()
 		{
 			AnalyzeResults("fromfile 0 100 ParallelSimulation_xml 2018-03-14_07_47_44.xml",
-				new[] { ConfigurationGenerator.Parameters.ParallelSimulation });
+				ConfigurationGenerator.Parameters.ParallelSimulation);
 		}
 
 		[TestMethod]
 		public void Test()
 		{
 			AnalyzeResults("fromfile 0 1 parallelsimulation_xml 2018-03-09_10_49_45.xml",
-				new[] { ConfigurationGenerator.Parameters.ParallelSimulation });
+				ConfigurationGenerator.Parameters.ParallelSimulation);
 		}
 
 		[TestMethod]
 		public void Results_SimulationDecrementScore2Factor()
 		{
 			AnalyzeResults("fromfile 0 10 SimulationDecrementScore2Factor_xml 2018-03-07_08_57_12.xml",
-				new[] { ConfigurationGenerator.Parameters.SimulationDecrementScore2Factor });
+				ConfigurationGenerator.Parameters.SimulationDecrementScore2Factor);
 		}
 
 		[TestMethod]
 		public void Results_HardcodedSimulationCounts()
 		{
 			AnalyzeResults("fromfile 0 25 HardCodedSimulationCounts_xml 2018-03-08_09_16_04.xml",
-				new[] { ConfigurationGenerator.Parameters.HardcodedSimulationCounts });
+				ConfigurationGenerator.Parameters.HardcodedSimulationCounts);
 		}
 
 		[TestMethod]
 		public void Results_SimulationFactor()
 		{
 			AnalyzeResults("fromfile 0 25 SimulationFactor_xml 2018-03-08_10_25_53.xml",
-				new[] { ConfigurationGenerator.Parameters.SimulationFactor });
+				ConfigurationGenerator.Parameters.SimulationFactor);
 		}
 
 		[TestMethod]
@@ -237,28 +284,21 @@ namespace GeneticSimulator.Analysis
 		public void Results_Identical()
 		{
 			AnalyzeResults("fromfile 0 25 Identical_xml 2018-03-13_08_49_13.xml",
-				new[] { ConfigurationGenerator.Parameters.SmartMoveGenerationCount });
-		}
-
-		[TestMethod]
-		public void Results_MaxDuration()
-		{
-			AnalyzeResults("fromfile 0 100 MaxDuration2_xml 2018-03-14_02_15_27.xml",
-				new[] { ConfigurationGenerator.Parameters.MaxDuration });
+				ConfigurationGenerator.Parameters.SmartMoveGenerationCount);
 		}
 
 		[TestMethod]
 		public void Results_DoubleWinBonusCount()
 		{
 			AnalyzeResults("fromfile 0 100 DoubleWinBonusCount_xml 2018-03-14_12_13_56.xml",
-				new[] { ConfigurationGenerator.Parameters.DoubleWinBonusCount });
+				ConfigurationGenerator.Parameters.DoubleWinBonusCount);
 		}
 
 		[TestMethod]
 		public void Results_ScoreBasedOnWinBonus()
 		{
 			AnalyzeResults("fromfile 0 25 ScoreBasedOnWinBonus_xml 2018-03-11_07_28_53.xml",
-				new[] { ConfigurationGenerator.Parameters.ScoreBasedOnWinBonus });
+				ConfigurationGenerator.Parameters.ScoreBasedOnWinBonus);
 		}
 
 		[TestMethod]
@@ -275,28 +315,28 @@ namespace GeneticSimulator.Analysis
 		public void Results_WinBonusDecrementFactor_3()
 		{
 			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-11_10_46_55.xml",
-				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+				ConfigurationGenerator.Parameters.WinBonusDecrementFactor);
 		}
 
 		[TestMethod]
 		public void Results_WinBonusDecrementFactor_93_94()
 		{
 			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_03_35_48.xml",
-				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+				ConfigurationGenerator.Parameters.WinBonusDecrementFactor);
 		}
 
 		[TestMethod]
 		public void Results_WinBonusDecrementFactor_94_95()
 		{
 			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_04_06_19.xml",
-				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+				ConfigurationGenerator.Parameters.WinBonusDecrementFactor);
 		}
 
 		[TestMethod]
 		public void Results_WinBonusDecrementFactor_95_96()
 		{
 			AnalyzeResults(@"fromfile 0 25 WinBonusDecrementFactor_xml 2018-03-12_04_37_26.xml",
-				new[] { ConfigurationGenerator.Parameters.WinBonusDecrementFactor });
+				ConfigurationGenerator.Parameters.WinBonusDecrementFactor);
 		}
 
 		private void AnalyzeResults(string path)
@@ -311,6 +351,11 @@ namespace GeneticSimulator.Analysis
 				Console.WriteLine($"{ix}.\tCount={result.Count}\tWon={result.Won}\tDraw={result.Draw}\tLost={result.Lost}\n{result.Parameters}");
 				ix++;
 			}
+		}
+
+		private void AnalyzeResults(string path, ConfigurationGenerator.Parameters varyingParameter, bool sortByScore = false)
+		{
+			AnalyzeResults(path, new[] { varyingParameter }, sortByScore);
 		}
 
 		private void AnalyzeResults(string path, IEnumerable<ConfigurationGenerator.Parameters> varyingParameters, bool sortByScore = false)

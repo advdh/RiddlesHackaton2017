@@ -52,7 +52,7 @@ namespace RiddlesHackaton2017.Moves
 			string errorMessage = ValidateMove(board, player);
 			if (errorMessage == null)
 			{
-				result.Field[BirthIndex] = (short)player;
+				result.Field[BirthIndex] = player.Value();
 				result.Field[SacrificeIndex1] = 0;
 				result.Field[SacrificeIndex2] = 0;
 				result.MyPlayerFieldCount--;
@@ -70,11 +70,9 @@ namespace RiddlesHackaton2017.Moves
 			string errorMessage = ValidateMove(board, player);
 			if (errorMessage == null)
 			{
-				board.Field[BirthIndex] = (short)player;
-				board.Field[SacrificeIndex1] = 0;
-				board.Field[SacrificeIndex2] = 0;
-				board.MyPlayerFieldCount--;
-				board.ResetNextGeneration();
+				board.ApplyBirth(player, BirthIndex);
+				board.ApplyKill(player, SacrificeIndex1);
+				board.ApplyKill(player, SacrificeIndex2);
 			}
 			else if (validate)
 			{
@@ -92,11 +90,11 @@ namespace RiddlesHackaton2017.Moves
 			{
 				return $"Birth position must be empty: {BirthPosition}";
 			}
-			if (board.Field[SacrificeIndex1] != (short)player)
+			if (board.Field[SacrificeIndex1] != player.Value())
 			{
 				return $"SacrificeIndex1 position must be owned by you: {SacrificePosition1}";
 			}
-			if (board.Field[SacrificeIndex2] != (short)player)
+			if (board.Field[SacrificeIndex2] != player.Value())
 			{
 				return $"SacrificeIndex2 position must be owned by you: {SacrificePosition2}";
 			}

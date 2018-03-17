@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.MonteCarlo;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
+using RiddlesHackaton2017.RandomGeneration;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,18 +16,45 @@ namespace RiddlesHackaton2017.IntegrationTest
 	{
 		public static string Folder { get { return @"D:\Ad\Golad\Games"; } }
 
+		/// <summary>
+		/// Should play kill moves in last 4 rounds
+		/// </summary>
+		/// <remarks>TODO: fails if we use board.NextGeneration2 instead of board.NextGeneration</remarks>
+		[TestMethod]
+		public void Regression_KillMovesToWin()
+		{
+			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9"; // Hakamo_bot
+
+			var parms = MonteCarloParameters.Life;
+			parms.Debug = false;
+
+			DoReplay(gameId, differenceOnly: false
+				, rounds: new[] { 63, 64, 65, 66 }
+				, action: AssertKillMove
+				, bot: new Anila8Bot(new TheConsole()) { Parameters = parms }
+				, source: LogSource.File);
+			}
+
+		private void AssertKillMove(Board board, BaseBot bot, TimeSpan timelimit)
+		{
+			var moveString = bot.GetMove(board, timelimit);
+			var move = Move.Parse(moveString);
+			Assert.IsInstanceOfType(move, typeof(KillMove), $"Round {board.Round}: {move}");
+		}
+
 		[TestMethod]
 		public void Replay_Test()
 		{
 			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";	// "3c3dbc15-c316-434e-886b-fbad287e6d10";     //Player1, UnManagedCode
 																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
+
+			parms.Debug = false;
 			parms.LogLevel = 0;
-			parms.ParallelSimulation = true;
-			parms.DoubleWinBonusCount = 2;
-			parms.SmartMoveGenerationCount = 2;
+			parms.UseFastAndSmartMoveSimulator = false;
+
 			DoReplay(gameId, differenceOnly: false
-				//, rounds: new[] { 32 }
+				//, rounds: new[] { 65 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
@@ -57,6 +86,19 @@ namespace RiddlesHackaton2017.IntegrationTest
 				source: LogSource.File);
 		}
 
+		[TestMethod]
+		public void FastAndSmartMoveSimulator_Test()
+		{
+			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
+			var parameters = MonteCarloParameters.Life;
+			parameters.KillMovePercentage = 100;
+			parameters.PassMovePercentage = 0;
+			var simulator = new FastAndSmartMoveSimulator(new RandomGenerator(new Random()), parameters);
+			//var move = simulator.GetRandomKillMove(board, Player.Player1);
+			//var move = simulator.GetRandomBirthMove(board, Player.Player1);
+			var move = simulator.GetRandomMove(board, Player.Player1);
+		}
+
 		private Board GetBoard(string gameId, int round)
 		{
 			var lines = GetLines(gameId, LogSource.File);
@@ -64,6 +106,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			var line = lines[ix + 1];
 			var board = new Board();
 			ParseBoard(line.Split(' '), board);
+			board.UpdateFieldCounts();
 			return board;
 		}
 
@@ -113,7 +156,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		/// <param name="differenceOnly">Show differences with regards to original move only</param>
 		/// <param name="action">Optional: action to execute on action command</param>
 		private void DoReplay(string gameId, bool differenceOnly = true,
-			Action<Board> action = null,
+			Action<Board, BaseBot, TimeSpan> action = null,
 			int[] rounds = null,
 			BaseBot bot = null,
 			LogSource source = LogSource.File)
@@ -159,7 +202,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		}
 
 		private void DoReplayLines(string[] lines, bool differenceOnly, 
-			Action<Board> action, int[] rounds, BaseBot bot)
+			Action<Board, BaseBot, TimeSpan> action, int[] rounds, BaseBot bot)
 		{
 			var board = new Board();
 			Move originalMove;
@@ -181,14 +224,14 @@ namespace RiddlesHackaton2017.IntegrationTest
 					case "action":
 						if (rounds.Contains(board.Round))
 						{
+							var timelimit = TimeSpan.FromMilliseconds(int.Parse(words[2]));
 							if (action == null)
 							{
-								int timelimit = int.Parse(words[2]);
-								newMove = Move.Parse(bot.GetMove(board, TimeSpan.FromMilliseconds(timelimit)));
+								newMove = Move.Parse(bot.GetMove(board, timelimit));
 							}
 							else
 							{
-								action.Invoke(board);
+								action.Invoke(board, bot, timelimit);
 							}
 						}
 						break;

@@ -88,7 +88,7 @@ namespace RiddlesHackaton2017.Test.Models
 		/// Move to the next generation
 		/// </summary>
 		[TestMethod]
-		public void NextGeneration2_Test()
+		public void NextGeneration_Test2()
 		{
 			var board = InitBoard(".,.,.,1,.,1,.,.,.,.,.,0,.,0,1,1,.,1,.,.,1,1,.,.,.,.,.,0,1,.,1,.,.,.,0,.,0,.,.,.,1,.,0,.,1,.,0,.,.,.,.,1,.,.,.,.,1,.,0,.,1,.,0,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,0,0,.,0,.,1,.,1,.,.,.,.,0,0,.,.,.,.,.,.,.,0,1,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,1,.,.,1,.,.,1,.,.,.,.,.,.,1,1,0,.,.,1,1,.,1,.,1,.,.,0,.,0,.,0,0,.,.,1,0,0,.,.,.,.,.,.,0,.,.,0,.,.,0,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,0,1,.,.,.,.,.,.,.,1,1,.,.,.,.,0,.,0,.,1,.,1,1,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,1,.,0,.,1,.,0,.,.,.,.,0,.,.,.,.,1,.,0,.,1,.,0,.,.,.,1,.,1,.,.,.,0,.,0,1,.,.,.,.,.,0,0,.,.,0,.,0,0,1,.,1,.,.,.,.,.,0,.,0,.,.,.");
 
@@ -191,6 +191,50 @@ namespace RiddlesHackaton2017.Test.Models
 		{
 			var board = InitBoard();
 			Assert.AreEqual(HumanStartBoardString, board.HumanBoardString());
+		}
+
+		[TestMethod]
+		public void NextGeneration2_Test()
+		{
+			var board = InitBoard();
+			board.CalculateNeighbours();
+			var nextBoard = board.NextGeneration;
+			var nextBoard2 = board.NextGeneration2;
+			Assert.AreEqual(nextBoard.HumanBoardString(), nextBoard2.HumanBoardString());
+		}
+
+		[TestMethod]
+		public void NextGeneration2_PerformanceTest()
+		{
+			int n = 100000;
+
+			var board = InitBoard();
+
+			var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+			board.CalculateNeighbours();
+			for (int i = 0; i < n; i++)
+			{
+				board.ResetNextGeneration();
+				var nextBoard = board.NextGeneration;
+			}
+			Console.WriteLine($"NextGeneration: {stopwatch.ElapsedMilliseconds}");
+			stopwatch.Restart();
+			for (int i = 0; i < n; i++)
+			{
+				board.ResetNextGeneration();
+				var nextBoard = board.NextGeneration2;
+				//Assert.AreEqual(nextBoard.HumanBoardString(), board.NextGeneration.HumanBoardString());
+			}
+			Console.WriteLine($"NextGeneration2: {stopwatch.ElapsedMilliseconds}");
+			stopwatch.Restart();
+			for (int i = 0; i < n; i++)
+			{
+				board.ResetNextGeneration();
+				board.CalculateNeighbours();
+				var nextBoard = board.NextGeneration2;
+			}
+			Console.WriteLine($"Calculate + NextGeneration2: {stopwatch.ElapsedMilliseconds}");
+			stopwatch.Restart();
 		}
 	}
 }

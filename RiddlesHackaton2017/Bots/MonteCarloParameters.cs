@@ -35,6 +35,7 @@ namespace RiddlesHackaton2017.Bots
 			Debug = original.Debug;
 			LogLevel = original.LogLevel;
 			SimulationMaxGenerationCount = original.SimulationMaxGenerationCount;
+			UseFastAndSmartMoveSimulator = original.UseFastAndSmartMoveSimulator;
 			SmartMoveGenerationCount = original.SmartMoveGenerationCount;
 			SmartMoveMinimumFieldCount = original.SmartMoveMinimumFieldCount;
 			SmartMoveDurationThreshold = original.SmartMoveDurationThreshold;
@@ -165,25 +166,29 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Maximum time to spend per turn</summary>
 		[XmlIgnore]
-		public TimeSpan MaxDuration { get; set; } = TimeSpan.FromMilliseconds(500);
+		public TimeSpan MaxDuration
+		{
+			get { return Debug ? TimeSpan.FromDays(1) : _MaxDuration; }
+			set { _MaxDuration = value; }
+		}
+		private TimeSpan _MaxDuration = TimeSpan.FromMilliseconds(500);
 
 		/// <summary>
 		/// MaxDuration in milliseconds: only for serialization purposes
 		/// </summary>
 		public int MaxDurationMs
 		{
-			get
-			{
-				return (int)MaxDuration.TotalMilliseconds;
-			}
-			set
-			{
-				MaxDuration = TimeSpan.FromMilliseconds(value);
-			}
+			get { return (int)MaxDuration.TotalMilliseconds; }
+			set { MaxDuration = TimeSpan.FromMilliseconds(value); }
 		}
 
 		/// <summary>Maximum fraction of timelimit to be used</summary>
-		public double MaxRelativeDuration { get; set; } = 0.1;
+		public double MaxRelativeDuration
+		{
+			get { return Debug ? 1.0 : _MaxRelativeDuration; }
+			set { _MaxRelativeDuration = value; }
+		}
+		private double _MaxRelativeDuration = 0.1;
 
 		/// <summary>Set this to true for debugging the bot without any time limit constraints</summary>
 		public bool Debug { get; set; } = false;
@@ -212,6 +217,11 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Maximum number of generations during MonteCarlo simulation</summary>
 		public int SimulationMaxGenerationCount { get; set; } = 8;
+
+		/// <summary>
+		/// Use FastAndSmartMoveSimulator instead of SimpleMoveSimulator
+		/// </summary>
+		public bool UseFastAndSmartMoveSimulator { get; set; } = false;
 
 		/// <summary>Number of generations in which we use the smart move simulator</summary>
 		/// <remarks>After this number of rounds, we switch to the simple move simulator</remarks>
@@ -249,7 +259,12 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Relative weight of absolute cellcounts in score calcultion</summary>
 		public int WinBonusWeight { get; set; } = 10;
 
-		public bool ParallelSimulation { get; set; } = true;
+		public bool ParallelSimulation
+		{
+			get { return Debug ? false : _ParallelSimulation; }
+			set { _ParallelSimulation = value; }
+		}
+		private bool _ParallelSimulation = true;
 
 		/// <summary>
 		/// If true, then use winbonus for score calculation; if false, then use field counts for score calculation
@@ -279,6 +294,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"BirthMovePercentage = {BirthMovePercentage}");
 			sb.AppendLine($"MinimumFieldCountForBirthMoves = {MinimumFieldCountForBirthMoves}");
 			sb.AppendLine($"SimulationMaxGenerationCount = {SimulationMaxGenerationCount}");
+			sb.AppendLine($"UseFastAndSmartMoveSimulator = {UseFastAndSmartMoveSimulator}");
 			sb.AppendLine($"SmartMoveGenerationCount = {SmartMoveGenerationCount}");
 			sb.AppendLine($"SmartMoveMinimumFieldCount = {SmartMoveMinimumFieldCount}");
 			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
@@ -312,6 +328,7 @@ namespace RiddlesHackaton2017.Bots
 				&& PassMovePercentage == p.PassMovePercentage
 				&& KillMovePercentage == p.KillMovePercentage
 				&& SimulationMaxGenerationCount == p.SimulationMaxGenerationCount
+				&& UseFastAndSmartMoveSimulator == p.UseFastAndSmartMoveSimulator
 				&& SmartMoveGenerationCount == p.SmartMoveGenerationCount
 				&& SmartMoveMinimumFieldCount == p.SmartMoveMinimumFieldCount
 				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
@@ -341,6 +358,7 @@ namespace RiddlesHackaton2017.Bots
 				^ PassMovePercentage.GetHashCode()
 				^ KillMovePercentage.GetHashCode()
 				^ SimulationMaxGenerationCount.GetHashCode()
+				^ UseFastAndSmartMoveSimulator.GetHashCode()
 				^ SmartMoveGenerationCount.GetHashCode()
 				^ SmartMoveMinimumFieldCount.GetHashCode()
 				^ MinimumFieldCountForBirthMoves.GetHashCode()

@@ -56,6 +56,7 @@
     <Compile Include="Bots\Anila8Bot.cs" />
     <Compile Include="Bots\MonteCarloParameters.cs" />
     <Compile Include="Models\RoundStatistics.cs" />
+    <Compile Include="MonteCarlo\FastAndSmartMoveSimulator.cs" />
     <Compile Include="MonteCarlo\IMoveSimulator.cs" />
     <Compile Include="MonteCarlo\MonteCarloStatistics.cs" />
     <Compile Include="Bots\PassBot.cs" />

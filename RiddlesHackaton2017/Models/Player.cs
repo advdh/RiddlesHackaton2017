@@ -1,4 +1,6 @@
-﻿namespace RiddlesHackaton2017.Models
+﻿using System.Runtime.CompilerServices;
+
+namespace RiddlesHackaton2017.Models
 {
 	public enum Player
 	{
@@ -8,9 +10,16 @@
 
 	public static class PlayerExtensions
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Player Opponent(this Player player)
 		{
 			return 3 - player;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static short Value(this Player player)
+		{
+			return (short)player;
 		}
 	}
 }
