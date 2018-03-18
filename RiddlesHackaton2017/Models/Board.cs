@@ -15,9 +15,9 @@ namespace RiddlesHackaton2017.Models
 		public const int Size = Width * Height;
 		public const int MaxRounds = 100;
 
-		#region Properties
-
 		public int Round { get; set; }
+
+		#region Fields
 
 		public int[] PlayerFieldCount = new int[3];
 
@@ -72,6 +72,30 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int GetCalculatedPlayerFieldCount(Player player)
+		{
+			return AllCells.Count(i => Field[i] == player.Value());
+		}
+
+		#endregion
+
+		#region Cells
+
+		public IEnumerable<int> GetCells(Player player)
+		{
+			return AllCells.Where(i => Field[i] == player.Value());
+		}
+
+		public static IEnumerable<int> AllCells { get { return Enumerable.Range(0, Size); } }
+		public IEnumerable<int> MyCells { get { return AllCells.Where(i => Field[i] == MyPlayer.Value()); } }
+		public IEnumerable<int> OpponentCells { get { return AllCells.Where(i => Field[i] == OpponentPlayer.Value()); } }
+		public IEnumerable<int> EmptyCells { get { return AllCells.Where(i => Field[i] == 0); } }
+
+		#endregion
+
+		#region Players
+
 		public IEnumerable<Player> AllPlayers
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -83,67 +107,12 @@ namespace RiddlesHackaton2017.Models
 		/// <summary>Me</summary>
 		public Player MyPlayer { get; set; }
 
-		Dictionary<int, int> _mykills;
-		Dictionary<int, int> _opponentKills;
-		Dictionary<int, int> _myBirths;
-
-		public Dictionary<int, int> MyKills { get { return _mykills; } }
-		public Dictionary<int, int> OpponentKills { get { return _opponentKills; } }
-
-		/// <summary>
-		/// Apply kill to this board, and to the NextGeneration, if it exists
-		/// </summary>
-		/// <param name="player">Player of which the cell is killed</param>
-		/// <param name="index">Index which is killed</param>
-		internal void ApplyKill(Player player, int index)
-		{
-			PlayerFieldCount[player.Value()]--;
-			Field[index] = 0;
-			if (Neighbours != null)
-			{
-				foreach (int i in Board.NeighbourFields[index])
-				{
-					Neighbours[player.Value(), i]--;
-					SetNextGenerationField(this, NextGeneration, i);
-				}
-			}
-		}
-
-		/// Apply birth to this board, and to the NextGeneration, if it exists
-		/// </summary>
-		/// <param name="player">Player for which the cell is born</param>
-		/// <param name="index">Index which is born</param>
-		internal void ApplyBirth(Player player, int index)
-		{
-			PlayerFieldCount[player.Value()]++;
-			Field[index] = player.Value();
-			if (Neighbours != null)
-			{
-				foreach (int i in Board.NeighbourFields[index])
-				{
-					Neighbours[player.Value(), i]++;
-					SetNextGenerationField(this, NextGeneration, i);
-				}
-			}
-		}
-
-		public Dictionary<int, int> MyBirths { get { return _myBirths; } }
-
-		/// <remarks>MyKills gets kills for the opponent because we use it in the context of the opponent player</remarks>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InitializeSmartMoves()
-		{
-			_mykills = SmartMoveSimulator.GetKills(this, OpponentPlayer);
-			_opponentKills = SmartMoveSimulator.GetKills(this, MyPlayer);
-			_myBirths = SmartMoveSimulator.GetBirths(this, OpponentPlayer);
-		}
-
 		/// <summary>Opponent</summary>
 		public Player OpponentPlayer { get { return MyPlayer.Opponent(); } }
 
 		#endregion
 
-		#region Constructors and static Creaate methods
+		#region Constructors and next generation
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Board()
@@ -206,6 +175,7 @@ namespace RiddlesHackaton2017.Models
 		/// and return the next generation board in board
 		/// </summary>
 		/// <returns>New board</returns>
+		/// <remarks>TODO: get rid of this method, and refactor calling methods</remarks>
 		public void GetNextGeneration(Board board, IEnumerable<int> affectedFields)
 		{
 			foreach (int i in affectedFields)
@@ -253,10 +223,6 @@ namespace RiddlesHackaton2017.Models
 			return 0;
 		}
 
-		#endregion
-
-		#region Helper methods
-
 		public Board OpponentBoard
 		{
 			get
@@ -275,22 +241,285 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
-		public IEnumerable<int> MyCells { get { return AllCells.Where(i => Field[i] == MyPlayer.Value()); } }
+		#endregion
 
-		public IEnumerable<int> GetCells(Player player)
+		#region Apply moves
+
+		Dictionary<int, int> _mykills;
+		Dictionary<int, int> _opponentKills;
+		Dictionary<int, int> _myBirths;
+
+		public Dictionary<int, int> MyKills { get { return _mykills; } }
+		public Dictionary<int, int> OpponentKills { get { return _opponentKills; } }
+
+		/// <summary>
+		/// Apply kill to this board, and to the NextGeneration, if it exists
+		/// </summary>
+		/// <param name="player">Player of which the cell is killed</param>
+		/// <param name="index">Index which is killed</param>
+		internal void ApplyKill(Player player, int index)
 		{
-			return AllCells.Where(i => Field[i] == player.Value());
+			PlayerFieldCount[player.Value()]--;
+			Field[index] = 0;
+			if (Neighbours != null)
+			{
+				foreach (int i in Board.NeighbourFields[index])
+				{
+					Neighbours[player.Value(), i]--;
+					SetNextGenerationField(this, NextGeneration, i);
+				}
+			}
 		}
 
-		public static IEnumerable<int> AllCells { get { return Enumerable.Range(0, Size); } }
-		public IEnumerable<int> OpponentCells { get { return AllCells.Where(i => Field[i] == OpponentPlayer.Value()); } }
-		public IEnumerable<int> EmptyCells { get { return AllCells.Where(i => Field[i] == 0); } }
+		/// Apply birth to this board, and to the NextGeneration, if it exists
+		/// </summary>
+		/// <param name="player">Player for which the cell is born</param>
+		/// <param name="index">Index which is born</param>
+		internal void ApplyBirth(Player player, int index)
+		{
+			PlayerFieldCount[player.Value()]++;
+			Field[index] = player.Value();
+			if (Neighbours != null)
+			{
+				foreach (int i in Board.NeighbourFields[index])
+				{
+					Neighbours[player.Value(), i]++;
+					SetNextGenerationField(this, NextGeneration, i);
+				}
+			}
+		}
 
+		public Dictionary<int, int> MyBirths { get { return _myBirths; } }
+
+		/// <remarks>MyKills gets kills for the opponent because we use it in the context of the opponent player</remarks>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int GetCalculatedPlayerFieldCount(Player player)
+		public void InitializeSmartMoves()
 		{
-			return AllCells.Count(i => Field[i] == player.Value());
+			_mykills = SmartMoveSimulator.GetKills(this, MyPlayer);
+			_opponentKills = SmartMoveSimulator.GetKills(this, OpponentPlayer);
+			_myBirths = SmartMoveSimulator.GetBirths(this, MyPlayer);
 		}
+
+		#endregion
+
+		#region NextGeneration
+
+		/// <summary>
+		/// Returns the next generation of the current board
+		/// </summary>
+		public Board NextGeneration
+		{
+			get
+			{
+				if (_NextGeneration == null)
+				{
+					CalculateNeighbours();
+
+					_NextGeneration = new Board()
+					{
+						MyPlayer = MyPlayer.Opponent(),
+						Round = Round + (MyPlayer == Player.Player2 ? 1 : 0),
+					};
+					for (int i = 0; i < Size; i++)
+					{
+						SetNextGenerationField(this, _NextGeneration, i);
+					}
+				}
+				return _NextGeneration;
+			}
+		}
+
+		/// <summary>
+		/// Sets next generation field for the new board for position i
+		/// </summary>
+		/// <param name="board">Current board</param>
+		/// <param name="nextBoard">Next board</param>
+		/// <param name="i">Position</param>
+		private static void SetNextGenerationField(Board board, Board nextBoard, int i)
+		{
+			SetNextGenerationField(board, nextBoard, i, 0, 0);
+		}
+
+		/// <summary>
+		/// Sets next generation2 field for the new board for position i
+		/// </summary>
+		/// <param name="board">Current board</param>
+		/// <param name="nextBoard">Next board</param>
+		/// <param name="i">Position</param>
+		private static void SetNextGenerationField(Board board, Board nextBoard, int i,
+			int deltaNeighbours1, int deltaNeighbours2)
+		{
+			switch (board.Neighbours[1, i] + deltaNeighbours1 + board.Neighbours[2, i] + deltaNeighbours2)
+			{
+				case 2:
+					nextBoard.Field[i] = board.Field[i];
+					if (board.Field[i] == 1) nextBoard.Player1FieldCount++;
+					else if (board.Field[i] == 2) nextBoard.Player2FieldCount++;
+					break;
+				case 3:
+					if (board.Field[i] == 0)
+					{
+						if (board.Neighbours[1, i] + deltaNeighbours1 >= 2)
+						{
+							nextBoard.Field[i] = Player.Player1.Value();
+							nextBoard.PlayerFieldCount[1]++;
+						}
+						else
+						{
+							nextBoard.Field[i] = Player.Player2.Value();
+							nextBoard.PlayerFieldCount[2]++;
+						}
+					}
+					else
+					{
+						nextBoard.Field[i] = board.Field[i];
+						nextBoard.PlayerFieldCount[board.Field[i]]++;
+					}
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Returns the change in field count of player -/- the field count of opponent player
+		/// in the next generation after a kill on field i (which is owned by fieldOwner) 
+		/// in the current generation, by the player
+		/// </summary>
+		/// <param name="i">Cell index</param>
+		/// <param name="player">Current player</param>
+		/// <param name="fieldOwner">Current owner of the field</param>
+		/// <param name="validate">If true, then validate fieldOwner</param>
+		public int GetDeltaFieldCountForKill(int i, Player player, Player fieldOwner, bool validate = false)
+		{
+			if (validate && Field[i] != fieldOwner.Value())
+			{
+				throw new ArgumentException($"Field {i} is not owned by expected field owner {fieldOwner}, but by {Field[i]}");
+			}
+			var delta = new int[] {
+				0,
+				fieldOwner == Player.Player1 ? -1 : 0,
+				fieldOwner == Player.Player2 ? -1 : 0
+			};
+			var delta0 = new int[] { 0, 0, 0 };
+
+			int result = NextGeneration.Field[i] == 0 ? 0 : -1;
+			foreach (int j in NeighbourFields[i])
+			{
+				result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+			}
+			return (player == Player.Player1 ? 1 : -1) * result;
+		}
+
+		/// <summary>
+		/// Returns the change in field count of player -/- the field count of opponent player
+		/// in the next generation after a birth on field i (which will be owned by fieldOwner) 
+		/// in the current generation, by the player
+		/// </summary>
+		/// <param name="i">Cell index</param>
+		/// <param name="player">Current player</param>
+		/// <param name="fieldOwner">Owner of the field after the birth</param>
+		/// <param name="validate">If true, then validate that field is currently empty</param>
+		public int GetDeltaFieldCountForBirth(int i, Player player, Player fieldOwner, bool validate = false)
+		{
+			if (validate && Field[i] != 0)
+			{
+				throw new ArgumentException($"Field {i} is not empty but owned by {Field[i]}");
+			}
+
+			var delta = new int[] {
+				0,
+				fieldOwner == Player.Player1 ? 1 : 0,
+				fieldOwner == Player.Player2 ? 1 : 0
+			};
+			var delta0 = new int[] { 0, 0, 0 };
+
+			int result = 0;
+			switch(NextGeneration.Field[i])
+			{	case 1: result = fieldOwner == Player.Player1 ? 0 : -2; break;
+				case 2: result = fieldOwner == Player.Player1 ? 2 : 0; break;
+				default: result = fieldOwner == Player.Player1 ? 1 : -1; break;
+			}
+			foreach (int j in NeighbourFields[i])
+			{
+				result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+			}
+			return (player == Player.Player1 ? 1 : -1) * result;
+		}
+
+		/// <summary>
+		/// Returns additional delta field count for position i for player 1
+		/// if the number of neighbours changes with delta
+		/// </summary>
+		/// <param name="delta">Array of changes in neighbours cells 
+		/// (index 1 = change of player1, index 2 = change of player2)</param>
+		/// <returns></returns>
+		public int GetFieldCountChange(int i, int[] delta)
+		{
+			switch (Neighbours[1, i] + delta[1] + Neighbours[2, i] + delta[2])
+			{
+				case 2:
+					return 0;
+				case 3:
+					if (Field[i] == 0)
+						return Neighbours[1, i] + delta[1] >= 2 ? 1 : -1;
+					else
+						return 0;
+				default:
+					switch(Field[i])
+					{
+						case 1: return -1;
+						case 2: return 1;
+						default: return 0;
+					}
+			}
+		}
+
+		/// <summary>
+		/// Returns next field value for position i if the number of neighbours changes with delta
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="delta">Array of {0, change in neighbour cells of player1, change in neighbour cells of player2 }</param>
+		/// <returns></returns>
+		public int GetNextFieldValue(int i, int[] delta)
+		{
+			switch (Neighbours[1, i] + delta[1] + Neighbours[2, i] + delta[2])
+			{
+				case 2:
+					return Field[i];
+				case 3:
+					if (Field[i] == 0)
+						return Neighbours[1, i] + delta[1] >= 2 ? Player.Player1.Value() : Player.Player2.Value();
+					else
+						return Field[i];
+			}
+			return 0;
+		}
+
+		private Board _NextGeneration;
+
+		/// <summary>
+		/// Neighbours1[i] = number of neighbours of player1 of Field[i]
+		/// </summary>
+		public short[,] Neighbours = null;
+
+		public void CalculateNeighbours()
+		{
+			Neighbours = new short[3, Size];
+
+			foreach (var player in AllPlayers)
+			{
+				foreach (int i in GetCells(player))
+				{
+					foreach (int j in NeighbourFields[i])
+					{
+						Neighbours[player.Value(), j]++;
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region ToString
 
 		public override string ToString() => $"Round {Round}, {MyPlayer}: my count: {MyPlayerFieldCount}; his count: {OpponentPlayerFieldCount}";
 
@@ -1226,102 +1455,5 @@ namespace RiddlesHackaton2017.Models
 
 		#endregion
 
-		/// <summary>
-		/// Neighbours1[i] = number of neighbours of player1 of Field[i]
-		/// </summary>
-		public short[,] Neighbours = null;
-
-		public void CalculateNeighbours()
-		{
-			Neighbours = new short[3, Size];
-
-			foreach(var player in AllPlayers)
-			{
-				foreach (int i in GetCells(player))
-				{
-					foreach (int j in NeighbourFields[i])
-					{
-						Neighbours[player.Value(), j]++;
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns the next generation of the current board
-		/// </summary>
-		public Board NextGeneration
-		{
-			get
-			{
-				if (_NextGeneration == null)
-				{
-					CalculateNeighbours();
-
-					_NextGeneration = new Board()
-					{
-						MyPlayer = MyPlayer,
-						Round = Round + (MyPlayer == Player.Player2 ? 1 : 0),
-					};
-					for (int i = 0; i < Size; i++)
-					{
-						SetNextGenerationField(this, _NextGeneration, i);
-					}
-				}
-				return _NextGeneration;
-			}
-		}
-
-		/// <summary>
-		/// Sets next generation field for the new board for position i
-		/// </summary>
-		/// <param name="board">Current board</param>
-		/// <param name="nextBoard">Next board</param>
-		/// <param name="i">Position</param>
-		private static void SetNextGenerationField(Board board, Board nextBoard, int i)
-		{
-			SetNextGenerationField(board, nextBoard, i, 0, 0);
-		}
-
-		/// <summary>
-		/// Sets next generation2 field for the new board for position i
-		/// </summary>
-		/// <param name="board">Current board</param>
-		/// <param name="nextBoard">Next board</param>
-		/// <param name="i">Position</param>
-		private static void SetNextGenerationField(Board board, Board nextBoard, int i, 
-			int deltaNeighbours1, int deltaNeighbours2)
-		{
-			switch (board.Neighbours[1, i] + deltaNeighbours1 + board.Neighbours[2, i] + deltaNeighbours2)
-			{
-				case 2:
-					nextBoard.Field[i] = board.Field[i];
-					if (board.Field[i] == 1) nextBoard.Player1FieldCount++;
-					else if (board.Field[i] == 2) nextBoard.Player2FieldCount++;
-					break;
-				case 3:
-					if (board.Field[i] == 0)
-					{
-						if (board.Neighbours[1, i] + deltaNeighbours1 >= 2)
-						{
-							nextBoard.Field[i] = Player.Player1.Value();
-							nextBoard.PlayerFieldCount[1]++;
-						}
-						else
-						{
-							nextBoard.Field[i] = Player.Player2.Value();
-							nextBoard.PlayerFieldCount[2]++;
-						}
-					}
-					else
-					{
-						nextBoard.Field[i] = board.Field[i];
-						nextBoard.PlayerFieldCount[board.Field[i]]++;
-					}
-					break;
-			}
-		}
-
-		private Board _NextGeneration;
 	}
 }

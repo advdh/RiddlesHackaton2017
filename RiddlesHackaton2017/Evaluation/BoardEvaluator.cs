@@ -14,8 +14,8 @@ namespace RiddlesHackaton2017.Evaluation
 			return new BoardStatus(status, board.MyPlayerFieldCount - board.OpponentPlayerFieldCount);
 		}
 
-		/// <returns>Tuple (my score, opponent score)</returns>
-		public static Tuple<int, int> Evaluate(Board board, IEnumerable<int> positions, 
+		/// <returns>My score - opponent score</returns>
+		public static int Evaluate(Board board, IEnumerable<int> positions, 
 			int cellCountWeight)
 		{
 			int score1 = 0;
@@ -28,8 +28,8 @@ namespace RiddlesHackaton2017.Evaluation
 					case 2: score2 += cellCountWeight; break;
 				}
 			}
-			return new Tuple<int, int>(board.MyPlayer == Player.Player1 ? score1 : score2,
-				board.MyPlayer == Player.Player2 ? score1 : score2);
+			int sign = board.MyPlayer == Player.Player1 ? 1 : -1;
+			return sign * (score1 - score2);
 		}
 	}
 }

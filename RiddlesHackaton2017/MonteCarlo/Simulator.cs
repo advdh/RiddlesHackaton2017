@@ -190,7 +190,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			{
 				var simulator = GetSimulator(i, generationCount);
 
-				var tuple = simulator.GetRandomMove(board, player);
+				var tuple = simulator.GetRandomMove(board);
 				Move move = tuple.Item1;
 				Board nextBoard = tuple.Item2;
 				if (nextBoard == null)

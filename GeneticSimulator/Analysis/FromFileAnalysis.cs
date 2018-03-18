@@ -15,6 +15,8 @@ namespace GeneticSimulator.Analysis
 		[TestMethod]
 		public void Results_UseFastAndSmartMoveSimulator()
 		{
+			AnalyzeResults(@"fromfile 0 100 UseFastAndSmartMoveSimulator_xml 2018-03-17_05_42_04.xml",
+				ConfigurationGenerator.Parameters.UseFastAndSmartMoveSimulator);
 			AnalyzeResults(@"fromfile 0 25 UseFastAndSmartMoveSimulator_xml 2018-03-16_11_37_12.xml",
 				ConfigurationGenerator.Parameters.UseFastAndSmartMoveSimulator);
 		}

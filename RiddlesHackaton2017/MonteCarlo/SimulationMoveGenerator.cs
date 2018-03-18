@@ -72,12 +72,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 			afterMoveBoard.GetNextGeneration(afterMoveBoard1, neighbours1AndThis);
 
 			//Calculate
-			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard1, neighbours1AndThis, 1);
-			int myMoveScore = moveScore.Item1;
-			int opponentMoveScore = moveScore.Item2;
+			int moveScore = BoardEvaluator.Evaluate(afterMoveBoard1, neighbours1AndThis, 1);
 			var score = BoardEvaluator.Evaluate(board1, neighbours1AndThis, 1);
-			int myScore = score.Item1;
-			int opponentScore = score.Item2;
 
 			//Reset after move boards
 			foreach (int j in neighbours1AndThis)
@@ -87,7 +83,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 			afterMoveBoard1.MyPlayerFieldCount = board1.MyPlayerFieldCount;
 			afterMoveBoard1.OpponentPlayerFieldCount = board1.OpponentPlayerFieldCount;
 			int sign = (Board.MyPlayer == player ? 1 : -1);
-			return sign * ((myMoveScore - opponentMoveScore) - (myScore - opponentScore));
+			return sign * (moveScore - score);
 		}
 	}
 }

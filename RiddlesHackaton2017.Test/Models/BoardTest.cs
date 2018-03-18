@@ -193,7 +193,7 @@ namespace RiddlesHackaton2017.Test.Models
 			Assert.AreEqual(HumanStartBoardString, board.HumanBoardString());
 		}
 
-		[TestMethod]
+		[TestMethod, Ignore]
 		public void NextGeneration2_PerformanceTest()
 		{
 			int n = 100000;
@@ -217,6 +217,75 @@ namespace RiddlesHackaton2017.Test.Models
 			}
 			Console.WriteLine($"Calculate + NextGeneration2: {stopwatch.ElapsedMilliseconds}");
 			stopwatch.Restart();
+		}
+
+		[TestMethod]
+		public void GetDeltaFieldCountForKill_Test()
+		{
+			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
+			var nextGeneration = board.NextGeneration;
+
+			//Round 1
+
+			//Sacrifice position 1
+			int i = new Position(1, 5).Index;
+			int result = board.GetDeltaFieldCountForKill(i, Player.Player1, Player.Player1, validate: true);
+			Assert.AreEqual(-1, result);
+
+			//Sacrifice position 2
+			i = new Position(8, 1).Index;
+			result = board.GetDeltaFieldCountForKill(i, Player.Player1, Player.Player1, validate: true);
+			Assert.AreEqual(-3, result);
+
+			//Game 59f191a9-33d3-4f12-a38b-5a42346ba4c8, player2
+			board = GetBoard("59f191a9-33d3-4f12-a38b-5a42346ba4c8", 1);
+			nextGeneration = board.NextGeneration;
+
+			i = new Position(7, 9).Index;
+			result = board.GetDeltaFieldCountForKill(i, Player.Player2, Player.Player2, validate: true);
+			Assert.AreEqual(3, result);
+		}
+
+		[TestMethod]
+		public void GetDeltaFieldCountForBirth_Test()
+		{
+			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
+			var nextGeneration = board.NextGeneration;
+
+			//Round 1
+
+			//Birth position: example of a birth move on a cell which neither of us would own in the next generation
+			int i = new Position(14, 6).Index;
+			int result = board.GetDeltaFieldCountForBirth(i, Player.Player1, Player.Player1, validate: true);
+			Assert.AreEqual(2, result);
+
+			//Round 2
+			board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 2);
+			nextGeneration = board.NextGeneration;
+
+			//Birth position: example of a birth move on a cell which the opponent would own in the next generation
+			i = new Position(9, 9).Index;
+			result = board.GetDeltaFieldCountForBirth(i, Player.Player1, Player.Player1, validate: true);
+			Assert.AreEqual(5, result);
+
+			//Round 43
+			board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 43);
+			nextGeneration = board.NextGeneration;
+
+			//Birth position: example of a birth move on a cell which we would own in the next generation
+			i = new Position(10, 4).Index;
+			result = board.GetDeltaFieldCountForBirth(i, Player.Player1, Player.Player1, validate: true);
+			Assert.AreEqual(5, result);
+
+			//Game 59f191a9-33d3-4f12-a38b-5a42346ba4c8, player2
+			board = GetBoard("59f191a9-33d3-4f12-a38b-5a42346ba4c8", 1);
+			nextGeneration = board.NextGeneration;
+
+			//Birth
+			i = new Position(16, 6).Index;
+			result = board.GetDeltaFieldCountForBirth(i, Player.Player2, Player.Player2, validate: true);
+			Assert.AreEqual(3, result);
+
 		}
 	}
 }

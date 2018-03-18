@@ -18,12 +18,12 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
 		}
 
-		public Tuple<Move, Board> GetRandomMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomMove(Board board)
 		{
 			//If player has only a few cells left, then do only kill moves
-			if (board.PlayerFieldCount[player.Value()] < Parameters.MinimumFieldCountForBirthMoves)
+			if (board.PlayerFieldCount[board.MyPlayer.Value()] < Parameters.MinimumFieldCountForBirthMoves)
 			{
-				return new Tuple<Move, Board>(GetRandomKillMove(board, player), null);
+				return new Tuple<Move, Board>(GetRandomKillMove(board), null);
 			}
 
 			int rnd = Random.Next(100);
@@ -35,24 +35,24 @@ namespace RiddlesHackaton2017.MonteCarlo
 			else if (rnd < Parameters.PassMovePercentage + Parameters.KillMovePercentage)
 			{
 				//Kill move
-				return new Tuple<Move, Board>(GetRandomKillMove(board, player), null);
+				return new Tuple<Move, Board>(GetRandomKillMove(board), null);
 			}
 			else
 			{
 				//Birth move
-				return new Tuple<Move, Board>(GetRandomBirthMove(board, player), null);
+				return new Tuple<Move, Board>(GetRandomBirthMove(board), null);
 			}
 		}
 
-		public KillMove GetRandomKillMove(Board board, Player player)
+		public KillMove GetRandomKillMove(Board board)
 		{
-			var opponentCells = board.GetCells(player.Opponent()).ToArray();
+			var opponentCells = board.GetCells(board.OpponentPlayer).ToArray();
 			return new KillMove(opponentCells[Random.Next(opponentCells.Length)]);
 		}
 
-		public Move GetRandomBirthMove(Board board, Player player)
+		public Move GetRandomBirthMove(Board board)
 		{
-			var mine = board.GetCells(player).ToArray();
+			var mine = board.GetCells(board.MyPlayer).ToArray();
 			if (mine.Count() < 2)
 			{
 				//Only one cell left: cannot do a birth move

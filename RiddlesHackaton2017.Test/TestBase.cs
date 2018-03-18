@@ -1,5 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RiddlesHackaton2017.Models;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace RiddlesHackaton2017.Test
 {
@@ -70,6 +73,48 @@ namespace RiddlesHackaton2017.Test
 			board.UpdateFieldCounts();
 
 			return board;
+		}
+
+		protected Board GetBoard(string gameId, int round)
+		{
+			var lines = GetLines(gameId);
+			int ix = Enumerable.Range(0, lines.Count()).First(i => lines[i].StartsWith($"update game round {round}"));
+			var line = lines[ix + 1];
+			var board = new Board();
+			ParseBoard(line.Split(' '), board);
+			board.UpdateFieldCounts();
+			return board;
+		}
+
+		private static void ParseBoard(string[] words, Board board)
+		{
+			switch (words[2])
+			{
+				case "field":
+					board.SetField(BotParser.ParseBoard(words[3]));
+					break;
+				case "round":
+					board.Round = int.Parse(words[3]);
+					break;
+				case "living_cells":
+					if (words[1] == "player0")
+					{
+						board.Player1FieldCount = int.Parse(words[3]);
+					}
+					else
+					{
+						board.Player2FieldCount = int.Parse(words[3]);
+					}
+					break;
+			}
+		}
+
+		private static string Folder { get { return @"D:\Ad\Golad\Games"; } }
+
+		private string[] GetLines(string gameId)
+		{
+			var filename = Path.Combine(Folder, gameId + ".txt");
+			return File.ReadAllLines(filename);
 		}
 
 		protected void AssertHumanBoardString(string expected, string actual)

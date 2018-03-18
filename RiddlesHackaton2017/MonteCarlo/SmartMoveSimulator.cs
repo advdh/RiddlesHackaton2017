@@ -19,24 +19,24 @@ namespace RiddlesHackaton2017.MonteCarlo
 			Parameters = Guard.NotNull(monteCarloParameters, nameof(monteCarloParameters));
 		}
 
-		public Tuple<Move, Board> GetRandomMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomMove(Board board)
 		{
 			//If player has only a few cells left, then do a kill move
-			if (board.PlayerFieldCount[player.Value()] < Parameters.MinimumFieldCountForBirthMoves)
+			if (board.PlayerFieldCount[board.MyPlayer.Value()] < Parameters.MinimumFieldCountForBirthMoves)
 			{
 				//Do a kill move
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board);
 			}
 			else
 			{
 				//Do a birth move
-				return GetRandomBirthMove(board, player);
+				return GetRandomBirthMove(board);
 			}
 		}
 
-		public Tuple<Move, Board> GetRandomKillMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomKillMove(Board board)
 		{
-			var opponentKills = board.OpponentKills ?? GetKills(board, player.Opponent());
+			var opponentKills = board.OpponentKills ?? GetKills(board, board.MyPlayer.Opponent());
 
 			if (!opponentKills.Any())
 			{
@@ -54,16 +54,16 @@ namespace RiddlesHackaton2017.MonteCarlo
 				}
 			}
 			var move = new KillMove(index);
-			move.ApplyInline(board, player);
+			move.ApplyInline(board, board.MyPlayer);
 			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
-		public Tuple<Move, Board> GetRandomBirthMove(Board board, Player player)
+		public Tuple<Move, Board> GetRandomBirthMove(Board board)
 		{
-			var births = board.MyBirths ?? GetBirths(board, player);
-			var myKills = board.MyKills ?? GetKills(board, player);
+			var births = board.MyBirths ?? GetBirths(board, board.MyPlayer);
+			var myKills = board.MyKills ?? GetKills(board, board.MyPlayer);
 
-			if (board.NextGeneration.PlayerFieldCount[player.Opponent().Value()] == 0)
+			if (board.NextGeneration.PlayerFieldCount[board.OpponentPlayer.Value()] == 0)
 			{
 				//Pass leads to win
 				return new Tuple<Move, Board>(new PassMove(), board.NextGeneration);
@@ -72,13 +72,13 @@ namespace RiddlesHackaton2017.MonteCarlo
 			if (!births.Any())
 			{
 				//Not enough births: do a kill move anyway
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board);
 			}
 
 			if (myKills.Count < 2)
 			{
 				//Not enough own kills: do a kill move anyway
-				return GetRandomKillMove(board, player);
+				return GetRandomKillMove(board);
 			}
 
 			int birthValue = Random.Next(births.Last().Value);
@@ -126,26 +126,53 @@ namespace RiddlesHackaton2017.MonteCarlo
 				}
 			}
 			var move = new BirthMove(birthIndex, killIndex1, killIndex2);
-			move.ApplyInline(board, player);
+			move.ApplyInline(board, board.MyPlayer);
 			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
 		public static Dictionary<int, int> GetKills(Board board, Player player)
 		{
-			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration;
-			var afterMoveBoard = new Board(board);
-			var afterMoveBoard1 = new Board(board1);
-			return moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
+			//var moveGenerator = new SimulationMoveGenerator(board);
+			//var board1 = board.NextGeneration;
+			//var afterMoveBoard = new Board(board);
+			//var afterMoveBoard1 = new Board(board1);
+			//return moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
+
+			var result = new Dictionary<int, int>();
+			int total = 0;
+
+			foreach (int i in board.GetCells(player))
+			{
+				var score = board.GetDeltaFieldCountForKill(i, board.MyPlayer, player, true);
+				if (score >= 0)
+				{
+					total += score * score + 1;
+					result.Add(i, total);
+				}
+			}
+			return result;
 		}
 
 		public static Dictionary<int, int> GetBirths(Board board, Player player)
 		{
-			var moveGenerator = new SimulationMoveGenerator(board);
-			var board1 = board.NextGeneration;
-			var afterMoveBoard = new Board(board);
-			var afterMoveBoard1 = new Board(board1);
-			return moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
+			//var moveGenerator = new SimulationMoveGenerator(board);
+			//var board1 = board.NextGeneration;
+			//var afterMoveBoard = new Board(board);
+			//var afterMoveBoard1 = new Board(board1);
+			//return moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
+			var result = new Dictionary<int, int>();
+			int total = 0;
+
+			foreach (int i in board.EmptyCells)
+			{
+				var score = board.GetDeltaFieldCountForBirth(i, board.MyPlayer, player, true);
+				if (score >= 0)
+				{
+					total += score * score + 1;
+					result.Add(i, total);
+				}
+			}
+			return result;
 		}
 	}
 }

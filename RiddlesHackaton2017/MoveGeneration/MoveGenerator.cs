@@ -92,12 +92,8 @@ namespace RiddlesHackaton2017.MoveGeneration
 			afterMoveBoard1.GetNextGeneration(afterMoveBoard2, neighbours2);
 
 			//Calculate
-			var moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2, Parameters.CellCountWeight);
-			int myMoveScore = moveScore.Item1;
-			int opponentMoveScore = moveScore.Item2;
-			var score = BoardEvaluator.Evaluate(board2, neighbours2, Parameters.CellCountWeight);
-			int myScore = score.Item1;
-			int opponentScore = score.Item2;
+			int moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2, Parameters.CellCountWeight);
+			int score = BoardEvaluator.Evaluate(board2, neighbours2, Parameters.CellCountWeight);
 
 			//Win bonus
 			int winBonus = Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
@@ -118,8 +114,7 @@ namespace RiddlesHackaton2017.MoveGeneration
 			}
 			afterMoveBoard2.MyPlayerFieldCount = board2.MyPlayerFieldCount;
 			afterMoveBoard2.OpponentPlayerFieldCount = board2.OpponentPlayerFieldCount;
-			return myMoveScore - opponentMoveScore - (myScore - opponentScore) 
-				+ Parameters.WinBonusWeight * winBonus;
+			return moveScore - score + Parameters.WinBonusWeight * winBonus;
 		}
 	}
 }
