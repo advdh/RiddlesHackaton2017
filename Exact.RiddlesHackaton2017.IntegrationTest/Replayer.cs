@@ -48,12 +48,13 @@ namespace RiddlesHackaton2017.IntegrationTest
 																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
 
-			parms.Debug = true;
+			//parms.Debug = true;
 			parms.LogLevel = 0;
-			parms.UseFastAndSmartMoveSimulator = true;
+			//parms.UseFastAndSmartMoveSimulator = true;
+			//parms.SmartMoveGenerationCount = 8;
 
 			DoReplay(gameId, differenceOnly: false
-				, rounds: new[] { 1 }
+				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
@@ -119,7 +120,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 
 			var move = new BirthMove(new Position(4, 5).Index, new Position(4, 2).Index, new Position(7, 4).Index);
 			//var move = new KillMove(new Position(3,9).Index);
-			var newBoard = board.ApplyMoveAndNext(Player.Player1, move, validateMove: true);
+			var newBoard = board.ApplyMoveAndNext(move, validateMove: true);
 
 			Assert.AreEqual(4, newBoard.MyPlayerFieldCount);
 		}

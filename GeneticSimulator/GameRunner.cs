@@ -95,7 +95,7 @@ namespace GeneticSimulator
 					move = new PassMove();
 				}
 			}
-			board = board.ApplyMoveAndNext(player, move, true);
+			board = board.ApplyMoveAndNext(move, true);
 		}
 
 		private GameResult GetResult(Board board, TimeSpan timeBank1, TimeSpan timeBank2, bool bot1TimedOut, bool bot2TimedOut,

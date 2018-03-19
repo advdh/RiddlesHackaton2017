@@ -102,7 +102,7 @@ namespace RiddlesHackaton2017.Bots
 				var stopWatchSimulation = Stopwatch.StartNew();
 				var moveScore = candidateMoves[count];
 				var move = moveScore.Move;
-				var startBoard = Board.ApplyMoveAndNext(Board.MyPlayer, move);
+				var startBoard = Board.ApplyMoveAndNext(move, Parameters.ValidateMoves);
 				var result = Simulator.SimulateMove(startBoard, maxDuration, move, simulationCount);
 
 				if (Parameters.LogLevel >= 2)
@@ -177,11 +177,6 @@ namespace RiddlesHackaton2017.Bots
 				}
 			}
 
-			int winBonus = Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
-				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
-				+ Parameters.WinBonus2[afterMoveBoard2.OpponentPlayerFieldCount]
-				- Parameters.WinBonus2[afterMoveBoard2.MyPlayerFieldCount];
-			result.Add(new MoveScore(new PassMove(), Parameters.WinBonusWeight * winBonus));
 			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
 			{
 				for (int b = 0; b < i && b < myBirths.Count(); b++)

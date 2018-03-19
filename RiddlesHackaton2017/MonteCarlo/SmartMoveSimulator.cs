@@ -54,7 +54,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				}
 			}
 			var move = new KillMove(index);
-			move.ApplyInline(board, board.MyPlayer);
+			move.ApplyInline(board, Parameters.ValidateMoves);
 			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 
@@ -126,7 +126,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				}
 			}
 			var move = new BirthMove(birthIndex, killIndex1, killIndex2);
-			move.ApplyInline(board, board.MyPlayer);
+			move.ApplyInline(board, Parameters.ValidateMoves);
 			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 

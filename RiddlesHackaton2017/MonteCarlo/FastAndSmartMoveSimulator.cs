@@ -43,7 +43,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				//Birth move
 				move = GetRandomBirthMove(board);
 			}
-			move.ApplyInline(board, board.MyPlayer);
+			move.ApplyInline(board, Parameters.ValidateMoves);
 			return new Tuple<Move, Board>(move, board.NextGeneration);
 		}
 

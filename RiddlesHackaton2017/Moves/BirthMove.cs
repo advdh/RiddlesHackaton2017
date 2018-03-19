@@ -45,14 +45,14 @@ namespace RiddlesHackaton2017.Moves
 			return $"Birthmove {BirthPosition}, sacrifice = {SacrificePosition1} and {SacrificePosition2}";
 		}
 
-		public override Board Apply(Board board, Player player, bool validate = true)
+		public override Board Apply(Board board, bool validate)
 		{
 			var result = new Board(board);
 
-			string errorMessage = ValidateMove(board, player);
+			string errorMessage = ValidateMove(board, board.MyPlayer);
 			if (errorMessage == null)
 			{
-				result.Field[BirthIndex] = player.Value();
+				result.Field[BirthIndex] = board.MyPlayer.Value();
 				result.Field[SacrificeIndex1] = 0;
 				result.Field[SacrificeIndex2] = 0;
 				result.MyPlayerFieldCount--;
@@ -65,8 +65,9 @@ namespace RiddlesHackaton2017.Moves
 			return result;
 		}
 
-		public override void ApplyInline(Board board, Player player, bool validate = true)
+		public override void ApplyInline(Board board, bool validate)
 		{
+			var player = board.MyPlayer;
 			string errorMessage = ValidateMove(board, player);
 			if (errorMessage == null)
 			{

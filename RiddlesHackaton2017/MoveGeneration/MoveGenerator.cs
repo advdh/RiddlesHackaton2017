@@ -95,9 +95,9 @@ namespace RiddlesHackaton2017.MoveGeneration
 			int moveScore = BoardEvaluator.Evaluate(afterMoveBoard2, neighbours2, Parameters.CellCountWeight);
 			int score = BoardEvaluator.Evaluate(board2, neighbours2, Parameters.CellCountWeight);
 
-			//Win bonus
-			int winBonus = Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
-				- Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
+			//Win bonus (NB: afterMoveBoard1 has players switched!)
+			int winBonus = -Parameters.WinBonus[afterMoveBoard1.OpponentPlayerFieldCount]
+				+ Parameters.WinBonus[afterMoveBoard1.MyPlayerFieldCount]
 				+ Parameters.WinBonus2[afterMoveBoard2.OpponentPlayerFieldCount]
 				- Parameters.WinBonus2[afterMoveBoard2.MyPlayerFieldCount];
 

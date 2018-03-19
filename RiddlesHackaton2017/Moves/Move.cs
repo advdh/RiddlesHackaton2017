@@ -9,12 +9,12 @@ namespace RiddlesHackaton2017.Moves
 		/// <summary>
 		/// Applies the move for the specified player and returns a new Board
 		/// </summary>
-		public abstract Board Apply(Board board, Player player, bool validate = true);
+		public abstract Board Apply(Board board, bool validate);
 
 		/// <summary>
 		/// Applies the move for the specified player to the current Board
 		/// </summary>
-		public virtual void ApplyInline(Board board, Player player, bool validate = true)
+		public virtual void ApplyInline(Board board, bool validate)
 		{
 
 		}

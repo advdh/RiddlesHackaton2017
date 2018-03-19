@@ -114,7 +114,7 @@ namespace GeneticSimulator.Simulators
 				if (line != "kill -1,-1")
 				{
 					var move = Move.Parse(rawLines[ix]);
-					board = board.ApplyMoveAndNext(player, move, validateMove: false);
+					board = board.ApplyMoveAndNext(move, validateMove: false);
 					if (player == Player.Player2)
 					{
 						//For the moment we will always start with a start board where player1 moves first

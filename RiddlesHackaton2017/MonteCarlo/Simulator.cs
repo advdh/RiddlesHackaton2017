@@ -12,9 +12,13 @@ namespace RiddlesHackaton2017.MonteCarlo
 	public class Simulator
 	{
 		public Board StartBoard { get; set; }
+		public Player MyPlayer { get { return StartBoard.OpponentPlayer; } }
+
 		private readonly IRandomGenerator Random;
 		public MonteCarloParameters Parameters { get; private set; }
 		public TimeSpan MaxDuration { get; set; }
+		public int OpponentPlayerFieldCount { get { return StartBoard.MyPlayerFieldCount; } }
+		public int MyPlayerFieldCount { get { return StartBoard.OpponentPlayerFieldCount; } }
 
 		private readonly IMoveSimulator[] _SmartMoveSimulator;
 		private readonly IMoveSimulator[] _FastAndSmartMoveSimulator;
@@ -44,9 +48,9 @@ namespace RiddlesHackaton2017.MonteCarlo
 			MaxDuration = maxDuration;
 
 			var statistic = new MonteCarloStatistics() { Move = move };
-			if (StartBoard.OpponentPlayerFieldCount == 0)
+			if (OpponentPlayerFieldCount == 0)
 			{
-				if (StartBoard.MyPlayerFieldCount == 0)
+				if (MyPlayerFieldCount == 0)
 				{
 					//Draw in 0
 					statistic.Count = simulationCount;
@@ -61,7 +65,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 					return statistic;
 				}
 			}
-			if (StartBoard.MyPlayerFieldCount == 0)
+			if (MyPlayerFieldCount == 0)
 			{
 				//Lost in 0
 				statistic.Count = simulationCount;
@@ -181,10 +185,13 @@ namespace RiddlesHackaton2017.MonteCarlo
 		{
 			var board = new Board(StartBoard);
 
-			var player = board.OpponentPlayer;
 			int generationCount = 1;
-			int myScore = board.MyPlayerFieldCount;
-			int opponentScore = board.OpponentPlayerFieldCount;
+			int myScore = MyPlayerFieldCount;
+			int opponentScore = OpponentPlayerFieldCount;
+
+			Player player;
+			int myFieldCount;
+			int opponentFieldCount;
 
 			while (StartBoard.Round + generationCount / 2 <= Board.MaxRounds && generationCount < Parameters.SimulationMaxGenerationCount)
 			{
@@ -195,7 +202,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 				Board nextBoard = tuple.Item2;
 				if (nextBoard == null)
 				{
-					move.ApplyInline(board, player);
+					move.ApplyInline(board, Parameters.ValidateMoves);
 					board = board.NextGeneration;
 				}
 				else
@@ -204,27 +211,31 @@ namespace RiddlesHackaton2017.MonteCarlo
 					board.ResetNextGeneration();
 				}
 
+				player = board.MyPlayer == MyPlayer ? board.MyPlayer : board.OpponentPlayer;
+				myFieldCount = board.PlayerFieldCount[player.Value()];
+				opponentFieldCount = board.PlayerFieldCount[player.Opponent().Value()];
+
 				if (Parameters.ScoreBasedOnWinBonus)
 				{
 					//Use winbonus for score calculation
-					myScore += Parameters.WinBonus[board.OpponentPlayerFieldCount];
-					opponentScore += Parameters.WinBonus[board.MyPlayerFieldCount];
+					myScore += Parameters.WinBonus[opponentFieldCount];
+					opponentScore += Parameters.WinBonus[myFieldCount];
 				}
 				else
 				{
 					//Use field counts for score calculation
-					myScore += board.MyPlayerFieldCount;
-					opponentScore += board.OpponentPlayerFieldCount;
+					myScore += myFieldCount;
+					opponentScore += opponentFieldCount;
 				}
 
-				if (board.OpponentPlayerFieldCount == 0)
+				if (opponentFieldCount == 0)
 				{
 					//Won
 					myScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
 					return new SimulationResult(won: true, generationCount: generationCount,
 						myScore: myScore, opponentScore: opponentScore);
 				}
-				if (board.MyPlayerFieldCount == 0)
+				if (myFieldCount == 0)
 				{
 					//Lost
 					opponentScore += (Parameters.SimulationMaxGenerationCount - generationCount) * 100;
@@ -233,12 +244,15 @@ namespace RiddlesHackaton2017.MonteCarlo
 				}
 
 				//Next player
-				player = player.Opponent();
 				generationCount++;
 			}
 
-			bool? won = board.MyPlayerFieldCount > 2 * board.OpponentPlayerFieldCount ? true
-				: board.OpponentPlayerFieldCount > 2 * board.MyPlayerFieldCount ? (bool?)false
+			player = board.MyPlayer == MyPlayer ? board.MyPlayer : board.OpponentPlayer;
+			myFieldCount = board.PlayerFieldCount[player.Value()];
+			opponentFieldCount = board.PlayerFieldCount[player.Opponent().Value()];
+
+			bool? won = myFieldCount > 2 * opponentFieldCount ? true
+				: opponentFieldCount > 2 * myFieldCount ? (bool?)false
 				: null;
 			return new SimulationResult(won, generationCount, myScore, opponentScore);
 		}

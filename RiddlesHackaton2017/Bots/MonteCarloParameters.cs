@@ -33,6 +33,7 @@ namespace RiddlesHackaton2017.Bots
 			MaxDuration = original.MaxDuration;
 			MaxRelativeDuration = original.MaxRelativeDuration;
 			Debug = original.Debug;
+			ValidateMoves = original.ValidateMoves;
 			LogLevel = original.LogLevel;
 			SimulationMaxGenerationCount = original.SimulationMaxGenerationCount;
 			UseFastAndSmartMoveSimulator = original.UseFastAndSmartMoveSimulator;
@@ -261,10 +262,18 @@ namespace RiddlesHackaton2017.Bots
 
 		public bool ParallelSimulation
 		{
-			get { return Debug ? false : _ParallelSimulation; }
+			get { return !Debug && _ParallelSimulation; }
 			set { _ParallelSimulation = value; }
 		}
 		private bool _ParallelSimulation = true;
+
+
+		private bool _ValidateMoves = false;
+		public bool ValidateMoves
+		{
+			get { return Debug || _ValidateMoves; }
+			set { _ValidateMoves = value; }
+		}
 
 		/// <summary>
 		/// If true, then use winbonus for score calculation; if false, then use field counts for score calculation
@@ -302,6 +311,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
 			sb.AppendLine($"ScoreBasedOnWinBonus = {ScoreBasedOnWinBonus}");
 			sb.AppendLine($"Debug = {Debug}");
+			sb.AppendLine($"ValidateMoves = {ValidateMoves}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
 			return sb.ToString();
 		}
@@ -336,7 +346,8 @@ namespace RiddlesHackaton2017.Bots
 				&& LogLevel == p.LogLevel
 				&& ParallelSimulation == p.ParallelSimulation
 				&& SimulationFactor == p.SimulationFactor
-				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus;
+				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus
+				&& ValidateMoves == p.ValidateMoves;
 		}
 
 		public override int GetHashCode()
@@ -366,11 +377,11 @@ namespace RiddlesHackaton2017.Bots
 				^ LogLevel.GetHashCode()
 				^ ParallelSimulation.GetHashCode()
 				^ SimulationFactor.GetHashCode()
-				^ ScoreBasedOnWinBonus.GetHashCode();
+				^ ScoreBasedOnWinBonus.GetHashCode()
+				^ ValidateMoves.GetHashCode();
 		}
 
 		private int _hashCode;
 		public int HashCode { get { return GetHashCode(); } set { _hashCode = value; } }
-
 	}
 }

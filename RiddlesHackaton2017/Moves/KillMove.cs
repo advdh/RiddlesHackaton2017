@@ -57,7 +57,7 @@ namespace RiddlesHackaton2017.Moves
 			return false;
 		}
 
-		public override Board Apply(Board board, Player player, bool validate = true)
+		public override Board Apply(Board board, bool validate)
 		{
 			var result = new Board(board);
 
@@ -81,13 +81,13 @@ namespace RiddlesHackaton2017.Moves
 			return result;
 		}
 
-		public override void ApplyInline(Board board, Player player, bool validate = true)
+		public override void ApplyInline(Board board, bool validate)
 		{
 			var errorMessage = ValidateMove(board);
 			if (errorMessage == null)
 			{
 				//Valid move
-				board.ApplyKill(player, Index);
+				board.ApplyKill(board.MyPlayer, Index);
 			}
 			else if (validate)
 			{

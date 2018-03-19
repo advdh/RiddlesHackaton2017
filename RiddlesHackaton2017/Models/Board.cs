@@ -159,13 +159,10 @@ namespace RiddlesHackaton2017.Models
 		/// </summary>
 		/// <returns>New board</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Board ApplyMoveAndNext(Player player, Move move, bool validateMove = true)
+		public Board ApplyMoveAndNext(Move move, bool validateMove)
 		{
 			//Apply move and next generation
-			var newBoard = move.Apply(this, player, validateMove).NextGeneration;
-
-			//Increment round
-			newBoard.Round = Round + (player == Player.Player2 ? 1 : 0);
+			var newBoard = move.Apply(this, validateMove).NextGeneration;
 
 			return newBoard;
 		}

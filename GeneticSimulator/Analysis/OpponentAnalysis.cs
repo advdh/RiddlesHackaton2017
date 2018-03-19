@@ -165,7 +165,7 @@ namespace GeneticSimulator.Analysis
 				if (line != "kill -1,-1")
 				{
 					var move = Move.Parse(rawLines[ix]);
-					board = board.ApplyMoveAndNext(player, move, validateMove: false);
+					board = board.ApplyMoveAndNext(move, validateMove: false);
 					result[0] += board.Player1FieldCount;
 					result[1] += board.Player2FieldCount;
 					player = player.Opponent();
