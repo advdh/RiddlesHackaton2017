@@ -64,3 +64,4 @@ V47 13-03-2018, 23:29	SmartMoveGenerationCount = 1, and SmartMoveMinimumFieldCou
 						New parameter DoubleWinBonusCount (set to 2) to force move generator to add kill-in-one moves at the top of the list
 V48	14-03-2018, 22:17	50% performance improvement of SmartMoveGenerationCount = 1
 V49	19-03-2018, 20:00	After refactoring
+V50	20-03-2018, 23:38	Cache FieldCountChanges: gives 50% performance improvement in calculating birth and kill scores

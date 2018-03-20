@@ -376,14 +376,6 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
-		public enum CalcType
-		{
-			NoCache,
-			CacheBasic,
-			CacheBirth,
-			CacheKill,
-		}
-
 		/// <summary>
 		/// Returns the change in field count of player -/- the field count of opponent player
 		/// in the next generation after a kill on field i (which is owned by fieldOwner) 
@@ -393,7 +385,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="player">Current player</param>
 		/// <param name="fieldOwner">Current owner of the field</param>
 		/// <param name="validate">If true, then validate fieldOwner</param>
-		public int GetDeltaFieldCountForKill(int i, Player player, Player fieldOwner, bool validate = false, CalcType calcType = CalcType.CacheKill)
+		public int GetDeltaFieldCountForKill(int i, Player player, Player fieldOwner, bool validate = false)
 		{
 			if (validate && Field[i] != fieldOwner.Value())
 			{
@@ -410,23 +402,8 @@ namespace RiddlesHackaton2017.Models
 
 			foreach (int j in NeighbourFields[i])
 			{
-				switch (calcType)
-				{
-					case CalcType.NoCache:
-						result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
-						break;
-					case CalcType.CacheBasic:
-						result += FieldCountChange[Field[j], Neighbours[1, j] + delta[1], Neighbours[2, j] + delta[2]][0]
-							- FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][0];
-						break;
-					case CalcType.CacheBirth:
-						throw new Exception("Not supported");
-					case CalcType.CacheKill:
-						result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][2 + fieldOwner.Value()];
-						break;
-				}
+				result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][2 + fieldOwner.Value()];
 			}
-
 
 			return (player == Player.Player1 ? 1 : -1) * result;
 		}
@@ -440,7 +417,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="player">Current player</param>
 		/// <param name="fieldOwner">Owner of the field after the birth</param>
 		/// <param name="validate">If true, then validate that field is currently empty</param>
-		public int GetDeltaFieldCountForBirth(int i, Player player, Player fieldOwner, bool validate = false, CalcType calcType = CalcType.CacheBirth)
+		public int GetDeltaFieldCountForBirth(int i, Player player, Player fieldOwner, bool validate = false)
 		{
 			if (validate && Field[i] != 0)
 			{
@@ -462,21 +439,7 @@ namespace RiddlesHackaton2017.Models
 			}
 			foreach (int j in NeighbourFields[i])
 			{
-				switch(calcType)
-				{
-					case CalcType.NoCache:
-						result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
-						break;
-					case CalcType.CacheBasic:
-						result += FieldCountChange[Field[j], Neighbours[1, j] + delta[1], Neighbours[2, j] + delta[2]][0]
-							- FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][0];
-						break;
-					case CalcType.CacheBirth:
-						result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][fieldOwner.Value()];
-						break;
-					case CalcType.CacheKill:
-						throw new Exception("Not supported");
-				}
+				result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][fieldOwner.Value()];
 			}
 			return (player == Player.Player1 ? 1 : -1) * result;
 		}

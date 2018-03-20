@@ -132,12 +132,6 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 		public static Dictionary<int, int> GetKills(Board board, Player player)
 		{
-			//var moveGenerator = new SimulationMoveGenerator(board);
-			//var board1 = board.NextGeneration;
-			//var afterMoveBoard = new Board(board);
-			//var afterMoveBoard1 = new Board(board1);
-			//return moveGenerator.GetKillsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player, player);
-
 			var result = new Dictionary<int, int>();
 			int total = 0;
 
@@ -155,11 +149,6 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 		public static Dictionary<int, int> GetBirths(Board board, Player player)
 		{
-			//var moveGenerator = new SimulationMoveGenerator(board);
-			//var board1 = board.NextGeneration;
-			//var afterMoveBoard = new Board(board);
-			//var afterMoveBoard1 = new Board(board1);
-			//return moveGenerator.GetBirthsForPlayer(board1, afterMoveBoard, afterMoveBoard1, player);
 			var result = new Dictionary<int, int>();
 			int total = 0;
 
