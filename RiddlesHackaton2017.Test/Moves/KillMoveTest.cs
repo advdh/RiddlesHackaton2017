@@ -20,7 +20,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var board = InitBoard();
 			var move = new KillMove(new Position(0, 2));
 
-			var newBoard = move.Apply(board, Player.Player1);
+			var newBoard = move.Apply(board, validate: true);
 
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 2).Index], "Killed field");
 			Assert.AreEqual(2, newBoard.Field[new Position(0, 3).Index], "not killed field");
@@ -37,7 +37,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var board = InitBoard();
 			var move = new KillMove(new Position(0, 3));
 
-			var newBoard = move.Apply(board, Player.Player1);
+			var newBoard = move.Apply(board, validate: true);
 
 			Assert.AreEqual(1, newBoard.Field[new Position(0, 2).Index], "non-Killed field");
 			Assert.AreEqual(0, newBoard.Field[new Position(0, 3).Index], "Killed field");
@@ -54,7 +54,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var board = InitBoard();
 			var move = new KillMove(new Position(0, 0));
 
-			move.Apply(board, Player.Player1);
+			move.Apply(board, validate: true);
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var board = InitBoard();
 			var move = new KillMove(new Position(0, 0));
 
-			var newBoard = move.Apply(board, Player.Player1, validate: false);
+			var newBoard = move.Apply(board, validate: false);
 
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");

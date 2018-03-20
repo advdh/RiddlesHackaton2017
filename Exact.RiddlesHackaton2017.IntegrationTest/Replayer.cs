@@ -44,8 +44,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void Replay_Test()
 		{
-			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";	// "3c3dbc15-c316-434e-886b-fbad287e6d10";     //Player1, UnManagedCode
-																		//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
+			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";	// "3c3dbc15-c316-434e-886b-fbad287e6d10";     //Player1, UnManagedCode														//string gameId = "59f191a9-33d3-4f12-a38b-5a42346ba4c8";		//Player2
 			var parms = MonteCarloParameters.Life;
 
 			//parms.Debug = true;
@@ -204,6 +203,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		private void DoReplayLines(string[] lines, bool differenceOnly, 
 			Action<Board, BaseBot, TimeSpan> action, int[] rounds, BaseBot bot)
 		{
+			Board.InitializeFieldCountChanges();
 			var board = new Board();
 			Move originalMove;
 			Move newMove = new NullMove();

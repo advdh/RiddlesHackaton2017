@@ -24,6 +24,8 @@ namespace RiddlesHackaton2017
 			Console.Error.WriteLine("Parameters:");
 			Console.Error.WriteLine(Parameters);
 
+			Board.InitializeFieldCountChanges();
+
 			while (true)
 			{
 				var command = Console.ReadLine();

@@ -376,6 +376,14 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
+		public enum CalcType
+		{
+			NoCache,
+			CacheBasic,
+			CacheBirth,
+			CacheKill,
+		}
+
 		/// <summary>
 		/// Returns the change in field count of player -/- the field count of opponent player
 		/// in the next generation after a kill on field i (which is owned by fieldOwner) 
@@ -385,7 +393,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="player">Current player</param>
 		/// <param name="fieldOwner">Current owner of the field</param>
 		/// <param name="validate">If true, then validate fieldOwner</param>
-		public int GetDeltaFieldCountForKill(int i, Player player, Player fieldOwner, bool validate = false)
+		public int GetDeltaFieldCountForKill(int i, Player player, Player fieldOwner, bool validate = false, CalcType calcType = CalcType.CacheKill)
 		{
 			if (validate && Field[i] != fieldOwner.Value())
 			{
@@ -399,10 +407,27 @@ namespace RiddlesHackaton2017.Models
 			var delta0 = new int[] { 0, 0, 0 };
 
 			int result = NextGeneration.Field[i] == 0 ? 0 : -1;
+
 			foreach (int j in NeighbourFields[i])
 			{
-				result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+				switch (calcType)
+				{
+					case CalcType.NoCache:
+						result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+						break;
+					case CalcType.CacheBasic:
+						result += FieldCountChange[Field[j], Neighbours[1, j] + delta[1], Neighbours[2, j] + delta[2]][0]
+							- FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][0];
+						break;
+					case CalcType.CacheBirth:
+						throw new Exception("Not supported");
+					case CalcType.CacheKill:
+						result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][2 + fieldOwner.Value()];
+						break;
+				}
 			}
+
+
 			return (player == Player.Player1 ? 1 : -1) * result;
 		}
 
@@ -415,7 +440,7 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="player">Current player</param>
 		/// <param name="fieldOwner">Owner of the field after the birth</param>
 		/// <param name="validate">If true, then validate that field is currently empty</param>
-		public int GetDeltaFieldCountForBirth(int i, Player player, Player fieldOwner, bool validate = false)
+		public int GetDeltaFieldCountForBirth(int i, Player player, Player fieldOwner, bool validate = false, CalcType calcType = CalcType.CacheBirth)
 		{
 			if (validate && Field[i] != 0)
 			{
@@ -437,7 +462,21 @@ namespace RiddlesHackaton2017.Models
 			}
 			foreach (int j in NeighbourFields[i])
 			{
-				result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+				switch(calcType)
+				{
+					case CalcType.NoCache:
+						result += GetFieldCountChange(j, delta) - GetFieldCountChange(j, delta0);
+						break;
+					case CalcType.CacheBasic:
+						result += FieldCountChange[Field[j], Neighbours[1, j] + delta[1], Neighbours[2, j] + delta[2]][0]
+							- FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][0];
+						break;
+					case CalcType.CacheBirth:
+						result += FieldCountChange[Field[j], Neighbours[1, j], Neighbours[2, j]][fieldOwner.Value()];
+						break;
+					case CalcType.CacheKill:
+						throw new Exception("Not supported");
+				}
 			}
 			return (player == Player.Player1 ? 1 : -1) * result;
 		}
@@ -451,17 +490,73 @@ namespace RiddlesHackaton2017.Models
 		/// <returns></returns>
 		public int GetFieldCountChange(int i, int[] delta)
 		{
-			switch (Neighbours[1, i] + delta[1] + Neighbours[2, i] + delta[2])
+			return GetFieldCountChange(Field[i], Neighbours[1, i] + delta[1], Neighbours[2, i] + delta[2]);
+		}
+
+		/// <summary>
+		/// FieldCountChange[a, b, c] = the relative additional field count for player 1
+		/// if the current field value is a (0, 1, or 2),
+		/// and the number of Neighbours of player 1 is b
+		/// and the number of Neighbours of player 2 is c
+		/// </summary>
+		private static int[,,][] FieldCountChange = new int[3, 9, 9][];
+
+		public static void InitializeFieldCountChanges()
+		{
+			//Basic field count changes
+			for(int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 9; b++)
+				{
+					for(int c = 0; c < 9; c++)
+					{
+						FieldCountChange[a, b, c] = new int[5];
+						FieldCountChange[a, b, c][0] = GetFieldCountChange(a, b, c);
+					}
+				}
+			}
+
+			//Field count changes for player1 births (index = 1) and player2 births (index = 2)
+			//Loops of b and c go only to 8 because b + 1 cannot be greater than 8 (anyway all FieldCountChange with b or c > 5 are always 0)
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 8; b++)
+				{
+					for (int c = 0; c < 8; c++)
+					{
+						FieldCountChange[a, b, c][1] = FieldCountChange[a, b + 1, c][0] - FieldCountChange[a, b, c][0];
+						FieldCountChange[a, b, c][2] = FieldCountChange[a, b, c + 1][0] - FieldCountChange[a, b, c][0];
+					}
+				}
+			}
+
+			//Field count changes for player1 kills (index = 3) and player2 kills (index = 4)
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 9; b++)
+				{
+					for (int c = 0; c < 9; c++)
+					{
+						FieldCountChange[a, b, c][3] = FieldCountChange[a, Math.Max(0, b - 1), c][0] - FieldCountChange[a, b, c][0];
+						FieldCountChange[a, b, c][4] = FieldCountChange[a, b, Math.Max(0, c - 1)][0] - FieldCountChange[a, b, c][0];
+					}
+				}
+			}
+		}
+
+		public static int GetFieldCountChange(int a, int b, int c)
+		{
+			switch (b + c)
 			{
 				case 2:
 					return 0;
 				case 3:
-					if (Field[i] == 0)
-						return Neighbours[1, i] + delta[1] >= 2 ? 1 : -1;
+					if (a == 0)
+						return b >= 2 ? 1 : -1;
 					else
 						return 0;
 				default:
-					switch(Field[i])
+					switch (a)
 					{
 						case 1: return -1;
 						case 2: return 1;

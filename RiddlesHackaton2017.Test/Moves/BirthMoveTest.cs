@@ -17,7 +17,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var sacrificePosition2 = new Position(11, 0);
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			var newBoard = move.Apply(board, Player.Player1);
+			var newBoard = move.Apply(board, validate: true);
 
 			Assert.AreEqual(1, newBoard.Field[birthPosition.Index], "Born position");
 			Assert.AreEqual(0, newBoard.Field[sacrificePosition1.Index], "SacrificePosition1");
@@ -37,7 +37,7 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			move.Apply(board, Player.Player1);
+			move.Apply(board, validate: true);
 		}
 
 		[TestMethod]
@@ -49,7 +49,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var sacrificePosition2 = new Position(11, 0);
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			var newBoard = move.Apply(board, Player.Player1, validate: false);
+			var newBoard = move.Apply(board, validate: false);
 
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
@@ -65,7 +65,7 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			move.Apply(board, Player.Player1);
+			move.Apply(board, validate: true);
 		}
 
 		[TestMethod]
@@ -77,7 +77,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var sacrificePosition2 = new Position(11, 0);
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			var newBoard = move.Apply(board, Player.Player1, validate: false);
+			var newBoard = move.Apply(board, validate: false);
 
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
@@ -93,7 +93,7 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			move.Apply(board, Player.Player1);
+			move.Apply(board, validate: true);
 		}
 
 		[TestMethod]
@@ -105,7 +105,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var sacrificePosition2 = new Position(0, 0);
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			var newBoard = move.Apply(board, Player.Player1, validate: false);
+			var newBoard = move.Apply(board, validate: false);
 
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");
@@ -121,7 +121,7 @@ namespace RiddlesHackaton2017.Test.Moves
 
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			move.Apply(board, Player.Player1);
+			move.Apply(board, validate: true);
 		}
 
 		[TestMethod]
@@ -133,7 +133,7 @@ namespace RiddlesHackaton2017.Test.Moves
 			var sacrificePosition2 = new Position(5, 0);
 			var move = new BirthMove(birthPosition, sacrificePosition1, sacrificePosition2);
 
-			var newBoard = move.Apply(board, Player.Player1, validate: false);
+			var newBoard = move.Apply(board, validate: false);
 
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player1), newBoard.Player1FieldCount, "Player1FieldCount");
 			Assert.AreEqual(newBoard.GetCalculatedPlayerFieldCount(Player.Player2), newBoard.Player2FieldCount, "Player2FieldCount");

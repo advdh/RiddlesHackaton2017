@@ -31,7 +31,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("birth 12,1 16,6 13,10", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
@@ -59,7 +59,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("pass", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
@@ -87,7 +87,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("birth 14,2 16,5 15,4", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
@@ -115,7 +115,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("kill 15,1", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
@@ -143,7 +143,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("pass", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
@@ -171,7 +171,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			var actualNextBoard = result.Item2;
 
 			Assert.AreEqual("kill 6,12", move.ToOutputString());
-			var expectedNextBoard = board.ApplyMoveAndNext(player, move);
+			var expectedNextBoard = board.ApplyMoveAndNext(move, validateMove: true);
 			Assert.AreEqual(expectedNextBoard.HumanBoardString(), actualNextBoard.HumanBoardString());
 			Assert.AreEqual(expectedNextBoard.Player1FieldCount, actualNextBoard.Player1FieldCount);
 			Assert.AreEqual(expectedNextBoard.Player2FieldCount, actualNextBoard.Player2FieldCount);
