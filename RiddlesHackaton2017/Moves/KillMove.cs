@@ -87,7 +87,7 @@ namespace RiddlesHackaton2017.Moves
 			if (errorMessage == null)
 			{
 				//Valid move
-				board.ApplyKill(board.MyPlayer, Index);
+				board.ApplyKill(Index);
 			}
 			else if (validate)
 			{

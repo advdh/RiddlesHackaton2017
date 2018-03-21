@@ -2,9 +2,7 @@
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 namespace RiddlesHackaton2017.Test.Models
@@ -51,6 +49,7 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_Test()
 		{
+			Board.InitializeFieldCountChanges();
 			var board = InitBoard(4, 4, @"
 1...
 0...
@@ -69,6 +68,7 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextNextGeneration_Test()
 		{
+			Board.InitializeFieldCountChanges();
 			var board = InitBoard(4, 4, @"
 1...
 0...
@@ -93,6 +93,7 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_Test2()
 		{
+			Board.InitializeFieldCountChanges();
 			var board = InitBoard(".,.,.,1,.,1,.,.,.,.,.,0,.,0,1,1,.,1,.,.,1,1,.,.,.,.,.,0,1,.,1,.,.,.,0,.,0,.,.,.,1,.,0,.,1,.,0,.,.,.,.,1,.,.,.,.,1,.,0,.,1,.,0,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,0,0,.,0,.,1,.,1,.,.,.,.,0,0,.,.,.,.,.,.,.,0,1,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,1,.,.,1,.,.,1,.,.,.,.,.,.,1,1,0,.,.,1,1,.,1,.,1,.,.,0,.,0,.,0,0,.,.,1,0,0,.,.,.,.,.,.,0,.,.,0,.,.,0,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,0,1,.,.,.,.,.,.,.,1,1,.,.,.,.,0,.,0,.,1,.,1,1,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,1,.,0,.,1,.,0,.,.,.,.,0,.,.,.,.,1,.,0,.,1,.,0,.,.,.,1,.,1,.,.,.,0,.,0,1,.,.,.,.,.,0,0,.,.,0,.,0,0,1,.,1,.,.,.,.,.,0,.,0,.,.,.");
 
 			Console.WriteLine("Original:");
@@ -141,6 +142,7 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void CopyAndPlay_Test()
 		{
+			Board.InitializeFieldCountChanges();
 			var board = InitBoard(".,.,.,1,.,1,.,.,.,.,.,0,.,0,1,1,.,1,.,.,1,1,.,.,.,.,.,0,1,.,1,.,.,.,0,.,0,.,.,.,1,.,0,.,1,.,0,.,.,.,.,1,.,.,.,.,1,.,0,.,1,.,0,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,0,0,.,0,.,1,.,1,.,.,.,.,0,0,.,.,.,.,.,.,.,0,1,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,1,.,.,1,.,.,1,.,.,.,.,.,.,1,1,0,.,.,1,1,.,1,.,1,.,.,0,.,0,.,0,0,.,.,1,0,0,.,.,.,.,.,.,0,.,.,0,.,.,0,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,0,1,.,.,.,.,.,.,.,1,1,.,.,.,.,0,.,0,.,1,.,1,1,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,1,.,0,.,1,.,0,.,.,.,.,0,.,.,.,.,1,.,0,.,1,.,0,.,.,.,1,.,1,.,.,.,0,.,0,1,.,.,.,.,.,0,0,.,.,0,.,0,0,1,.,1,.,.,.,.,.,0,.,0,.,.,.");
 
 			Console.WriteLine("Original:");
@@ -203,7 +205,7 @@ namespace RiddlesHackaton2017.Test.Models
 
 			var board = InitBoard();
 
-			var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+			var stopwatch = Stopwatch.StartNew();
 			for (int i = 0; i < n; i++)
 			{
 				board.ResetNextGeneration();
@@ -225,6 +227,8 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void GetDeltaFieldCountForKill_Test()
 		{
+			Board.InitializeFieldCountChanges();
+
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var nextGeneration = board.NextGeneration;
 
@@ -252,6 +256,7 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void GetDeltaFieldCountForBirth_Test()
 		{
+			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var nextGeneration = board.NextGeneration;
 
@@ -289,6 +294,30 @@ namespace RiddlesHackaton2017.Test.Models
 			result = board.GetDeltaFieldCountForBirth(i, Player.Player2, Player.Player2, validate: true);
 			Assert.AreEqual(3, result);
 
+		}
+
+		[TestMethod]
+		public void NextGeneration_FieldCounts_Test()
+		{
+			Board.InitializeFieldCountChanges();
+			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
+			board.ValidateFieldCounts(true);
+			board.NextGeneration.ValidateFieldCounts(true);
+
+			board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 62);
+			board.ValidateFieldCounts(true);
+			board.NextGeneration.ValidateFieldCounts(true);
+		}
+
+		[TestMethod]
+		public void NextGeneration_FieldCounts_Round65()
+		{
+			Board.InitializeFieldCountChanges();
+			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 65);
+			board.ValidateFieldCounts(true);
+			board.NextGeneration.ValidateFieldCounts(true);
+			Assert.AreEqual(board.NextGeneration.GetCalculatedPlayerFieldCount(Player.Player1), board.NextGeneration.Player1FieldCount, "Player1FieldCount");
+			Assert.AreEqual(board.NextGeneration.GetCalculatedPlayerFieldCount(Player.Player2), board.NextGeneration.Player2FieldCount, "Player2FieldCount");
 		}
 	}
 }

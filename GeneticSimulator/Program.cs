@@ -1,4 +1,5 @@
 ﻿using GeneticSimulator.Simulators;
+using RiddlesHackaton2017.Models;
 using System;
 
 namespace GeneticSimulator
@@ -11,6 +12,7 @@ namespace GeneticSimulator
 			BaseSimulator simulator = null;
 			int populationSize;
 			int simulationCount;
+			Board.InitializeFieldCountChanges();
 
 			//Read console
 			Console.Write(">");

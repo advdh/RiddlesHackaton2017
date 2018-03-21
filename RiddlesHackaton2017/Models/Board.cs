@@ -88,6 +88,17 @@ namespace RiddlesHackaton2017.Models
 		}
 
 		public static IEnumerable<int> AllCells { get { return Enumerable.Range(0, Size); } }
+
+		public void ValidateFieldCounts(bool validate)
+		{
+			if (validate &&
+				(PlayerFieldCount[1] != GetCalculatedPlayerFieldCount(Player.Player1)
+					|| PlayerFieldCount[2] != GetCalculatedPlayerFieldCount(Player.Player2)))
+					{
+						Console.WriteLine($"Incorrect field count: 1: {Player1FieldCount} / {GetCalculatedPlayerFieldCount(Player.Player1)}; 2: {Player2FieldCount} / {GetCalculatedPlayerFieldCount(Player.Player2)}");
+					}
+		}
+
 		public IEnumerable<int> MyCells { get { return AllCells.Where(i => Field[i] == MyPlayer.Value()); } }
 		public IEnumerable<int> OpponentCells { get { return AllCells.Where(i => Field[i] == OpponentPlayer.Value()); } }
 		public IEnumerable<int> EmptyCells { get { return AllCells.Where(i => Field[i] == 0); } }
@@ -254,15 +265,16 @@ namespace RiddlesHackaton2017.Models
 		/// </summary>
 		/// <param name="player">Player of which the cell is killed</param>
 		/// <param name="index">Index which is killed</param>
-		internal void ApplyKill(Player player, int index)
+		internal void ApplyKill(int index)
 		{
-			PlayerFieldCount[player.Value()]--;
+			int playerValue = Field[index];
+			PlayerFieldCount[playerValue]--;
 			Field[index] = 0;
 			if (Neighbours != null)
 			{
 				foreach (int i in Board.NeighbourFields[index])
 				{
-					Neighbours[player.Value(), i]--;
+					Neighbours[playerValue, i]--;
 					SetNextGenerationField(this, NextGeneration, i);
 				}
 			}
@@ -334,46 +346,10 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="i">Position</param>
 		private static void SetNextGenerationField(Board board, Board nextBoard, int i)
 		{
-			SetNextGenerationField(board, nextBoard, i, 0, 0);
-		}
-
-		/// <summary>
-		/// Sets next generation2 field for the new board for position i
-		/// </summary>
-		/// <param name="board">Current board</param>
-		/// <param name="nextBoard">Next board</param>
-		/// <param name="i">Position</param>
-		private static void SetNextGenerationField(Board board, Board nextBoard, int i,
-			int deltaNeighbours1, int deltaNeighbours2)
-		{
-			switch (board.Neighbours[1, i] + deltaNeighbours1 + board.Neighbours[2, i] + deltaNeighbours2)
-			{
-				case 2:
-					nextBoard.Field[i] = board.Field[i];
-					if (board.Field[i] == 1) nextBoard.Player1FieldCount++;
-					else if (board.Field[i] == 2) nextBoard.Player2FieldCount++;
-					break;
-				case 3:
-					if (board.Field[i] == 0)
-					{
-						if (board.Neighbours[1, i] + deltaNeighbours1 >= 2)
-						{
-							nextBoard.Field[i] = Player.Player1.Value();
-							nextBoard.PlayerFieldCount[1]++;
-						}
-						else
-						{
-							nextBoard.Field[i] = Player.Player2.Value();
-							nextBoard.PlayerFieldCount[2]++;
-						}
-					}
-					else
-					{
-						nextBoard.Field[i] = board.Field[i];
-						nextBoard.PlayerFieldCount[board.Field[i]]++;
-					}
-					break;
-			}
+			var values = FieldCountChange[board.Field[i], board.Neighbours[1, i], board.Neighbours[2, i]];
+			nextBoard.Field[i] = (short)values[5];
+			nextBoard.PlayerFieldCount[1] += values[6];
+			nextBoard.PlayerFieldCount[2] += values[7];
 		}
 
 		/// <summary>
@@ -391,12 +367,6 @@ namespace RiddlesHackaton2017.Models
 			{
 				throw new ArgumentException($"Field {i} is not owned by expected field owner {fieldOwner}, but by {Field[i]}");
 			}
-			var delta = new int[] {
-				0,
-				fieldOwner == Player.Player1 ? -1 : 0,
-				fieldOwner == Player.Player2 ? -1 : 0
-			};
-			var delta0 = new int[] { 0, 0, 0 };
 
 			int result = NextGeneration.Field[i] == 0 ? 0 : -1;
 
@@ -424,13 +394,6 @@ namespace RiddlesHackaton2017.Models
 				throw new ArgumentException($"Field {i} is not empty but owned by {Field[i]}");
 			}
 
-			var delta = new int[] {
-				0,
-				fieldOwner == Player.Player1 ? 1 : 0,
-				fieldOwner == Player.Player2 ? 1 : 0
-			};
-			var delta0 = new int[] { 0, 0, 0 };
-
 			int result = 0;
 			switch(NextGeneration.Field[i])
 			{	case 1: result = fieldOwner == Player.Player1 ? 0 : -2; break;
@@ -445,22 +408,19 @@ namespace RiddlesHackaton2017.Models
 		}
 
 		/// <summary>
-		/// Returns additional delta field count for position i for player 1
-		/// if the number of neighbours changes with delta
-		/// </summary>
-		/// <param name="delta">Array of changes in neighbours cells 
-		/// (index 1 = change of player1, index 2 = change of player2)</param>
-		/// <returns></returns>
-		public int GetFieldCountChange(int i, int[] delta)
-		{
-			return GetFieldCountChange(Field[i], Neighbours[1, i] + delta[1], Neighbours[2, i] + delta[2]);
-		}
-
-		/// <summary>
-		/// FieldCountChange[a, b, c] = the relative additional field count for player 1
+		/// FieldCountChange[a, b, c] = array of 5 elements:
 		/// if the current field value is a (0, 1, or 2),
 		/// and the number of Neighbours of player 1 is b
 		/// and the number of Neighbours of player 2 is c
+		/// Value is the field count change for player 1 (field count change for player  is -Value)
+		/// index 0: the relative additional field count for player 1
+		/// index 1: Field count changes for player1 births
+		/// index 2: Field count changes for player2 births
+		/// index 3: Field count changes for player1 kills (field owner is player1)
+		/// index 4: Field count changes for player2 kills (field owner is player1)
+		/// index 5: Next field value
+		/// index 6: Absolute additional field count for player 1
+		/// index 7: Absolute additional field count for player 2
 		/// </summary>
 		private static int[,,][] FieldCountChange = new int[3, 9, 9][];
 
@@ -473,8 +433,11 @@ namespace RiddlesHackaton2017.Models
 				{
 					for(int c = 0; c < 9; c++)
 					{
-						FieldCountChange[a, b, c] = new int[5];
-						FieldCountChange[a, b, c][0] = GetFieldCountChange(a, b, c);
+						FieldCountChange[a, b, c] = new int[8];
+						FieldCountChange[a, b, c][6] = GetAbsoluteFieldCountChangeForPlayer1(a, b, c);
+						FieldCountChange[a, b, c][7] = GetAbsoluteFieldCountChangeForPlayer2(a, b, c);
+						FieldCountChange[a, b, c][0] = FieldCountChange[a, b, c][6] - FieldCountChange[a, b, c][7];
+						FieldCountChange[a, b, c][5] = GetNextFieldValue(a, b, c);
 					}
 				}
 			}
@@ -507,44 +470,47 @@ namespace RiddlesHackaton2017.Models
 			}
 		}
 
-		public static int GetFieldCountChange(int a, int b, int c)
+		public static int GetNextFieldValue(int a, int b, int c)
 		{
 			switch (b + c)
 			{
 				case 2:
-					return 0;
+					return a;
 				case 3:
 					if (a == 0)
-						return b >= 2 ? 1 : -1;
+						return b >= 2 ? Player.Player1.Value() : Player.Player2.Value();
 					else
-						return 0;
-				default:
-					switch (a)
-					{
-						case 1: return -1;
-						case 2: return 1;
-						default: return 0;
-					}
+						return a;
 			}
+			return 0;
 		}
 
-		/// <summary>
-		/// Returns next field value for position i if the number of neighbours changes with delta
-		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="delta">Array of {0, change in neighbour cells of player1, change in neighbour cells of player2 }</param>
-		/// <returns></returns>
-		public int GetNextFieldValue(int i, int[] delta)
+		public static int GetAbsoluteFieldCountChangeForPlayer1(int a, int b, int c)
 		{
-			switch (Neighbours[1, i] + delta[1] + Neighbours[2, i] + delta[2])
+			switch (b + c)
 			{
 				case 2:
-					return Field[i];
+					return a == 1 ? 1 : 0;
 				case 3:
-					if (Field[i] == 0)
-						return Neighbours[1, i] + delta[1] >= 2 ? Player.Player1.Value() : Player.Player2.Value();
+					if (a == 0)
+						return b >= 2 ? 1 : 0;
 					else
-						return Field[i];
+						return a == 1 ? 1 : 0;
+			}
+			return 0;
+		}
+
+		public static int GetAbsoluteFieldCountChangeForPlayer2(int a, int b, int c)
+		{
+			switch (b + c)
+			{
+				case 2:
+					return a == 2 ? 1 : 0;
+				case 3:
+					if (a == 0)
+						return c >= 2 ? 1 : 0;
+					else
+						return a == 2 ? 1 : 0;
 			}
 			return 0;
 		}

@@ -72,8 +72,8 @@ namespace RiddlesHackaton2017.Moves
 			if (errorMessage == null)
 			{
 				board.ApplyBirth(player, BirthIndex);
-				board.ApplyKill(player, SacrificeIndex1);
-				board.ApplyKill(player, SacrificeIndex2);
+				board.ApplyKill(SacrificeIndex1);
+				board.ApplyKill(SacrificeIndex2);
 			}
 			else if (validate)
 			{

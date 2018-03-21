@@ -20,7 +20,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				database.Connect();
 
 				var games = database.GetMyGames();
-				foreach (var game in games.Where(g => g.Version >= 38))
+				foreach (var game in games.Where(g => g.Version >= 50))
 				{
 					var log = game.Log;
 					var lines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
