@@ -58,7 +58,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			//parms.SimulationMaxGenerationCount = 2;
 			
 			DoReplay(gameId, differenceOnly: false
-				//, rounds: new[] { 62 }
+				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{

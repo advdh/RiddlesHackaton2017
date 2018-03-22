@@ -68,3 +68,4 @@ V50	20-03-2018, 23:38	Cache FieldCountChanges: gives 50% performance improvement
 V51 22-03-2018, 00:05	In generation 1, use always SmartMoveSimulator
 						Cache also Next field and absolute field count changes for player 1 and 2
 						Bugfix ApplyKill (and probably solve exceptions): playerfield counts were not correctly updated
+V52 22-03-2018, 20:32	Performance improvements based on performance profiling: replace foreach by for loops, remove player.Value() in loops, etc.

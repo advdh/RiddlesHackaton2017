@@ -84,7 +84,11 @@ namespace RiddlesHackaton2017.Models
 
 		public IEnumerable<int> GetCells(Player player)
 		{
-			return AllCells.Where(i => Field[i] == player.Value());
+			int playerId = player.Value();
+			for (int i = 0; i < Size; i++)
+			{
+				if (Field[i] == playerId) yield return i;
+			}
 		}
 
 		public static IEnumerable<int> AllCells { get { return Enumerable.Range(0, Size); } }
@@ -286,13 +290,14 @@ namespace RiddlesHackaton2017.Models
 		/// <param name="index">Index which is born</param>
 		internal void ApplyBirth(Player player, int index)
 		{
-			PlayerFieldCount[player.Value()]++;
-			Field[index] = player.Value();
+			int playerId = player.Value();
+			PlayerFieldCount[playerId]++;
+			Field[index] = (short)playerId;
 			if (Neighbours != null)
 			{
 				foreach (int i in Board.NeighbourFields[index])
 				{
-					Neighbours[player.Value(), i]++;
+					Neighbours[playerId, i]++;
 					SetNextGenerationField(this, NextGeneration, i);
 				}
 			}
@@ -528,11 +533,12 @@ namespace RiddlesHackaton2017.Models
 
 			foreach (var player in AllPlayers)
 			{
-				foreach (int i in GetCells(player))
+				int playerIndex = player.Value();
+				foreach(int i in GetCells(player))
 				{
-					foreach (int j in NeighbourFields[i])
+					for(int j = 0; j < NeighbourFields[i].Length; j++)
 					{
-						Neighbours[player.Value(), j]++;
+						Neighbours[playerIndex, NeighbourFields[i][j]]++;
 					}
 				}
 			}

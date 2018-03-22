@@ -44,10 +44,11 @@ namespace RiddlesHackaton2017.MonteCarlo
 			var candidates = Board.EmptyCells;
 
 			int total = 0;
+			short playerId = player.Value();
 			foreach (int i in candidates)
 			{
 				var neighbours1 = Board.NeighbourFieldsAndThis[i];
-				afterMoveBoard.Field[i] = player.Value();
+				afterMoveBoard.Field[i] = playerId;
 				var score = CalculateMoveScore(board1, afterMoveBoard, afterMoveBoard1, neighbours1, player);
 				if (score > 0)
 				{

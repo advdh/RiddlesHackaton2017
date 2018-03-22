@@ -18,18 +18,17 @@ namespace RiddlesHackaton2017.Evaluation
 		public static int Evaluate(Board board, IEnumerable<int> positions, 
 			int cellCountWeight)
 		{
-			int score1 = 0;
-			int score2 = 0;
+			int score = 0;
 			foreach (int i in positions)
 			{
 				switch (board.Field[i])
 				{
-					case 1: score1 += cellCountWeight; break;
-					case 2: score2 += cellCountWeight; break;
+					case 1: score += cellCountWeight; break;
+					case 2: score -= cellCountWeight; break;
 				}
 			}
 			int sign = board.MyPlayer == Player.Player1 ? 1 : -1;
-			return sign * (score1 - score2);
+			return sign * score;
 		}
 	}
 }
