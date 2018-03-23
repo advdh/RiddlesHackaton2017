@@ -50,7 +50,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			//parms.ParallelSimulation = false;
 			//parms.ValidateMoves = true;
 			////parms.Debug = true;
-			//parms.LogLevel = 0;
+			parms.LogLevel = 1;
 			////parms.UseFastAndSmartMoveSimulator = true;
 			////parms.SmartMoveGenerationCount = 8;
 			//parms.StartSimulationCount = 1;

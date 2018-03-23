@@ -44,3 +44,5 @@ Solved in v45
 v45, edb3825c-6629-4c2b-90cb-7c1e0aa71de9, Hakomo_bot
 Round 64: Could win in one
 Solved in v46 (parameter DoubleWinBonusCount = 1)
+
+v48 seems to be better than v52, despite a lot of performance improvements. There must be something wrong.

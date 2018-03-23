@@ -66,7 +66,6 @@
     <Compile Include="Models\BoardStatus.cs" />
     <Compile Include="Models\GameStatus.cs" />
     <Compile Include="MonteCarlo\SimpleMoveSimulator.cs" />
-    <Compile Include="MonteCarlo\SimulationMoveGenerator.cs" />
     <Compile Include="MonteCarlo\Simulator.cs" />
     <Compile Include="MonteCarlo\SimulationResult.cs" />
     <Compile Include="MonteCarlo\SmartMoveSimulator.cs" />

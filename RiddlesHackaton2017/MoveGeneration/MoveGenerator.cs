@@ -1,6 +1,7 @@
 ﻿using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Evaluation;
 using RiddlesHackaton2017.Models;
+using RiddlesHackaton2017.Moves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,26 @@ namespace RiddlesHackaton2017.MoveGeneration
 				var score = CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
 				result.Add(i, score);
 				afterMoveBoard.Field[i] = Board.Field[i];
+			}
+			return result;
+		}
+
+		/// <summary>Gets a dictionary of kills on one of my cells with their scores after two generations</summary>
+		public Dictionary<int, int> GetMyKills2()
+		{
+			var result = new Dictionary<int, int>();
+			foreach (int i in Board.MyCells)
+			{
+				var move = new KillMove(i);
+				var nextBoard = move.Apply(Board, validate: true).NextGeneration;
+				var nextNextBoard = nextBoard.NextGeneration;
+				var moveScore = nextNextBoard.MyPlayerFieldCount - nextNextBoard.OpponentPlayerFieldCount;
+				int winBonus = -Parameters.WinBonus[nextBoard.OpponentPlayerFieldCount]
+				   + Parameters.WinBonus[nextBoard.MyPlayerFieldCount]
+				   + Parameters.WinBonus2[nextNextBoard.OpponentPlayerFieldCount]
+				   - Parameters.WinBonus2[nextNextBoard.MyPlayerFieldCount];
+				int score = Parameters.CellCountWeight * moveScore + Parameters.WinBonusWeight * winBonus;
+				result.Add(i, score);
 			}
 			return result;
 		}
