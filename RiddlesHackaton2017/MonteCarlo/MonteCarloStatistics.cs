@@ -6,6 +6,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 	{
 		public Move Move { get; set; }
 
+		public int Gain2 { get; set; }
+
 		/// <summary>Number of played games</summary>
 		public int Count;
 
@@ -32,6 +34,8 @@ namespace RiddlesHackaton2017.MonteCarlo
 		/// <summary>Average number of generations until we loose</summary>
 		public double AverageLooseGenerations { get { return Lost > 0 ? (double)LostInGenerations / Lost : double.PositiveInfinity; } }
 
+		public int Index { get; set; }
+
 		/// <summary>Total of my fields during all simulations</summary>
 		public int MyScore;
 		/// <summary>Total of opponent fields during all simulations</summary>
@@ -39,7 +43,7 @@ namespace RiddlesHackaton2017.MonteCarlo
 
 		public override string ToString()
 		{
-			return $"Move: {Move}: Count {Count}, Won {Won}, Lost {Lost}, Draw {Draw}, Score = {Score:P0}, MyScore = {MyScore}, OpponentScore = {OpponentScore}";
+			return $"Move: {Move}: Count {Count}, Won {Won}, Lost {Lost}, Draw {Draw}, Score = {Score:P0}, Score2 = {Score2}";
 		}
 	}
 }

@@ -69,3 +69,6 @@ V51 22-03-2018, 00:05	In generation 1, use always SmartMoveSimulator
 						Cache also Next field and absolute field count changes for player 1 and 2
 						Bugfix ApplyKill (and probably solve exceptions): playerfield counts were not correctly updated
 V52 22-03-2018, 20:32	Performance improvements based on performance profiling: replace foreach by for loops, remove player.Value() in loops, etc.
+V54 02-04-2018, 20:30	Trial version with new MoveGenerator2: parameters UseMoveGenerator2 = true, 
+						MoveGeneratorGenerationCount = 8, MoveGeneratorTopBirths = 7, MoveGeneratorTopKills = 12, 
+						MoveGeneratorKeepFraction = 0.8, MaxDuration = 400 ms

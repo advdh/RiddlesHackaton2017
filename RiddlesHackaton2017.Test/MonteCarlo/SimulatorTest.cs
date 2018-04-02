@@ -24,7 +24,6 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player1;
 
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
@@ -52,8 +51,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player1;
-
+			
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
 			var actualNextBoard = result.Item2;
@@ -80,8 +78,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player1;
-
+			
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
 			var actualNextBoard = result.Item2;
@@ -108,8 +105,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player2;
-
+			
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
 			var actualNextBoard = result.Item2;
@@ -136,8 +132,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player2;
-
+			
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
 			var actualNextBoard = result.Item2;
@@ -164,8 +159,7 @@ namespace RiddlesHackaton2017.Test.MonteCarlo
 			board.UpdateFieldCounts();
 			Console.WriteLine(board.HumanBoardString());
 			var simulator = new SmartMoveSimulator(random, new MonteCarloParameters());
-			var player = Player.Player1;
-
+			
 			var result = simulator.GetRandomMove(board);
 			var move = result.Item1;
 			var actualNextBoard = result.Item2;

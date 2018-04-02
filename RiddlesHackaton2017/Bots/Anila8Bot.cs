@@ -56,13 +56,7 @@ namespace RiddlesHackaton2017.Bots
 
 		public override Move GetMove()
 		{
-			MonteCarloStatistics bestResult = new MonteCarloStatistics()
-			{
-				Won = -1,
-				MyScore = int.MinValue,
-				OpponentScore = 0,
-			};
-			Move bestMove = GetDirectWinMove();
+			var bestMove = GetDirectWinMove();
 			if (bestMove != null)
 			{
 				LogMessage = "Direct win move";
@@ -70,66 +64,81 @@ namespace RiddlesHackaton2017.Bots
 			}
 
 			var stopwatch = Stopwatch.StartNew();
+			MoveScore[] candidateMoves;
+			if (Parameters.UseMoveGenerator2)
+			{
+				var moveGenerator2 = new MoveGenerator2(Board, Parameters);
+				candidateMoves = moveGenerator2.GetMoves().ToArray();
+			}
+			else
+			{
+				candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
+			}
+			if (Parameters.LogLevel >= 1)
+			{
+				Console.WriteLine($"GetCandidateMoves = {stopwatch.ElapsedMilliseconds}");
+			}
+			return GetSimulationMove(candidateMoves, stopwatch);
+		}
+
+		/// <summary>
+		/// Get best simulation move from candidateMoves within limited time
+		/// </summary>
+		public Move GetSimulationMove(MoveScore[] candidateMoves, Stopwatch stopwatch)
+		{
+			if (stopwatch == null) stopwatch = Stopwatch.StartNew();
+			int GetMoveCandidatesMs = (int)stopwatch.ElapsedMilliseconds;
 			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
 			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount, Parameters.StartSimulationCount
 				, Parameters.SimulationFactor);
 
-			var moveGeneratorStopwatch = Stopwatch.StartNew();
-			var candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
-			if (Parameters.LogLevel >= 1)
-			{
-				ConsoleError.WriteLine($"MoveGeneration: {moveGeneratorStopwatch.ElapsedMilliseconds:0} ms");
-			}
+			List<MonteCarloStatistics> results = SimulateMoves(candidateMoves, stopwatch, maxDuration, simulationCount);
 
-			if (Parameters.LogLevel >= 2)
-			{
-				int ix = 0;
-				foreach (var moveScore in candidateMoves)
-				{
-					ConsoleError.WriteLine($"  {ix}: {moveScore}");
-					ix++;
-				}
-			}
+			RoundStatistics.Add(new RoundStatistic() { MaxDuration = stopwatch.Elapsed, MoveCount = results.Count, SimulationCount = simulationCount, Round = Board.Round });
 
-			int count = 0;
-			int bestGain2 = 0;
-			int bestCount = 0;
+			var best = results.OrderByDescending(r => r.Score2).First();
 
+			//Log and return
+			LogMessage = $"{best.Move} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {best.Gain2}): score = {best.Score:P0}, score2 = {best.Score2}, moves = {results.Count} ({best.Index}), simulations = {simulationCount}, win in {best.AverageWinGenerations:0.00}, loose in {best.AverageLooseGenerations:0.00}, GetMoveCandidates = {GetMoveCandidatesMs} ms";
+
+			return best.Move;
+		}
+
+		public List<MonteCarloStatistics> SimulateMoves(MoveScore[] candidateMoves, Stopwatch stopwatch, TimeSpan maxDuration, int simulationCount)
+		{
+			if (stopwatch == null) stopwatch = Stopwatch.StartNew();
+
+			var results = new List<MonteCarloStatistics>();
+			int i = 0;
 			bool goOn = true;
 			while (goOn)
 			{
 				//Get random move and simulate rest of the game several times
 				var stopWatchSimulation = Stopwatch.StartNew();
-				var moveScore = candidateMoves[count];
+				var moveScore = candidateMoves[i];
 				var move = moveScore.Move;
-				var startBoard = Board.ApplyMoveAndNext(move, Parameters.ValidateMoves);
-				var result = Simulator.SimulateMove(startBoard, maxDuration, move, simulationCount);
+
+				var result = TryMove(move, moveScore.Gain2, maxDuration, simulationCount);
 
 				if (Parameters.LogLevel >= 2)
 				{
-					ConsoleError.WriteLine($"     Move {count}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
+					ConsoleError.WriteLine($"     Move {i}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
 				}
+				result.Index = i;
+				results.Add(result);
 
-				// Score based on total field counts
-				if (result.Score2 > bestResult.Score2)
-				{
-					bestResult = result;
-					bestMove = move;
-					bestGain2 = moveScore.Gain2;
-					bestCount = count;
-				}
+				i++;
 
-				count++;
-
-				goOn = stopwatch.Elapsed < maxDuration && count < candidateMoves.Length;
+				goOn = stopwatch.Elapsed < maxDuration && i < candidateMoves.Length;
 			}
 
-			RoundStatistics.Add(new RoundStatistic() { MaxDuration = stopwatch.Elapsed, MoveCount = count, SimulationCount = simulationCount, Round = Board.Round });
+			return results;
+		}
 
-			//Log and return
-			LogMessage = $"{bestMove} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {bestGain2}): score = {bestResult.Score:P0}, score2 = {bestResult.Score2}, moves = {count} ({bestCount}), simulations = {simulationCount}, win in {bestResult.AverageWinGenerations:0.00}, loose in {bestResult.AverageLooseGenerations:0.00}";
-
-			return bestMove;
+		public MonteCarloStatistics TryMove(Move move, int gain2, TimeSpan maxDuration, int simulationCount)
+		{
+			var startBoard = Board.ApplyMoveAndNext(move, Parameters.ValidateMoves);
+			return Simulator.SimulateMove(startBoard, maxDuration, move, gain2, simulationCount);
 		}
 
 		/// <summary>
@@ -137,9 +146,11 @@ namespace RiddlesHackaton2017.Bots
 		/// have never more than 1 move part (birth/kill) in common
 		/// </summary>
 		/// <returns>Sorted collection of moves</returns>
-		private IEnumerable<MoveScore> GetCandidateMoves(int maxCount)
+		public IEnumerable<MoveScore> GetCandidateMoves(int maxCount)
 		{
 			var result = new List<MoveScore>();
+
+			var moveGeneratorStopwatch = Stopwatch.StartNew();
 
 			var board1 = Board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -227,7 +238,54 @@ namespace RiddlesHackaton2017.Bots
 				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
 			}
 
+			if (Parameters.LogLevel >= 1)
+			{
+				ConsoleError.WriteLine($"MoveGeneration: {moveGeneratorStopwatch.ElapsedMilliseconds:0} ms");
+				if (Parameters.LogLevel >= 2)
+				{
+					int ix = 0;
+					foreach (var moveScore in result)
+					{
+						ConsoleError.WriteLine($"  {ix}: {moveScore}");
+						ix++;
+					}
+				}
+			}
+
 			return result.OrderByDescending(r => r.Gain2).Take(maxCount);
+		}
+
+		/// <remarks>TODO: remove this: only used by test code</remarks>
+		public int GetMoveScore(Move move)
+		{
+			var moveGenerator = new MoveGenerator(Board, Parameters);
+			var board1 = Board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var afterMoveBoard = new Board(Board);
+			var afterMoveBoard1 = new Board(board1);
+			var afterMoveBoard2 = new Board(board2);
+			var birthMove = move as BirthMove;
+			if (birthMove != null)
+			{
+				afterMoveBoard.Field[birthMove.BirthIndex] = (short)Board.MyPlayer;
+				afterMoveBoard.Field[birthMove.SacrificeIndex1] = 0;
+				afterMoveBoard.Field[birthMove.SacrificeIndex2] = 0;
+				var neighbours1 = Board.NeighbourFieldsAndThis[birthMove.BirthIndex].Union(Board.NeighbourFieldsAndThis[birthMove.SacrificeIndex1]).Union(Board.NeighbourFieldsAndThis[birthMove.SacrificeIndex2]);
+				var neighbours2 = Board.NeighbourFields2[birthMove.BirthIndex].Union(Board.NeighbourFields2[birthMove.SacrificeIndex1]).Union(Board.NeighbourFields2[birthMove.SacrificeIndex2]);
+				return moveGenerator.CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
+			}
+
+			var killMove = move as KillMove;
+			if (killMove != null)
+			{
+				afterMoveBoard.Field[killMove.Index] = 0;
+				var neighbours1 = Board.NeighbourFieldsAndThis[killMove.Index];
+				var neighbours2 = Board.NeighbourFields2[killMove.Index];
+				return moveGenerator.CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
+			}
+
+			//PassMove
+			return 0;
 		}
 
 		/// <summary>

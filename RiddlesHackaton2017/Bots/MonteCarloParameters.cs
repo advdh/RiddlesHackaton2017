@@ -45,6 +45,11 @@ namespace RiddlesHackaton2017.Bots
 			ParallelSimulation = original.ParallelSimulation;
 			SimulationFactor = original.SimulationFactor;
 			ScoreBasedOnWinBonus = original.ScoreBasedOnWinBonus;
+			UseMoveGenerator2 = original.UseMoveGenerator2;
+			MoveGeneratorGenerationCount = original.MoveGeneratorGenerationCount;
+			MoveGeneratorTopBirths = original.MoveGeneratorTopBirths;
+			MoveGeneratorTopKills = original.MoveGeneratorTopKills;
+			MoveGeneratorKeepFraction = original.MoveGeneratorKeepFraction;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -208,7 +213,7 @@ namespace RiddlesHackaton2017.Bots
 			{
 				return new MonteCarloParameters()
 				{
-					MaxDuration = TimeSpan.FromMilliseconds(800),
+					MaxDuration = TimeSpan.FromMilliseconds(400),
 					MoveCount = 100,
 				};
 			}
@@ -310,6 +315,11 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
 			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
 			sb.AppendLine($"ScoreBasedOnWinBonus = {ScoreBasedOnWinBonus}");
+			sb.AppendLine($"UseMoveGenerator2 = {UseMoveGenerator2}");
+			sb.AppendLine($"MoveGeneratorGenerationCount = {MoveGeneratorGenerationCount}");
+			sb.AppendLine($"MoveGeneratorTopBirths = {MoveGeneratorTopBirths}");
+			sb.AppendLine($"MoveGeneratorTopKills = {MoveGeneratorTopKills}");
+			sb.AppendLine($"MoveGeneratorKeepFraction = {MoveGeneratorKeepFraction}");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"ValidateMoves = {ValidateMoves}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
@@ -347,7 +357,12 @@ namespace RiddlesHackaton2017.Bots
 				&& ParallelSimulation == p.ParallelSimulation
 				&& SimulationFactor == p.SimulationFactor
 				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus
-				&& ValidateMoves == p.ValidateMoves;
+				&& ValidateMoves == p.ValidateMoves
+				&& UseMoveGenerator2 == p.UseMoveGenerator2
+				&& MoveGeneratorGenerationCount == p.MoveGeneratorGenerationCount
+				&& MoveGeneratorTopBirths == p.MoveGeneratorTopBirths
+				&& MoveGeneratorTopKills == p.MoveGeneratorTopKills
+				&& MoveGeneratorKeepFraction == p.MoveGeneratorKeepFraction;
 		}
 
 		public override int GetHashCode()
@@ -378,10 +393,34 @@ namespace RiddlesHackaton2017.Bots
 				^ ParallelSimulation.GetHashCode()
 				^ SimulationFactor.GetHashCode()
 				^ ScoreBasedOnWinBonus.GetHashCode()
-				^ ValidateMoves.GetHashCode();
+				^ ValidateMoves.GetHashCode()
+				^ UseMoveGenerator2.GetHashCode()
+				^ MoveGeneratorGenerationCount.GetHashCode()
+				^ MoveGeneratorTopBirths.GetHashCode()
+				^ MoveGeneratorTopKills.GetHashCode()
+				^ MoveGeneratorKeepFraction.GetHashCode();
 		}
 
 		private int _hashCode;
 		public int HashCode { get { return GetHashCode(); } set { _hashCode = value; } }
+
+		#region MoveGenerator2 properties
+
+		/// <summary>Use MoveGenerator2</summary>
+		public bool UseMoveGenerator2 { get; set; } = false;
+
+		/// <summary>Generation count in MoveGenerator: for births, kills and moves</summary>
+		public int MoveGeneratorGenerationCount { get; set; } = 8;
+
+		/// <summary>Initial number of births to keep</summary>
+		public int MoveGeneratorTopBirths { get; set; } = 7;
+
+		/// <summary>Initial number of kills to keep</summary>
+		public int MoveGeneratorTopKills { get; set; } = 12;
+
+		/// <summary>Fraction of moves to keep after each generation in MoveGenerator2</summary>
+		public double MoveGeneratorKeepFraction { get; set; } = 0.8;
+
+		#endregion
 	}
 }

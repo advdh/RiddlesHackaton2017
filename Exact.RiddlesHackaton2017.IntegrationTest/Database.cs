@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace RiddlesHackaton2017.IntegrationTest
 {
@@ -38,24 +39,35 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public IEnumerable<Anila8Game> GetMyGames(int top, string where, string orderBy)
 		{
 			string sql = $"SELECT TOP {top} {SelectAnila8} FROM Anila8Games WHERE {where} ORDER BY {orderBy}";
-			return GetMyGames(sql);
+			return _GetMyGames(sql);
+		}
+
+		public Game GetGameById(string id)
+		{
+			return GetGames($"ID = N'{id}'").FirstOrDefault();
+		}
+
+		public IEnumerable<Anila8Game> GetMyGames(string where)
+		{
+			string sql = $"SELECT {SelectAnila8} FROM Anila8Games WHERE {where}";
+			return _GetMyGames(sql);
 		}
 
 		public IEnumerable<Anila8Game> GetMyGames(string where, string orderBy)
 		{
 			string sql = $"SELECT {SelectAnila8} FROM Anila8Games WHERE {where} ORDER BY {orderBy}";
-			return GetMyGames(sql);
+			return _GetMyGames(sql);
 		}
 
 		public IEnumerable<Anila8Game> GetMyGames()
 		{
 			string sql = $"SELECT {SelectAnila8} FROM Anila8Games WHERE Log IS NOT NULL";
-			return GetMyGames(sql);
+			return _GetMyGames(sql);
 		}
 
 		private string SelectAnila8 { get { return " Id, Version, Opponent, Log, PlayedDate, Won, Rounds, GameData, Player "; } }
 
-		private IEnumerable<Anila8Game> GetMyGames(string sql)
+		private IEnumerable<Anila8Game> _GetMyGames(string sql)
 		{
 			using (var command = new SqlCommand(sql, Connection))
 			{
@@ -83,18 +95,24 @@ namespace RiddlesHackaton2017.IntegrationTest
 		public IEnumerable<Game> GetGames(int top, string where, string orderBy)
 		{
 			string sql = $"SELECT TOP {top} {Select} FROM Games WHERE {where} ORDER BY {orderBy}";
-			return GetGames(sql);
+			return _GetGames(sql);
+		}
+
+		public IEnumerable<Game> GetGames(string where)
+		{
+			string sql = $"SELECT {Select} FROM Games WHERE {where}";
+			return _GetGames(sql);
 		}
 
 		public IEnumerable<Game> GetGames(string where, string orderBy)
 		{
 			string sql = $"SELECT {Select} FROM Games WHERE {where} ORDER BY {orderBy}";
-			return GetGames(sql);
+			return _GetGames(sql);
 		}
 
 		private string Select { get { return " Id, PlayedDate, Rounds, Winner, Player0, Version0, Player1, Version1, GameData "; } }
 
-		private IEnumerable<Game> GetGames(string sql)
+		private IEnumerable<Game> _GetGames(string sql)
 		{
 			using (var command = new SqlCommand(sql, Connection))
 			{

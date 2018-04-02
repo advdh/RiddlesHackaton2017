@@ -59,7 +59,8 @@
     <Compile Include="GameLogAnalyzer.cs" />
     <Compile Include="GameLogGenerator.cs" />
     <Compile Include="GameLogGeneratorTest.cs" />
-    <Compile Include="PerformanceTest.cs" />
+    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="MoveGeneration\MoveGenerator2Test.cs" />
     <Compile Include="RegressionTest.cs" />
     <Compile Include="Replayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

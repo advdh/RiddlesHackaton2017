@@ -9,7 +9,7 @@ namespace RiddlesHackaton2017.Bots
 	{
 		protected IConsole ConsoleError;
 		public Board Board;
-		protected TimeSpan TimeLimit;
+		public TimeSpan TimeLimit;
 
 		protected DateTime StartTime { get; set; }
 		protected string LogMessage { get; set; }

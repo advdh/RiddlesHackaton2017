@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\LogRound.cs" />
+    <Compile Include="Analysis\LogRoundTest.cs" />
+    <Compile Include="Analysis\MoveGeneratorAnalysis.cs" />
     <Compile Include="Analysis\EndGameAnalysis.cs" />
     <Compile Include="Analysis\FromFileAnalysis.cs" />
     <Compile Include="Analysis\OpponentAnalysis.cs" />

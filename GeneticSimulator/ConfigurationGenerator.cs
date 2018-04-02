@@ -102,6 +102,11 @@ namespace GeneticSimulator
 			ScoreBasedOnWinBonus,
 			DoubleWinBonusCount,
 			UseFastAndSmartMoveSimulator,
+			UseMoveGenerator2,
+			MoveGeneratorGenerationCount,
+			MoveGeneratorTopBirths,
+			MoveGeneratorTopKills,
+			MoveGeneratorKeepFraction,
 		}
 
 		/// <summary>

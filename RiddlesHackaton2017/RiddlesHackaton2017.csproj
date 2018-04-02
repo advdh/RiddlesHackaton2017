@@ -70,6 +70,7 @@
     <Compile Include="MonteCarlo\SimulationResult.cs" />
     <Compile Include="MonteCarlo\SmartMoveSimulator.cs" />
     <Compile Include="MoveGeneration\MoveGenerator.cs" />
+    <Compile Include="MoveGeneration\MoveGenerator2.cs" />
     <Compile Include="Moves\BirthMove.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Moves\KillMove.cs" />

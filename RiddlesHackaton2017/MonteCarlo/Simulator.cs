@@ -38,13 +38,13 @@ namespace RiddlesHackaton2017.MonteCarlo
 		/// Simulates the specified move a number of times using MonteCarlo simulation
 		/// </summary>
 		/// <returns>Statistics object for this move</returns>
-		public MonteCarloStatistics SimulateMove(Board startBoard, TimeSpan maxDuration, Move move, int simulationCount)
+		public MonteCarloStatistics SimulateMove(Board startBoard, TimeSpan maxDuration, Move move, int gain2, int simulationCount)
 		{
 			StartBoard = Guard.NotNull(startBoard, nameof(startBoard));
 			StartBoard.InitializeSmartMoves();
 			MaxDuration = maxDuration;
 
-			var statistic = new MonteCarloStatistics() { Move = move };
+			var statistic = new MonteCarloStatistics() { Move = move, Gain2 = gain2 };
 			if (OpponentPlayerFieldCount == 0)
 			{
 				if (MyPlayerFieldCount == 0)

@@ -13,6 +13,18 @@ namespace GeneticSimulator.Analysis
 		private const string Directory = @"D:\Temp\GeneticSimulator";
 
 		[TestMethod]
+		public void Results_UseMoveGenerator2()
+		{
+			AnalyzeResults(@"fromfile 0 25 UseMoveGenerator2_xml 2018-04-02_01_36_37.xml",
+				new[] { ConfigurationGenerator.Parameters.UseMoveGenerator2,
+					ConfigurationGenerator.Parameters.MoveGeneratorGenerationCount,
+					ConfigurationGenerator.Parameters.MoveGeneratorTopBirths,
+					ConfigurationGenerator.Parameters.MoveGeneratorTopKills,
+					ConfigurationGenerator.Parameters.MoveGeneratorKeepFraction,
+		 });
+		}
+
+		[TestMethod]
 		public void Results_UseFastAndSmartMoveSimulator()
 		{
 			AnalyzeResults(@"fromfile 0 25 SimulationMaxGenerationCount_xml 2018-03-21_07_44_49.xml",
