@@ -60,7 +60,10 @@ namespace RiddlesHackaton2017.MoveGeneration
 			foreach (var move in moves)
 			{
 				var nextBoard = new Board(Board.ApplyMoveAndNext(move, Parameters.ValidateMoves));
-				int score = nextBoard.Player1FieldCount - nextBoard.Player2FieldCount;
+
+				//For first board include winbonus
+				int score = nextBoard.Player1FieldCount - nextBoard.Player2FieldCount
+					+ Parameters.WinBonus[nextBoard.Player2FieldCount] - Parameters.WinBonus[nextBoard.Player1FieldCount];
 
 				var moveBoard = new MoveBoard()
 				{

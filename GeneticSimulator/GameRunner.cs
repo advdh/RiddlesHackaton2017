@@ -50,8 +50,7 @@ namespace GeneticSimulator
 				//Player 1
 				if (!skipPlayer1)
 				{
-					board.MyPlayer = Player.Player1;
-					PlayerPlay(ref board, bot1, Player.Player1, ref timeLimit1, ref bot1Timeout);
+					PlayerPlay(ref board, bot1, ref timeLimit1, ref bot1Timeout);
 					board.UpdateFieldCounts();
 					score1 += board.Player1FieldCount;
 					score2 += board.Player2FieldCount;
@@ -65,8 +64,7 @@ namespace GeneticSimulator
 				}
 
 				//Player 2
-				board.MyPlayer = Player.Player2;
-				PlayerPlay(ref board, bot2, Player.Player2, ref timeLimit2, ref bot2Timeout);
+				PlayerPlay(ref board, bot2, ref timeLimit2, ref bot2Timeout);
 				board.UpdateFieldCounts();
 				score1 += board.Player1FieldCount;
 				score2 += board.Player2FieldCount;
@@ -79,7 +77,7 @@ namespace GeneticSimulator
 						score1, score2);
 		}
 
-		private void PlayerPlay(ref Board board, Anila8Bot bot, Player player, ref TimeSpan playerTimeBank, ref bool playerTimedOut)
+		private void PlayerPlay(ref Board board, Anila8Bot bot, ref TimeSpan playerTimeBank, ref bool playerTimedOut)
 		{
 			Move move = new PassMove();
 			if (!playerTimedOut)

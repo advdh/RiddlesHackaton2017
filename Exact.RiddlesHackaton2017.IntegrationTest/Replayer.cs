@@ -49,10 +49,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 			string gameId = "97273128-a1da-4d3f-8b6c-3e187daa4709";
 			var parms = MonteCarloParameters.Life;
 			parms.UseMoveGenerator2 = false;
-			parms.MoveGeneratorTopBirths = 7;
-			parms.MoveGeneratorTopKills = 12;
-			parms.MoveGeneratorKeepFraction = 0.8;
-			parms.MaxDuration = TimeSpan.FromMilliseconds(200);
+			//parms.MoveGeneratorTopBirths = 7;
+			//parms.MoveGeneratorTopKills = 12;
+			//parms.MoveGeneratorKeepFraction = 0.8;
+			//parms.MaxDuration = TimeSpan.FromMilliseconds(200);
 
 			//parms.ParallelSimulation = false;
 			//parms.ValidateMoves = true;

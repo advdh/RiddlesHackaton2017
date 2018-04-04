@@ -72,3 +72,5 @@ V52 22-03-2018, 20:32	Performance improvements based on performance profiling: r
 V54 02-04-2018, 20:30	Trial version with new MoveGenerator2: parameters UseMoveGenerator2 = true, 
 						MoveGeneratorGenerationCount = 8, MoveGeneratorTopBirths = 7, MoveGeneratorTopKills = 12, 
 						MoveGeneratorKeepFraction = 0.8, MaxDuration = 400 ms
+V55 04-04-2018, 07:18	MoveGenerator2: InitializeMoveBoards: add winbonus,
+						MoveGeneratorKeepFraction = 0.7, MoveGeneratorTopKills = 20

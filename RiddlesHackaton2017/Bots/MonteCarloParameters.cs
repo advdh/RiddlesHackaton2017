@@ -416,10 +416,10 @@ namespace RiddlesHackaton2017.Bots
 		public int MoveGeneratorTopBirths { get; set; } = 7;
 
 		/// <summary>Initial number of kills to keep</summary>
-		public int MoveGeneratorTopKills { get; set; } = 12;
+		public int MoveGeneratorTopKills { get; set; } = 20;
 
 		/// <summary>Fraction of moves to keep after each generation in MoveGenerator2</summary>
-		public double MoveGeneratorKeepFraction { get; set; } = 0.8;
+		public double MoveGeneratorKeepFraction { get; set; } = 0.7;
 
 		#endregion
 	}
