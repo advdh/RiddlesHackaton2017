@@ -2,9 +2,17 @@
 using RiddlesHackaton2017.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace GeneticSimulator
 {
+	public enum ConfigurationType
+	{
+		ForBoth,
+		ForRed,
+		ForBlue,
+	}
+
 	public class Configuration
 	{
 		public Configuration()
@@ -16,6 +24,9 @@ namespace GeneticSimulator
 		{
 			Parameters = monteCarloParameters;
 		}
+
+		[XmlAttribute]
+		public ConfigurationType Type { get; set; } = ConfigurationType.ForBoth;
 
 		public MonteCarloParameters Parameters { get; set; }
 

@@ -14,7 +14,7 @@ namespace GeneticSimulator.Analysis
 		public void Test()
 		{
 			string s = @"Round 1: Birthmove (15,9), sacrifice = (14,0) and (0,5) (40-40, gain2 = 150): score = 62 %, score2 = 1552, moves = 100 (67), simulations = 25, win in 8.00, loose in Infinity - Used 751 ms, Timelimit 10000 ms, Start 45.129, End 45.880";
-			var logRound = LogRound.ParseV52(s);
+			var logRound = LogRound.Parse(s, 52);
 			Assert.IsNotNull(logRound);
 			Assert.AreEqual(1, logRound.Round, "Round");
 			Assert.AreEqual(new BirthMove(new Position(15, 9), new Position(14, 0), new Position(0, 5)), logRound.move, "Move");

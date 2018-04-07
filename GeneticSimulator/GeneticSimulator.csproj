@@ -64,6 +64,7 @@
     <Compile Include="Simulators\EndGameSimulator.cs" />
     <Compile Include="Simulators\RandomSimulator.cs" />
     <Compile Include="Simulators\VaryingOneSimulator.cs" />
+    <Compile Include="TimespanExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -74,3 +74,8 @@ V54 02-04-2018, 20:30	Trial version with new MoveGenerator2: parameters UseMoveG
 						MoveGeneratorKeepFraction = 0.8, MaxDuration = 400 ms
 V55 04-04-2018, 07:18	MoveGenerator2: InitializeMoveBoards: add winbonus,
 						MoveGeneratorKeepFraction = 0.7, MoveGeneratorTopKills = 20
+V56 07-04-2018, 13:00	V54 and V55 turned out to have UseMoveGenerator2 = false anyway.
+						Split UseMoveGenerator2 in UseMoveGenerator2ForRed and UseMoveGenerator2ForBlue (because of unknown bug, it generates bad moves for blue)
+						UseMoveGenerator2ForRed = true, UseMoveGenerator2ForBlue = false, MoveGeneratorTopBirths = 7, 
+						MoveGeneratorTopKills = 12, MoveGeneratorGenerationCount = 8, MoveGeneratorKeepFraction = 0.8
+						New parameter Throttle to be able to throttle during simulations for better simulation of website performance

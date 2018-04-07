@@ -1,48 +1,10 @@
-﻿v39, 9b87a3e8-cafa-48cf-9380-3fd46bddc434, Shazbot
-Round 29: can win in one. Solved in V40
+﻿V56, 4f7f1ff5-57b6-48af-adc0-b80083274d39
+Round 52: area around (9,6): gain1 is very good but gain2 is very bad. Therefore not in move candidates anymore to fix that
 
-v40, 8e0c9c9d-9fc3-4d2b-a631-bafe7a313f58, Ol0
-Round 78: pass? only one move?
+V56, 13e54cec-5471-4e1b-8c60-793c4dd9d1e0, UnmanagedCode
+Round 55-end: time out because of GetMoveCandidates taking too long
 
-v40, 2a3aeb67-a1b5-4aa8-ac2a-f407c1f24719, Hakomo_bot
-Round 49: if we sacrifice (11,11), then win immediately
-
-General: Use Parameter.WinBonus (based on MaxWinBonus and WinBonusDecrementFactor) also for calculating Score2 after simulation
-
-v41, a58372ac-071c-4f95-959e-c9fccf1cfdb4
-Round 56: PassMove (26-57, gain2 = 0): score = 6 %, score2 = -2419, moves = 1 (0), simulations = 8, win in Infinity, loose in 8.00 - Used 107 ms, Timelimit 946 ms, Start 39.711, End 39.818
-Solved in V43
-
-v41, 9d21efa0-453b-4951-87e5-0c0ed56b1248, Shazbot
-Round 91: should do killmove (13,14) to win in one instead of win in two
-Solved in V42
-
-v41, 58f5aa11-7a3e-4e76-a485-c8fbbb019b03, Kimiyuki_vot
-Round 100: passmove? 
-Solved in V42
-
-v41, c82c2d7d-7254-4178-8d17-cca4a7dd6e44, Hakomo_vot
-Round 65: should place a field next to opponent's square
-
-v41, 3c3dbc15-c316-434e-886b-fbad287e6d10, UnManagedCode
-Round 100: passmove? Partly solved in v42. BUT: the only move which does not lead to loss is not in the move candidates!
-After solving that (v42): Best move is birthmove (4,5) (4,2) (7,4), but there are two issues:
-- This birthmore is not in the move candidates: because birth (4,5) is ranked 13th in the births ranking. Birth moves are
-	only generated for the first 3 births for this low number of own fields (4). TODO: find a way to generate more birth moves
-	in case we have only a few own fields.
-	Idea: add additional birth moves as follows: for each pair of kills, try to find births, which protect the remaining own fields
-	(prevent them from being removed because of lonelyness or suffocation)
-- Even if the birthmove is added to the move candidates, then it is not getting the highest score of all move candidates.
-	That's because the simulator is not smart enough to generate winning moves for the opponent for other move candidates.
-	Solution: turn off smartsimulator (parms.SmartMoveGenerationCount = 0): only if we have few fields? or also if opponent has few fields?
-
-v44, 5b9cb1fb-d605-4539-9c99-3b6abf85facb, UnManagedCode
-Round 78: PassMove (21-85, gain2 = -152): score = 0 %, score2 = -4860, moves = 1 (0), simulations = 11, win in Infinity, loose in 8.00 - Used 223 ms, Timelimit 915 ms, Start 06.190, End 06.413
-PassMove?
-Solved in v45
-
-v45, edb3825c-6629-4c2b-90cb-7c1e0aa71de9, Hakomo_bot
-Round 64: Could win in one
-Solved in v46 (parameter DoubleWinBonusCount = 1)
-
-v48 seems to be better than v52, despite a lot of performance improvements. There must be something wrong.
+V56, c622e914-53a2-41fc-9b5c-b16b483a5f27, Monstuo
+Round 66: moves = 1 (0), 99 ms - Used 662 ms, Timelimit 902 ms???
+Round 65-100: moves = 1 (0)
+Round 71: should do kill (5,8)

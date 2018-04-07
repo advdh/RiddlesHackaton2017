@@ -46,24 +46,13 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			//Play as red: "edb3825c-6629-4c2b-90cb-7c1e0aa71de9"
 			//Play as blue: "97273128-a1da-4d3f-8b6c-3e187daa4709";
-			string gameId = "97273128-a1da-4d3f-8b6c-3e187daa4709";
+			string gameId = "c622e914-53a2-41fc-9b5c-b16b483a5f27";
 			var parms = MonteCarloParameters.Life;
-			parms.UseMoveGenerator2 = false;
-			//parms.MoveGeneratorTopBirths = 7;
-			//parms.MoveGeneratorTopKills = 12;
-			//parms.MoveGeneratorKeepFraction = 0.8;
-			//parms.MaxDuration = TimeSpan.FromMilliseconds(200);
-
-			//parms.ParallelSimulation = false;
-			//parms.ValidateMoves = true;
-			////parms.Debug = true;
+			parms.UseMoveGenerator2ForRed = true;
+			parms.UseMoveGenerator2ForBlue = false;
 			parms.LogLevel = 0;
-			////parms.UseFastAndSmartMoveSimulator = true;
-			////parms.SmartMoveGenerationCount = 8;
-			//parms.StartSimulationCount = 1;
-			//parms.MoveCount = 1;
-			//parms.SimulationMaxGenerationCount = 2;
-			
+			parms.Throttle = 4;
+
 			DoReplay(gameId, differenceOnly: false
 				//, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves

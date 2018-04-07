@@ -35,6 +35,7 @@ namespace RiddlesHackaton2017.Bots
 			Debug = original.Debug;
 			ValidateMoves = original.ValidateMoves;
 			LogLevel = original.LogLevel;
+			Throttle = original.Throttle;
 			SimulationMaxGenerationCount = original.SimulationMaxGenerationCount;
 			UseFastAndSmartMoveSimulator = original.UseFastAndSmartMoveSimulator;
 			SmartMoveGenerationCount = original.SmartMoveGenerationCount;
@@ -45,7 +46,8 @@ namespace RiddlesHackaton2017.Bots
 			ParallelSimulation = original.ParallelSimulation;
 			SimulationFactor = original.SimulationFactor;
 			ScoreBasedOnWinBonus = original.ScoreBasedOnWinBonus;
-			UseMoveGenerator2 = original.UseMoveGenerator2;
+			UseMoveGenerator2ForRed = original.UseMoveGenerator2ForRed;
+			UseMoveGenerator2ForBlue = original.UseMoveGenerator2ForBlue;
 			MoveGeneratorGenerationCount = original.MoveGeneratorGenerationCount;
 			MoveGeneratorTopBirths = original.MoveGeneratorTopBirths;
 			MoveGeneratorTopKills = original.MoveGeneratorTopKills;
@@ -177,7 +179,7 @@ namespace RiddlesHackaton2017.Bots
 			get { return Debug ? TimeSpan.FromDays(1) : _MaxDuration; }
 			set { _MaxDuration = value; }
 		}
-		private TimeSpan _MaxDuration = TimeSpan.FromMilliseconds(500);
+		private TimeSpan _MaxDuration = TimeSpan.FromMilliseconds(400);
 
 		/// <summary>
 		/// MaxDuration in milliseconds: only for serialization purposes
@@ -199,23 +201,11 @@ namespace RiddlesHackaton2017.Bots
 		/// <summary>Set this to true for debugging the bot without any time limit constraints</summary>
 		public bool Debug { get; set; } = false;
 
-		public static MonteCarloParameters Default
-		{
-			get
-			{
-				return new MonteCarloParameters();
-			}
-		}
-
 		public static MonteCarloParameters Life
 		{
 			get
 			{
-				return new MonteCarloParameters()
-				{
-					MaxDuration = TimeSpan.FromMilliseconds(400),
-					MoveCount = 100,
-				};
+				return new MonteCarloParameters();
 			}
 		}
 
@@ -281,6 +271,11 @@ namespace RiddlesHackaton2017.Bots
 		}
 
 		/// <summary>
+		/// Throttle factor for durations to simulate more realistically
+		/// </summary>
+		public double Throttle { get; set; } = 1;
+
+		/// <summary>
 		/// If true, then use winbonus for score calculation; if false, then use field counts for score calculation
 		/// </summary>
 		public bool ScoreBasedOnWinBonus { get; set; } = false;
@@ -315,7 +310,8 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
 			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
 			sb.AppendLine($"ScoreBasedOnWinBonus = {ScoreBasedOnWinBonus}");
-			sb.AppendLine($"UseMoveGenerator2 = {UseMoveGenerator2}");
+			sb.AppendLine($"UseMoveGenerator2Red = {UseMoveGenerator2ForRed}");
+			sb.AppendLine($"UseMoveGenerator2Blue = {UseMoveGenerator2ForBlue}");
 			sb.AppendLine($"MoveGeneratorGenerationCount = {MoveGeneratorGenerationCount}");
 			sb.AppendLine($"MoveGeneratorTopBirths = {MoveGeneratorTopBirths}");
 			sb.AppendLine($"MoveGeneratorTopKills = {MoveGeneratorTopKills}");
@@ -323,6 +319,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"ValidateMoves = {ValidateMoves}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
+			sb.AppendLine($"Throttle = {Throttle}");
 			return sb.ToString();
 		}
 
@@ -354,11 +351,13 @@ namespace RiddlesHackaton2017.Bots
 				&& MinimumFieldCountForBirthMoves == p.MinimumFieldCountForBirthMoves
 				&& Debug == p.Debug
 				&& LogLevel == p.LogLevel
+				&& Throttle == p.Throttle
 				&& ParallelSimulation == p.ParallelSimulation
 				&& SimulationFactor == p.SimulationFactor
 				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus
 				&& ValidateMoves == p.ValidateMoves
-				&& UseMoveGenerator2 == p.UseMoveGenerator2
+				&& UseMoveGenerator2ForRed == p.UseMoveGenerator2ForRed
+				&& UseMoveGenerator2ForBlue == p.UseMoveGenerator2ForBlue
 				&& MoveGeneratorGenerationCount == p.MoveGeneratorGenerationCount
 				&& MoveGeneratorTopBirths == p.MoveGeneratorTopBirths
 				&& MoveGeneratorTopKills == p.MoveGeneratorTopKills
@@ -390,11 +389,13 @@ namespace RiddlesHackaton2017.Bots
 				^ MinimumFieldCountForBirthMoves.GetHashCode()
 				^ Debug.GetHashCode()
 				^ LogLevel.GetHashCode()
+				^ Throttle.GetHashCode()
 				^ ParallelSimulation.GetHashCode()
 				^ SimulationFactor.GetHashCode()
 				^ ScoreBasedOnWinBonus.GetHashCode()
 				^ ValidateMoves.GetHashCode()
-				^ UseMoveGenerator2.GetHashCode()
+				^ UseMoveGenerator2ForRed.GetHashCode()
+				^ UseMoveGenerator2ForBlue.GetHashCode()
 				^ MoveGeneratorGenerationCount.GetHashCode()
 				^ MoveGeneratorTopBirths.GetHashCode()
 				^ MoveGeneratorTopKills.GetHashCode()
@@ -406,8 +407,11 @@ namespace RiddlesHackaton2017.Bots
 
 		#region MoveGenerator2 properties
 
-		/// <summary>Use MoveGenerator2</summary>
-		public bool UseMoveGenerator2 { get; set; } = false;
+		/// <summary>Use MoveGenerator2 for Player1 (Red)</summary>
+		public bool UseMoveGenerator2ForRed { get; set; } = true;
+
+		/// <summary>Use MoveGenerator2 for Player2 (Blue)</summary>
+		public bool UseMoveGenerator2ForBlue { get; set; } = false;
 
 		/// <summary>Generation count in MoveGenerator: for births, kills and moves</summary>
 		public int MoveGeneratorGenerationCount { get; set; } = 8;
@@ -416,10 +420,10 @@ namespace RiddlesHackaton2017.Bots
 		public int MoveGeneratorTopBirths { get; set; } = 7;
 
 		/// <summary>Initial number of kills to keep</summary>
-		public int MoveGeneratorTopKills { get; set; } = 20;
+		public int MoveGeneratorTopKills { get; set; } = 12;
 
 		/// <summary>Fraction of moves to keep after each generation in MoveGenerator2</summary>
-		public double MoveGeneratorKeepFraction { get; set; } = 0.7;
+		public double MoveGeneratorKeepFraction { get; set; } = 0.8;
 
 		#endregion
 	}

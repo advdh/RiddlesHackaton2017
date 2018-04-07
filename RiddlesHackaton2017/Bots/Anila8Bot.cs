@@ -13,7 +13,7 @@ namespace RiddlesHackaton2017.Bots
 {
 	public class Anila8Bot : BaseBot
 	{
-		public MonteCarloParameters Parameters { get; set; } = MonteCarloParameters.Default;
+		public MonteCarloParameters Parameters { get; set; } = MonteCarloParameters.Life;
 
 		private readonly IRandomGenerator Random;
 
@@ -37,8 +37,8 @@ namespace RiddlesHackaton2017.Bots
 		private TimeSpan GetMaxDuration(TimeSpan timeLimit)
 		{
 			if (Parameters.Debug) return Parameters.MaxDuration;
-			return new TimeSpan(Math.Min((long)(Parameters.MaxRelativeDuration * timeLimit.Ticks), 
-				Parameters.MaxDuration.Ticks));
+			return new TimeSpan((int)(Math.Min((long)(Parameters.MaxRelativeDuration * timeLimit.Ticks), 
+				Parameters.MaxDuration.Ticks) / Parameters.Throttle));
 		}
 
 		private Simulator _Simulator;
@@ -54,6 +54,15 @@ namespace RiddlesHackaton2017.Bots
 			}
 		}
 
+		private bool UseMoveGenerator2
+		{
+			get
+			{
+				return (Parameters.UseMoveGenerator2ForRed && Board.MyPlayer == Player.Player1) ||
+					(Parameters.UseMoveGenerator2ForBlue && Board.MyPlayer == Player.Player2);
+			}
+		}
+
 		public override Move GetMove()
 		{
 			var bestMove = GetDirectWinMove();
@@ -65,7 +74,7 @@ namespace RiddlesHackaton2017.Bots
 
 			var stopwatch = Stopwatch.StartNew();
 			MoveScore[] candidateMoves;
-			if (Parameters.UseMoveGenerator2)
+			if (UseMoveGenerator2)
 			{
 				var moveGenerator2 = new MoveGenerator2(Board, Parameters);
 				candidateMoves = moveGenerator2.GetMoves().ToArray();
@@ -96,12 +105,31 @@ namespace RiddlesHackaton2017.Bots
 
 			RoundStatistics.Add(new RoundStatistic() { MaxDuration = stopwatch.Elapsed, MoveCount = results.Count, SimulationCount = simulationCount, Round = Board.Round });
 
-			var best = results.OrderByDescending(r => r.Score2).First();
+			var orderedResults = results.OrderByDescending(r => r.Score2);
+			LogSimulatedMoves(orderedResults);
+
+			var best = orderedResults.First();
 
 			//Log and return
 			LogMessage = $"{best.Move} ({Board.MyPlayerFieldCount}-{Board.OpponentPlayerFieldCount}, gain2 = {best.Gain2}): score = {best.Score:P0}, score2 = {best.Score2}, moves = {results.Count} ({best.Index}), simulations = {simulationCount}, win in {best.AverageWinGenerations:0.00}, loose in {best.AverageLooseGenerations:0.00}, GetMoveCandidates = {GetMoveCandidatesMs} ms";
 
 			return best.Move;
+		}
+
+		/// <summary>
+		/// Logs simulated moves, if loglevel is 2 or more
+		/// </summary>
+		private void LogSimulatedMoves(IOrderedEnumerable<MonteCarloStatistics> orderedResults)
+		{
+			if (Parameters.LogLevel >= 2)
+			{
+				int rank = 1;
+				foreach (var result in orderedResults)
+				{
+					ConsoleError.WriteLine($"     Move {rank} ({result.Index}): move gain2: {result.Gain2} - {result.Move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}");
+					rank++;
+				}
+			}
 		}
 
 		public List<MonteCarloStatistics> SimulateMoves(MoveScore[] candidateMoves, Stopwatch stopwatch, TimeSpan maxDuration, int simulationCount)
@@ -120,10 +148,6 @@ namespace RiddlesHackaton2017.Bots
 
 				var result = TryMove(move, moveScore.Gain2, maxDuration, simulationCount);
 
-				if (Parameters.LogLevel >= 2)
-				{
-					ConsoleError.WriteLine($"     Move {i}: move gain2: {moveScore.Gain2} - {move} - score = {result.Score:P0}, score2 = {result.Score2}, win in {result.AverageWinGenerations:0.00}, loose in {result.AverageLooseGenerations:0.00}, calculation = {stopWatchSimulation.ElapsedMilliseconds} ms");
-				}
 				result.Index = i;
 				results.Add(result);
 
@@ -163,7 +187,7 @@ namespace RiddlesHackaton2017.Bots
 			var opponentKills = moveGenerator.GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 			var myBirths = moveGenerator.GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
 
-			if (Parameters.LogLevel >= 3)
+			if (Parameters.LogLevel >= 4)
 			{
 				ConsoleError.WriteLine("MyKills:");
 				int ix = 0;
@@ -241,7 +265,7 @@ namespace RiddlesHackaton2017.Bots
 			if (Parameters.LogLevel >= 1)
 			{
 				ConsoleError.WriteLine($"MoveGeneration: {moveGeneratorStopwatch.ElapsedMilliseconds:0} ms");
-				if (Parameters.LogLevel >= 2)
+				if (Parameters.LogLevel >= 3)
 				{
 					int ix = 0;
 					foreach (var moveScore in result)

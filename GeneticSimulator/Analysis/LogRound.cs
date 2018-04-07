@@ -1,6 +1,7 @@
 ﻿using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.Moves;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace GeneticSimulator.Analysis
@@ -23,17 +24,18 @@ namespace GeneticSimulator.Analysis
 		public int SimulationCount { get; set; }
 		public double WinRounds { get; set; }
 		public double LooseRounds { get; set; }
+		public TimeSpan MoveCandidatesTime { get; private set; }
 		public TimeSpan UsedTime { get; set; }
 		public TimeSpan TimeLimit { get; set; }
 		public DateTime StartTime { get; set; }
 		public DateTime EndTime { get; set; }
 
-		public static LogRound ParseV52(string s)
+		public static LogRound Parse(string s, int version)
 		{
-			var result = ParseDirectWinMoveV52(s);
+			var result = ParseDirectWinMove(s, version);
 			if (result == null)
 			{
-				result = ParseMoveV52(s);
+				result = ParseMove(s, version);
 			}
 			if (result == null)
 			{
@@ -42,10 +44,18 @@ namespace GeneticSimulator.Analysis
 			return result;
 		}
 
-	private static LogRound ParseDirectWinMoveV52(string s)
+		private static string PatternDirectWinMove = @"Round \s (?<round>\d+): \s Direct \s win \s move \s-\s Used \s (?<usedms>\d+) \s ms, \s Timelimit \s (?<timelimitms>\d+) \s ms, \s Start \s (?<start>\d+\.\d+), \s End \s (?<end>\d+\.\d+)";
+
+		private static Dictionary<int, string> DirectMovePatterns = new Dictionary<int, string>()
 		{
-			string patternDirectWinMove = @"Round \s (?<round>\d+): \s Direct \s win \s move \s-\s Used \s (?<usedms>\d+) \s ms, \s Timelimit \s (?<timelimitms>\d+) \s ms, \s Start \s (?<start>\d+\.\d+), \s End \s (?<end>\d+\.\d+)";
-			var regexDirectWinMove = new Regex(patternDirectWinMove, RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
+			{ 52, PatternDirectWinMove },
+			{ 54, PatternDirectWinMove },
+		};
+
+		private static LogRound ParseDirectWinMove(string s, int version)
+		{
+			var pattern = DirectMovePatterns[version];
+			var regexDirectWinMove = new Regex(pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 			var match = regexDirectWinMove.Match(s);
 			if (match.Success)
 			{
@@ -60,10 +70,18 @@ namespace GeneticSimulator.Analysis
 			return null;
 		}
 
-		private static LogRound ParseMoveV52(string s)
-		{
+		private static string MovePattern52 = @"Round \s (?<round>\d+): \s (?<move>Birthmove \s \(\d+,\d+\), \s sacrifice \s = \s \(\d+,\d+\) \s and \s \(\d+,\d+\) | Killmove \s \(\d+,\d+\) | Passmove) \s \((?<myfieldcount>\d+)-(?<opponentfieldcount>\d+), \s gain2 \s=\s (?<gain2>(-)?\d+)\): \s score \s=\s (?<score>\d+)\s%, \s score2 \s=\s (?<score2>(-)?\d+), \s moves \s=\s (?<movecount>\d+) \s \((?<bestmoveindex>\d+)\), \s simulations \s=\s (?<simulationcount>\d+), \s win \s in \s (?<winmovecount>\d+\.\d+ | Infinity), \s loose \s in \s (?<loosemovecount>\d+\.\d+ | Infinity) \s-\s Used \s (?<usedms>\d+) \s ms, \s Timelimit \s (?<timelimitms>\d+) \s ms, \s Start \s (?<start>\d+\.\d+), \s End \s (?<end>\d+\.\d+)";
+		private static string MovePattern54 = @"Round \s (?<round>\d+): \s (?<move>Birthmove \s \(\d+,\d+\), \s sacrifice \s = \s \(\d+,\d+\) \s and \s \(\d+,\d+\) | Killmove \s \(\d+,\d+\) | Passmove) \s \((?<myfieldcount>\d+)-(?<opponentfieldcount>\d+), \s gain2 \s=\s (?<gain2>(-)?\d+)\): \s score \s=\s (?<score>\d+)\s%, \s score2 \s=\s (?<score2>(-)?\d+), \s moves \s=\s (?<movecount>\d+) \s \((?<bestmoveindex>\d+)\), \s simulations \s=\s (?<simulationcount>\d+), \s win \s in \s (?<winmovecount>\d+\.\d+ | Infinity), \s loose \s in \s (?<loosemovecount>\d+\.\d+ | Infinity) , \s GetMoveCandidates \s=\s (?<movecandidatesms>\d+) \s ms \s-\s Used \s (?<usedms>\d+) \s ms, \s Timelimit \s (?<timelimitms>\d+) \s ms, \s Start \s (?<start>\d+\.\d+), \s End \s (?<end>\d+\.\d+)";
 
-			string pattern = @"Round \s (?<round>\d+): \s (?<move>Birthmove \s \(\d+,\d+\), \s sacrifice \s = \s \(\d+,\d+\) \s and \s \(\d+,\d+\) | Killmove \s \(\d+,\d+\) | Passmove) \s \((?<myfieldcount>\d+)-(?<opponentfieldcount>\d+), \s gain2 \s=\s (?<gain2>(-)?\d+)\): \s score \s=\s (?<score>\d+)\s%, \s score2 \s=\s (?<score2>(-)?\d+), \s moves \s=\s (?<movecount>\d+) \s \((?<bestmoveindex>\d+)\), \s simulations \s=\s (?<simulationcount>\d+), \s win \s in \s (?<winmovecount>\d+\.\d+ | Infinity), \s loose \s in \s (?<loosemovecount>\d+\.\d+ | Infinity) \s-\s Used \s (?<usedms>\d+) \s ms, \s Timelimit \s (?<timelimitms>\d+) \s ms, \s Start \s (?<start>\d+\.\d+), \s End \s (?<end>\d+\.\d+)";
+		private static Dictionary<int, string> MovePatterns = new Dictionary<int, string>()
+		{
+			{ 52, MovePattern52 },
+			{ 54, MovePattern54 },
+		};
+
+		private static LogRound ParseMove(string s, int version)
+		{
+			string pattern = MovePatterns[version];
 			var regex = new Regex(pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 			var match = regex.Match(s);
 			if (match.Success)
@@ -81,6 +99,7 @@ namespace GeneticSimulator.Analysis
 				logRound.SimulationCount = int.Parse(match.Groups["simulationcount"].Value);
 				logRound.WinRounds = ParseDouble(match.Groups["winmovecount"].Value);
 				logRound.LooseRounds = ParseDouble(match.Groups["loosemovecount"].Value);
+				logRound.MoveCandidatesTime = TimeSpan.FromMilliseconds(int.Parse(match.Groups["movecandidatesms"].Value));
 				logRound.UsedTime = TimeSpan.FromMilliseconds(int.Parse(match.Groups["usedms"].Value));
 				logRound.TimeLimit = TimeSpan.FromMilliseconds(int.Parse(match.Groups["timelimitms"].Value));
 				logRound.StartTime = DateTime.MinValue.AddSeconds(double.Parse(match.Groups["start"].Value));

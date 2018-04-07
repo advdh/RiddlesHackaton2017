@@ -86,7 +86,7 @@ namespace GeneticSimulator
 				playerTimeBank += TimeSpan.FromMilliseconds(RoundTimeBank);
 				if (playerTimeBank > StartTimeBank) playerTimeBank = StartTimeBank;
 				move = Move.Parse(bot.GetMove(new Board(board), playerTimeBank));
-				playerTimeBank -= stopwatch.Elapsed;
+				playerTimeBank -= stopwatch.Elapsed.Multiply(bot.Parameters.Throttle);
 				if (playerTimeBank < TimeSpan.Zero)
 				{
 					playerTimedOut = true;

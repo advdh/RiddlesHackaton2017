@@ -15,13 +15,18 @@ namespace GeneticSimulator.Analysis
 		[TestMethod]
 		public void Results_UseMoveGenerator2()
 		{
-			AnalyzeResults(@"fromfile 0 25 UseMoveGenerator2_xml 2018-04-02_01_36_37.xml",
-				new[] { ConfigurationGenerator.Parameters.UseMoveGenerator2,
+			var pattern = Directory + @"\fromfile 0 10 UseMoveGenerator2_xml";
+			var last = System.IO.Directory.GetFiles(Directory).Where(f => f.StartsWith(pattern)).OrderByDescending(f => f).FirstOrDefault();
+			var lastFile = new FileInfo(last);
+			AnalyzeResults(lastFile.Name,
+				new[] { ConfigurationGenerator.Parameters.UseMoveGenerator2ForRed,
+					ConfigurationGenerator.Parameters.UseMoveGenerator2ForBlue,
 					ConfigurationGenerator.Parameters.MoveGeneratorGenerationCount,
 					ConfigurationGenerator.Parameters.MoveGeneratorTopBirths,
 					ConfigurationGenerator.Parameters.MoveGeneratorTopKills,
 					ConfigurationGenerator.Parameters.MoveGeneratorKeepFraction,
-		 });
+					ConfigurationGenerator.Parameters.Throttle,
+			 });
 		}
 
 		[TestMethod]

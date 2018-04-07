@@ -10,7 +10,7 @@ namespace GeneticSimulator.Simulators
 
 		protected BaseSimulator(string commandLine)
 		{
-			Filename = Path.Combine(Directory, string.Format("{0} {1:yyyy-MM-dd_hh_mm_ss}.xml",
+			Filename = Path.Combine(Directory, string.Format("{0} {1:yyyy-MM-dd_HH_mm_ss}.xml",
 				commandLine.Replace(".", "_"),
 				DateTime.Now));
 		}
@@ -31,15 +31,18 @@ namespace GeneticSimulator.Simulators
 
 				for (int i = 0; i < populationSize; i++)
 				{
-					for (int j = 0; j < populationSize; j++)
+					if (configurations[i].Type != ConfigurationType.ForBlue)
 					{
-						if (i != j)
+						for (int j = 0; j < populationSize; j++)
 						{
-							var result = gameRunner.Run(configurations[i].Parameters, configurations[j].Parameters);
-							configurations[i].Results1.Add(result);
-							configurations[j].Results2.Add(result);
-							Console.WriteLine($"{i} - {j}: {result}");
-							configurations.Save(Filename);
+							if (i != j && configurations[j].Type != ConfigurationType.ForRed)
+							{
+								var result = gameRunner.Run(configurations[i].Parameters, configurations[j].Parameters);
+								configurations[i].Results1.Add(result);
+								configurations[j].Results2.Add(result);
+								Console.WriteLine($"{i} - {j}: {result}");
+								configurations.Save(Filename);
+							}
 						}
 					}
 				}

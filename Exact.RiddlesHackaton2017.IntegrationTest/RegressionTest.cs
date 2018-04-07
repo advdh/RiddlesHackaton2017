@@ -30,7 +30,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 
 			var bot = new Anila8Bot(new NullConsole());
 			var parameters = MonteCarloParameters.Life;
-			parameters.UseMoveGenerator2 = true;
+			parameters.UseMoveGenerator2ForRed = true;
 			bot.Parameters = parameters;
 			bot.Board = board;
 			bot.TimeLimit = TimeSpan.FromMilliseconds(7892);
