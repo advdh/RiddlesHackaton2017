@@ -79,3 +79,4 @@ V56 07-04-2018, 13:00	V54 and V55 turned out to have UseMoveGenerator2 = false a
 						UseMoveGenerator2ForRed = true, UseMoveGenerator2ForBlue = false, MoveGeneratorTopBirths = 7, 
 						MoveGeneratorTopKills = 12, MoveGeneratorGenerationCount = 8, MoveGeneratorKeepFraction = 0.8
 						New parameter Throttle to be able to throttle during simulations for better simulation of website performance
+V57 08-04-2018, 00:51	New parameter MoveGenerator2MinimumTimebank = 2500 ms

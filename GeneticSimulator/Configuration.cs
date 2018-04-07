@@ -6,11 +6,11 @@ using System.Xml.Serialization;
 
 namespace GeneticSimulator
 {
-	public enum ConfigurationType
+	public enum ConfigurationFor
 	{
-		ForBoth,
-		ForRed,
-		ForBlue,
+		Both,
+		Red,
+		Blue,
 	}
 
 	public class Configuration
@@ -26,7 +26,7 @@ namespace GeneticSimulator
 		}
 
 		[XmlAttribute]
-		public ConfigurationType Type { get; set; } = ConfigurationType.ForBoth;
+		public ConfigurationFor For { get; set; } = ConfigurationFor.Both;
 
 		public MonteCarloParameters Parameters { get; set; }
 

@@ -34,9 +34,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 			bot.Parameters = parameters;
 			bot.Board = board;
 			bot.TimeLimit = TimeSpan.FromMilliseconds(7892);
-			var candidateMoves = bot.GetCandidateMoves(100).ToArray();
-			var moveGenerator = new MoveGenerator2(board, parameters);
-			var candidateMoves2 = moveGenerator.GetMoves().ToArray();
+			var moveGenerator = new MoveGenerator(board, parameters);
+			var candidateMoves = moveGenerator.GetCandidateMoves(100).ToArray();
+			var moveGenerator2 = new MoveGenerator2(board, parameters);
+			var candidateMoves2 = moveGenerator2.GetMoves().ToArray();
 			var moves = new List<Move>();
 			moves.Add(new PassMove());
 			moves.Add(oIomove);

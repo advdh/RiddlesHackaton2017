@@ -52,6 +52,7 @@ namespace RiddlesHackaton2017.Bots
 			MoveGeneratorTopBirths = original.MoveGeneratorTopBirths;
 			MoveGeneratorTopKills = original.MoveGeneratorTopKills;
 			MoveGeneratorKeepFraction = original.MoveGeneratorKeepFraction;
+			MoveGenerator2MinimumTimebank = original.MoveGenerator2MinimumTimebank;
 		}
 
 		/// <summary>Minimum number of simulations per move</summary>
@@ -316,6 +317,7 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"MoveGeneratorTopBirths = {MoveGeneratorTopBirths}");
 			sb.AppendLine($"MoveGeneratorTopKills = {MoveGeneratorTopKills}");
 			sb.AppendLine($"MoveGeneratorKeepFraction = {MoveGeneratorKeepFraction}");
+			sb.AppendLine($"MoveGenerator2MinimumTimebank = {MoveGenerator2MinimumTimebank.TotalMilliseconds:0} ms");
 			sb.AppendLine($"Debug = {Debug}");
 			sb.AppendLine($"ValidateMoves = {ValidateMoves}");
 			sb.AppendLine($"LogLevel = {LogLevel}");
@@ -361,7 +363,8 @@ namespace RiddlesHackaton2017.Bots
 				&& MoveGeneratorGenerationCount == p.MoveGeneratorGenerationCount
 				&& MoveGeneratorTopBirths == p.MoveGeneratorTopBirths
 				&& MoveGeneratorTopKills == p.MoveGeneratorTopKills
-				&& MoveGeneratorKeepFraction == p.MoveGeneratorKeepFraction;
+				&& MoveGeneratorKeepFraction == p.MoveGeneratorKeepFraction
+				&& MoveGenerator2MinimumTimebank == p.MoveGenerator2MinimumTimebank;
 		}
 
 		public override int GetHashCode()
@@ -399,7 +402,8 @@ namespace RiddlesHackaton2017.Bots
 				^ MoveGeneratorGenerationCount.GetHashCode()
 				^ MoveGeneratorTopBirths.GetHashCode()
 				^ MoveGeneratorTopKills.GetHashCode()
-				^ MoveGeneratorKeepFraction.GetHashCode();
+				^ MoveGeneratorKeepFraction.GetHashCode()
+				^ MoveGenerator2MinimumTimebank.GetHashCode();
 		}
 
 		private int _hashCode;
@@ -424,6 +428,26 @@ namespace RiddlesHackaton2017.Bots
 
 		/// <summary>Fraction of moves to keep after each generation in MoveGenerator2</summary>
 		public double MoveGeneratorKeepFraction { get; set; } = 0.8;
+
+		/// <summary>Minimum time bank for using MoveGenerator2</summary>
+		[XmlIgnore]
+		public TimeSpan MoveGenerator2MinimumTimebank { get; set; } = TimeSpan.FromMilliseconds(2500);
+
+		/// <summary>
+		/// MaxDuration in milliseconds: only for serialization purposes
+		/// </summary>
+		/// <remarks>Only for serialization</remarks>
+		public int MoveGenerator2MinimumTimebankMs
+		{
+			get
+			{
+				return (int)MoveGenerator2MinimumTimebank.TotalMilliseconds;
+			}
+			set
+			{
+				MoveGenerator2MinimumTimebank = TimeSpan.FromMilliseconds(value);
+			}
+		}
 
 		#endregion
 	}

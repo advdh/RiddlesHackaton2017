@@ -31,11 +31,11 @@ namespace GeneticSimulator.Simulators
 
 				for (int i = 0; i < populationSize; i++)
 				{
-					if (configurations[i].Type != ConfigurationType.ForBlue)
+					if (configurations[i].For != ConfigurationFor.Blue)
 					{
 						for (int j = 0; j < populationSize; j++)
 						{
-							if (i != j && configurations[j].Type != ConfigurationType.ForRed)
+							if (i != j && configurations[j].For != ConfigurationFor.Red)
 							{
 								var result = gameRunner.Run(configurations[i].Parameters, configurations[j].Parameters);
 								configurations[i].Results1.Add(result);

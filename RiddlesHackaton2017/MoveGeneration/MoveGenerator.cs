@@ -19,6 +19,103 @@ namespace RiddlesHackaton2017.MoveGeneration
 			Parameters = Guard.NotNull(parameters, nameof(parameters));
 		}
 
+		/// <summary>
+		/// Generates birth moves and kill moves in such a way that two birth moves 
+		/// have never more than 1 move part (birth/kill) in common
+		/// </summary>
+		/// <returns>Sorted collection of moves</returns>
+		public IEnumerable<MoveScore> GetCandidateMoves(int maxCount)
+		{
+			var result = new List<MoveScore>();
+
+			var board1 = Board.NextGeneration;
+			var board2 = board1.NextGeneration;
+			var afterMoveBoard = new Board(Board);
+			var afterMoveBoard1 = new Board(board1);
+			var afterMoveBoard2 = new Board(board2);
+
+			var myKills = GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var opponentKills = GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+			var myBirths = GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
+
+			if (Parameters.LogLevel >= 4)
+			{
+				Console.WriteLine("MyKills:");
+				int ix = 0;
+				foreach (var kill in myKills)
+				{
+					Console.WriteLine($"  {ix} ({kill.Value}): {new Position(kill.Key)}");
+					ix++;
+				}
+				Console.WriteLine("OpponentKills:");
+				ix = 0;
+				foreach (var kill in opponentKills)
+				{
+					Console.WriteLine($"  {ix} ({kill.Value}): {new Position(kill.Key)}");
+					ix++;
+				}
+				Console.WriteLine("Births:");
+				ix = 0;
+				foreach (var birth in myBirths)
+				{
+					Console.WriteLine($"  {ix} ({birth.Value}): {new Position(birth.Key)}");
+					ix++;
+				}
+			}
+
+			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
+			{
+				for (int b = 0; b < i && b < myBirths.Count(); b++)
+				{
+					var birth = myBirths.ElementAt(b);
+					for (int k1 = 0; k1 < i && k1 < myKills.Count(); k1++)
+					{
+						var kill1 = myKills.ElementAt(k1);
+						for (int k2 = k1 + 1; k2 < i + 1 && k2 < myKills.Count(); k2++)
+						{
+							if (b == i - 1 || k1 == i - 1 || k2 == i)
+							{
+								//Else already done
+								var kill2 = myKills.ElementAt(k2);
+
+								//Calculate real score
+								var birthMove = new BirthMove(birth.Key, kill1.Key, kill2.Key);
+
+								var neighbours1 = Board.NeighbourFieldsAndThis[birth.Key].Union(Board.NeighbourFieldsAndThis[kill1.Key]).Union(Board.NeighbourFieldsAndThis[kill2.Key]);
+								var neighbours2 = Board.NeighbourFields2[birth.Key].Union(Board.NeighbourFields2[kill1.Key]).Union(Board.NeighbourFields2[kill2.Key]);
+								afterMoveBoard.Field[birth.Key] = (short)Board.MyPlayer;
+								afterMoveBoard.Field[kill1.Key] = 0;
+								afterMoveBoard.Field[kill2.Key] = 0;
+								var score = CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
+								afterMoveBoard.Field[birth.Key] = 0;
+								afterMoveBoard.Field[kill1.Key] = (short)Board.MyPlayer;
+								afterMoveBoard.Field[kill2.Key] = (short)Board.MyPlayer;
+								result.Add(new MoveScore(birthMove, score));
+								if (result.Count >= maxCount) break;
+							}
+						}
+						if (result.Count >= maxCount) break;
+					}
+					if (result.Count >= maxCount) break;
+				}
+				if (result.Count >= maxCount) break;
+			}
+
+			//Own kill moves
+			foreach (var killMove in myKills)
+			{
+				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
+			}
+
+			//Opponent kill moves
+			foreach (var killMove in opponentKills)
+			{
+				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
+			}
+			return result.OrderByDescending(r => r.Gain2).Take(maxCount);
+		}
+
+
 		/// <summary>Gets a dictionary of kills on one of my cells with their scores after two generations</summary>
 		public Dictionary<int, int> GetMyKills(Board board1, Board board2,
 			Board afterMoveBoard, Board afterMoveBoard1, Board afterMoveBoard2)

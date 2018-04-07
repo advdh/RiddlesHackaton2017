@@ -8,6 +8,7 @@ using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -303,7 +304,28 @@ namespace GeneticSimulator.Analysis
 			}
 		}
 
-		private IEnumerable<LogRound> ParseLogRounds(string log, int version)
+		[TestMethod]
+		public void Test()
+		{
+			string log55 = File.ReadAllText(@"c:\tmp\v55.txt");
+			var logRounds55 = ParseLogRounds(log55, 54).ToArray();
+			string log56 = File.ReadAllText(@"c:\tmp\v56.txt");
+			var logRounds56 = ParseLogRounds(log56, 54).ToArray();
+
+			int cumumlativeScoreDiff = 0;
+			Console.WriteLine("Round\tTimebank\tDuration\tMoveCount\tScoreDiff\tCumulativeScoreDiff");
+			for (int i = 0; i < logRounds55.Length; i++)
+			{
+				var round55 = logRounds55[i];
+				var round56 = logRounds56[i];
+				var duration55 = 4 * round55.UsedTime.TotalMilliseconds;
+				var duration56 = 4 * round56.UsedTime.TotalMilliseconds;
+				cumumlativeScoreDiff += round56.Score2 - round55.Score2;
+				Console.WriteLine($"{round55.Round}\t{round55.TimeLimit.TotalMilliseconds:0}\t{duration55}\t{round56.MoveCount}\t{round56.Score2 - round55.Score2}\t{cumumlativeScoreDiff}");
+			}
+		}
+
+		public IEnumerable<LogRound> ParseLogRounds(string log, int version)
 		{
 			var roundLines = log
 				.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)

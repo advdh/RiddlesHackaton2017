@@ -39,7 +39,7 @@ namespace GeneticSimulator.Analysis
 			}
 			if (result == null)
 			{
-				throw new ArgumentException($"ParseV52: No match: {s}");
+				throw new ArgumentException($"Parse: No match: {s}");
 			}
 			return result;
 		}

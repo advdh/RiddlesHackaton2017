@@ -30,9 +30,7 @@ namespace RiddlesHackaton2017.Bots
 		}
 
 		/// <summary>
-		/// Returns the maximum allowed duration for simulations 
-		/// = minimum of "according to parameter" and
-		/// timeLimit / 4
+		/// Returns the maximum allowed duration for simulations
 		/// </summary>
 		private TimeSpan GetMaxDuration(TimeSpan timeLimit)
 		{
@@ -58,8 +56,9 @@ namespace RiddlesHackaton2017.Bots
 		{
 			get
 			{
-				return (Parameters.UseMoveGenerator2ForRed && Board.MyPlayer == Player.Player1) ||
-					(Parameters.UseMoveGenerator2ForBlue && Board.MyPlayer == Player.Player2);
+				return ((Parameters.UseMoveGenerator2ForRed && Board.MyPlayer == Player.Player1) ||
+					(Parameters.UseMoveGenerator2ForBlue && Board.MyPlayer == Player.Player2))
+					&& TimeLimit > Parameters.MoveGenerator2MinimumTimebank;
 			}
 		}
 
@@ -81,7 +80,8 @@ namespace RiddlesHackaton2017.Bots
 			}
 			else
 			{
-				candidateMoves = GetCandidateMoves(Parameters.MoveCount).ToArray();
+				var moveGenerator = new MoveGenerator(Board, Parameters);
+				candidateMoves = moveGenerator.GetCandidateMoves(Parameters.MoveCount).ToArray();
 			}
 			if (Parameters.LogLevel >= 1)
 			{
@@ -163,120 +163,6 @@ namespace RiddlesHackaton2017.Bots
 		{
 			var startBoard = Board.ApplyMoveAndNext(move, Parameters.ValidateMoves);
 			return Simulator.SimulateMove(startBoard, maxDuration, move, gain2, simulationCount);
-		}
-
-		/// <summary>
-		/// Generates birth moves and kill moves in such a way that two birth moves 
-		/// have never more than 1 move part (birth/kill) in common
-		/// </summary>
-		/// <returns>Sorted collection of moves</returns>
-		public IEnumerable<MoveScore> GetCandidateMoves(int maxCount)
-		{
-			var result = new List<MoveScore>();
-
-			var moveGeneratorStopwatch = Stopwatch.StartNew();
-
-			var board1 = Board.NextGeneration;
-			var board2 = board1.NextGeneration;
-			var afterMoveBoard = new Board(Board);
-			var afterMoveBoard1 = new Board(board1);
-			var afterMoveBoard2 = new Board(board2);
-
-			var moveGenerator = new MoveGenerator(Board, Parameters);
-			var myKills = moveGenerator.GetMyKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
-			var opponentKills = moveGenerator.GetOpponentKills(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
-			var myBirths = moveGenerator.GetBirths(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2).OrderByDescending(kvp => kvp.Value);
-
-			if (Parameters.LogLevel >= 4)
-			{
-				ConsoleError.WriteLine("MyKills:");
-				int ix = 0;
-				foreach (var kill in myKills)
-				{
-					ConsoleError.WriteLine($"  {ix} ({kill.Value}): {new Position(kill.Key)}");
-					ix++;
-				}
-				ConsoleError.WriteLine("OpponentKills:");
-				ix = 0;
-				foreach (var kill in opponentKills)
-				{
-					ConsoleError.WriteLine($"  {ix} ({kill.Value}): {new Position(kill.Key)}");
-					ix++;
-				}
-				ConsoleError.WriteLine("Births:");
-				ix = 0;
-				foreach (var birth in myBirths)
-				{
-					ConsoleError.WriteLine($"  {ix} ({birth.Value}): {new Position(birth.Key)}");
-					ix++;
-				}
-			}
-
-			for (int i = 1; i < Math.Min(myBirths.Count(), myKills.Count()); i++)
-			{
-				for (int b = 0; b < i && b < myBirths.Count(); b++)
-				{
-					var birth = myBirths.ElementAt(b);
-					for (int k1 = 0; k1 < i && k1 < myKills.Count(); k1++)
-					{
-						var kill1 = myKills.ElementAt(k1);
-						for (int k2 = k1 + 1; k2 < i + 1 && k2 < myKills.Count(); k2++)
-						{
-							if (b == i - 1 || k1 == i - 1 || k2 == i)
-							{
-								//Else already done
-								var kill2 = myKills.ElementAt(k2);
-
-								//Calculate real score
-								var birthMove = new BirthMove(birth.Key, kill1.Key, kill2.Key);
-
-								var neighbours1 = Board.NeighbourFieldsAndThis[birth.Key].Union(Board.NeighbourFieldsAndThis[kill1.Key]).Union(Board.NeighbourFieldsAndThis[kill2.Key]);
-								var neighbours2 = Board.NeighbourFields2[birth.Key].Union(Board.NeighbourFields2[kill1.Key]).Union(Board.NeighbourFields2[kill2.Key]);
-								afterMoveBoard.Field[birth.Key] = (short)Board.MyPlayer;
-								afterMoveBoard.Field[kill1.Key] = 0;
-								afterMoveBoard.Field[kill2.Key] = 0;
-								var score = moveGenerator.CalculateMoveScore(board1, board2, afterMoveBoard, afterMoveBoard1, afterMoveBoard2, neighbours1, neighbours2);
-								afterMoveBoard.Field[birth.Key] = 0;
-								afterMoveBoard.Field[kill1.Key] = (short)Board.MyPlayer;
-								afterMoveBoard.Field[kill2.Key] = (short)Board.MyPlayer;
-								result.Add(new MoveScore(birthMove, score));
-								if (result.Count >= maxCount) break;
-							}
-						}
-						if (result.Count >= maxCount) break;
-					}
-					if (result.Count >= maxCount) break;
-				}
-				if (result.Count >= maxCount) break;
-			}
-
-			//Own kill moves
-			foreach (var killMove in myKills)
-			{
-				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
-			}
-
-			//Opponent kill moves
-			foreach (var killMove in opponentKills)
-			{
-				result.Add(new MoveScore(new KillMove(killMove.Key), killMove.Value));
-			}
-
-			if (Parameters.LogLevel >= 1)
-			{
-				ConsoleError.WriteLine($"MoveGeneration: {moveGeneratorStopwatch.ElapsedMilliseconds:0} ms");
-				if (Parameters.LogLevel >= 3)
-				{
-					int ix = 0;
-					foreach (var moveScore in result)
-					{
-						ConsoleError.WriteLine($"  {ix}: {moveScore}");
-						ix++;
-					}
-				}
-			}
-
-			return result.OrderByDescending(r => r.Gain2).Take(maxCount);
 		}
 
 		/// <remarks>TODO: remove this: only used by test code</remarks>
