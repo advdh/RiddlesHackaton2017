@@ -415,7 +415,7 @@ namespace RiddlesHackaton2017.Bots
 		public bool UseMoveGenerator2ForRed { get; set; } = true;
 
 		/// <summary>Use MoveGenerator2 for Player2 (Blue)</summary>
-		public bool UseMoveGenerator2ForBlue { get; set; } = false;
+		public bool UseMoveGenerator2ForBlue { get; set; } = true;
 
 		/// <summary>Generation count in MoveGenerator: for births, kills and moves</summary>
 		public int MoveGeneratorGenerationCount { get; set; } = 8;

@@ -110,7 +110,7 @@ namespace RiddlesHackaton2017.MoveGeneration
 			{
 				int generation = 0;
 				var board1 = new Board(Board);
-				board1.Field[birth] = 1;
+				board1.Field[birth] = Board.MyPlayer.Value();
 				board1.MyPlayerFieldCount++;
 				board1 = board1.NextGeneration;
 				var score = board1.Player1FieldCount - board1.Player2FieldCount;

@@ -8,3 +8,7 @@ V56, c622e914-53a2-41fc-9b5c-b16b483a5f27, Monstuo
 Round 66: moves = 1 (0), 99 ms - Used 662 ms, Timelimit 902 ms???
 Round 65-100: moves = 1 (0)
 Round 71: should do kill (5,8)
+
+V57, 1a4383e8-169a-4526-ab2c-ab314351551d, Hakomo
+Round 65: score = 100 %, score2 = 12564, moves = 100 (8), simulations = 18, win in 1.00, loose in Infinity
+In fact: loose in 1!

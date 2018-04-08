@@ -46,15 +46,16 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			//Play as red: "edb3825c-6629-4c2b-90cb-7c1e0aa71de9"
 			//Play as blue: "97273128-a1da-4d3f-8b6c-3e187daa4709";
-			string gameId = "c622e914-53a2-41fc-9b5c-b16b483a5f27";
+			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";
 			var parms = MonteCarloParameters.Life;
 			parms.UseMoveGenerator2ForRed = true;
-			parms.UseMoveGenerator2ForBlue = false;
-			parms.LogLevel = 0;
-			parms.Throttle = 4;
+			parms.UseMoveGenerator2ForBlue = true;
+			parms.LogLevel = 2;
+			parms.MoveGeneratorGenerationCount = 8;
+			//parms.Throttle = 4;
 
 			DoReplay(gameId, differenceOnly: false
-				//, rounds: new[] { 1 }
+				, rounds: new[] { 1 }
 				//, action: Replay_OwnKillMoves
 				, bot: new Anila8Bot(new TheConsole())
 				{
