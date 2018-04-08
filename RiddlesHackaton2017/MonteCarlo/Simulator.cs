@@ -215,18 +215,9 @@ namespace RiddlesHackaton2017.MonteCarlo
 				myFieldCount = board.PlayerFieldCount[player.Value()];
 				opponentFieldCount = board.PlayerFieldCount[player.Opponent().Value()];
 
-				if (Parameters.ScoreBasedOnWinBonus)
-				{
-					//Use winbonus for score calculation
-					myScore += Parameters.WinBonus[opponentFieldCount];
-					opponentScore += Parameters.WinBonus[myFieldCount];
-				}
-				else
-				{
-					//Use field counts for score calculation
-					myScore += myFieldCount;
-					opponentScore += opponentFieldCount;
-				}
+				//Use field counts for score calculation
+				myScore += myFieldCount;
+				opponentScore += opponentFieldCount;
 
 				if (opponentFieldCount == 0)
 				{

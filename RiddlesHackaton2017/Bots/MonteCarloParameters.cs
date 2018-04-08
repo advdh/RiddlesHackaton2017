@@ -18,7 +18,6 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		public MonteCarloParameters(MonteCarloParameters original)
 		{
-			MinSimulationCount = original.MinSimulationCount;
 			MaxSimulationCount = original.MaxSimulationCount;
 			StartSimulationCount = original.StartSimulationCount;
 			MoveCount = original.MoveCount;
@@ -45,7 +44,6 @@ namespace RiddlesHackaton2017.Bots
 			WinBonusWeight = original.WinBonusWeight;
 			ParallelSimulation = original.ParallelSimulation;
 			SimulationFactor = original.SimulationFactor;
-			ScoreBasedOnWinBonus = original.ScoreBasedOnWinBonus;
 			UseMoveGenerator2ForRed = original.UseMoveGenerator2ForRed;
 			UseMoveGenerator2ForBlue = original.UseMoveGenerator2ForBlue;
 			MoveGeneratorGenerationCount = original.MoveGeneratorGenerationCount;
@@ -54,9 +52,6 @@ namespace RiddlesHackaton2017.Bots
 			MoveGeneratorKeepFraction = original.MoveGeneratorKeepFraction;
 			MoveGenerator2MinimumTimebank = original.MoveGenerator2MinimumTimebank;
 		}
-
-		/// <summary>Minimum number of simulations per move</summary>
-		public int MinSimulationCount { get; set; } = 1;
 
 		/// <summary>Maximum number of simulations per move</summary>
 		public int MaxSimulationCount { get; set; } = 50;
@@ -276,15 +271,9 @@ namespace RiddlesHackaton2017.Bots
 		/// </summary>
 		public double Throttle { get; set; } = 1;
 
-		/// <summary>
-		/// If true, then use winbonus for score calculation; if false, then use field counts for score calculation
-		/// </summary>
-		public bool ScoreBasedOnWinBonus { get; set; } = false;
-
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-			sb.AppendLine($"MinSimulationCount = {MinSimulationCount}");
 			sb.AppendLine($"MaxSimulationCount = {MaxSimulationCount}");
 			sb.AppendLine($"StartSimulationCount = {StartSimulationCount}");
 			sb.AppendLine($"MoveCount = {MoveCount}");
@@ -310,7 +299,6 @@ namespace RiddlesHackaton2017.Bots
 			sb.AppendLine($"SmartMoveDurationThreshold = {SmartMoveDurationThreshold.TotalMilliseconds:0} ms");
 			sb.AppendLine($"ParallelSimulation = {ParallelSimulation}");
 			sb.AppendLine($"SimulationFactor = {SimulationFactor}");
-			sb.AppendLine($"ScoreBasedOnWinBonus = {ScoreBasedOnWinBonus}");
 			sb.AppendLine($"UseMoveGenerator2Red = {UseMoveGenerator2ForRed}");
 			sb.AppendLine($"UseMoveGenerator2Blue = {UseMoveGenerator2ForBlue}");
 			sb.AppendLine($"MoveGeneratorGenerationCount = {MoveGeneratorGenerationCount}");
@@ -330,8 +318,7 @@ namespace RiddlesHackaton2017.Bots
 			if (obj == null || GetType() != obj.GetType()) return false;
 
 			var p = (MonteCarloParameters)obj;
-			return MinSimulationCount == p.MinSimulationCount
-				&& MaxSimulationCount == p.MaxSimulationCount
+			return MaxSimulationCount == p.MaxSimulationCount
 				&& StartSimulationCount == p.StartSimulationCount
 				&& MoveCount == p.MoveCount
 				&& MaxWinBonus == p.MaxWinBonus
@@ -356,7 +343,6 @@ namespace RiddlesHackaton2017.Bots
 				&& Throttle == p.Throttle
 				&& ParallelSimulation == p.ParallelSimulation
 				&& SimulationFactor == p.SimulationFactor
-				&& ScoreBasedOnWinBonus == p.ScoreBasedOnWinBonus
 				&& ValidateMoves == p.ValidateMoves
 				&& UseMoveGenerator2ForRed == p.UseMoveGenerator2ForRed
 				&& UseMoveGenerator2ForBlue == p.UseMoveGenerator2ForBlue
@@ -369,8 +355,7 @@ namespace RiddlesHackaton2017.Bots
 
 		public override int GetHashCode()
 		{
-			return MinSimulationCount.GetHashCode()
-				^ MaxSimulationCount.GetHashCode()
+			return MaxSimulationCount.GetHashCode()
 				^ StartSimulationCount.GetHashCode()
 				^ MoveCount.GetHashCode()
 				^ MaxWinBonus.GetHashCode()
@@ -395,7 +380,6 @@ namespace RiddlesHackaton2017.Bots
 				^ Throttle.GetHashCode()
 				^ ParallelSimulation.GetHashCode()
 				^ SimulationFactor.GetHashCode()
-				^ ScoreBasedOnWinBonus.GetHashCode()
 				^ ValidateMoves.GetHashCode()
 				^ UseMoveGenerator2ForRed.GetHashCode()
 				^ UseMoveGenerator2ForBlue.GetHashCode()

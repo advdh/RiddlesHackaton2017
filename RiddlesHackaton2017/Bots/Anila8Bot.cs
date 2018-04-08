@@ -98,7 +98,7 @@ namespace RiddlesHackaton2017.Bots
 			if (stopwatch == null) stopwatch = Stopwatch.StartNew();
 			int GetMoveCandidatesMs = (int)stopwatch.ElapsedMilliseconds;
 			TimeSpan maxDuration = GetMaxDuration(TimeLimit);
-			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MinSimulationCount, Parameters.MaxSimulationCount, Parameters.StartSimulationCount
+			int simulationCount = RoundStatistics.GetSimulationCount(maxDuration, Parameters.MaxSimulationCount, Parameters.StartSimulationCount
 				, Parameters.SimulationFactor);
 
 			List<MonteCarloStatistics> results = SimulateMoves(candidateMoves, stopwatch, maxDuration, simulationCount);

@@ -16,7 +16,7 @@ namespace RiddlesHackaton2017.Models
 
 	public class RoundStatistics : List<RoundStatistic>
 	{
-		public int GetSimulationCount(TimeSpan maxDuration, int minSimulationCount, int maxSimulationCount, int startSimulationCount,
+		public int GetSimulationCount(TimeSpan maxDuration, int maxSimulationCount, int startSimulationCount,
 			 double simulationFactor)
 		{
 			if (Count == 0) return startSimulationCount;
@@ -27,7 +27,6 @@ namespace RiddlesHackaton2017.Models
 
 			int available = (int)(maxDuration.TotalMilliseconds * perMs);
 			int result = (int)Math.Sqrt(simulationFactor * available); 
-			if (result < minSimulationCount) result = minSimulationCount;
 			if (result > maxSimulationCount) result = maxSimulationCount;
 			return result;
 		}

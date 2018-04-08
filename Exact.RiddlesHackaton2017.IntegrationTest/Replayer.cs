@@ -50,7 +50,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			var parms = MonteCarloParameters.Life;
 			parms.UseMoveGenerator2ForRed = true;
 			parms.UseMoveGenerator2ForBlue = true;
-			parms.LogLevel = 2;
+			parms.LogLevel = 0;
 			parms.MoveGeneratorGenerationCount = 8;
 			//parms.Throttle = 4;
 

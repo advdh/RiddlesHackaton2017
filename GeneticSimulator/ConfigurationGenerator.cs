@@ -37,9 +37,8 @@ namespace GeneticSimulator
 			var parameters = new MonteCarloParameters();
 
 			//Simulation count
-			parameters.MinSimulationCount = Range(1, 100);
-			parameters.MaxSimulationCount = Range(parameters.MinSimulationCount, 100);
-			parameters.StartSimulationCount = Range(parameters.MinSimulationCount, parameters.MaxSimulationCount);
+			parameters.MaxSimulationCount = Range(1, 100);
+			parameters.StartSimulationCount = Range(1, parameters.MaxSimulationCount);
 
 			//Move count
 			parameters.MoveCount = Range(1, 100);
@@ -75,7 +74,6 @@ namespace GeneticSimulator
 
 		public enum Parameters
 		{
-			MinSimulationCount,
 			MaxSimulationCount,
 			StartSimulationCount,
 			MoveCount,
@@ -120,14 +118,11 @@ namespace GeneticSimulator
 
 			switch (varyingParameter)
 			{
-				case Parameters.MinSimulationCount:
-					parameters.MinSimulationCount = Range(1, 100);
-					break;
 				case Parameters.MaxSimulationCount:
-					parameters.MaxSimulationCount = Range(parameters.MinSimulationCount, 100);
+					parameters.MaxSimulationCount = Range(1, 100);
 					break;
 				case Parameters.StartSimulationCount:
-					parameters.StartSimulationCount = Range(parameters.MinSimulationCount, parameters.MaxSimulationCount);
+					parameters.StartSimulationCount = Range(1, parameters.MaxSimulationCount);
 					break;
 				case Parameters.MoveCount:
 					parameters.MoveCount = Range(1, 100);
@@ -186,11 +181,8 @@ namespace GeneticSimulator
 
 			switch (varyingParameter)
 			{
-				case Parameters.MinSimulationCount:
-					parameters.MinSimulationCount = (int)(original.MinSimulationCount * factor);
-					break;
 				case Parameters.MaxSimulationCount:
-					parameters.MaxSimulationCount = (int)(original.MinSimulationCount * factor);
+					parameters.MaxSimulationCount = (int)(original.MaxSimulationCount * factor);
 					break;
 				case Parameters.StartSimulationCount:
 					parameters.StartSimulationCount = (int)(original.StartSimulationCount * factor);
@@ -254,7 +246,6 @@ namespace GeneticSimulator
 			newParameters.MaxSimulationCount = Random.NextDouble() < p ? parameters1.MaxSimulationCount : parameters2.MaxSimulationCount;
 			newParameters.MaxWinBonus = Random.NextDouble() < p ? parameters1.MaxWinBonus : parameters2.MaxWinBonus;
 			newParameters.MinimumFieldCountForBirthMoves = Random.NextDouble() < p ? parameters1.MinimumFieldCountForBirthMoves : parameters2.MinimumFieldCountForBirthMoves;
-			newParameters.MinSimulationCount = Random.NextDouble() < p ? parameters1.MinSimulationCount : parameters2.MinSimulationCount;
 			newParameters.MoveCount = Random.NextDouble() < p ? parameters1.MoveCount : parameters2.MoveCount;
 			newParameters.PassMovePercentage = Random.NextDouble() < p ? parameters1.PassMovePercentage : parameters2.PassMovePercentage;
 			newParameters.SimulationMaxGenerationCount = Random.NextDouble() < p ? parameters1.SimulationMaxGenerationCount : parameters2.SimulationMaxGenerationCount;
