@@ -49,7 +49,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = InitBoard(4, 4, @"
 1...
 0...
@@ -68,7 +67,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextNextGeneration_Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = InitBoard(4, 4, @"
 1...
 0...
@@ -93,7 +91,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_Test2()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = InitBoard(".,.,.,1,.,1,.,.,.,.,.,0,.,0,1,1,.,1,.,.,1,1,.,.,.,.,.,0,1,.,1,.,.,.,0,.,0,.,.,.,1,.,0,.,1,.,0,.,.,.,.,1,.,.,.,.,1,.,0,.,1,.,0,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,0,0,.,0,.,1,.,1,.,.,.,.,0,0,.,.,.,.,.,.,.,0,1,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,1,.,.,1,.,.,1,.,.,.,.,.,.,1,1,0,.,.,1,1,.,1,.,1,.,.,0,.,0,.,0,0,.,.,1,0,0,.,.,.,.,.,.,0,.,.,0,.,.,0,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,0,1,.,.,.,.,.,.,.,1,1,.,.,.,.,0,.,0,.,1,.,1,1,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,1,.,0,.,1,.,0,.,.,.,.,0,.,.,.,.,1,.,0,.,1,.,0,.,.,.,1,.,1,.,.,.,0,.,0,1,.,.,.,.,.,0,0,.,.,0,.,0,0,1,.,1,.,.,.,.,.,0,.,0,.,.,.");
 
 			Console.WriteLine("Original:");
@@ -142,7 +139,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void CopyAndPlay_Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = InitBoard(".,.,.,1,.,1,.,.,.,.,.,0,.,0,1,1,.,1,.,.,1,1,.,.,.,.,.,0,1,.,1,.,.,.,0,.,0,.,.,.,1,.,0,.,1,.,0,.,.,.,.,1,.,.,.,.,1,.,0,.,1,.,0,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,0,0,.,0,.,1,.,1,.,.,.,.,0,0,.,.,.,.,.,.,.,0,1,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,1,.,.,1,.,.,1,.,.,.,.,.,.,1,1,0,.,.,1,1,.,1,.,1,.,.,0,.,0,.,0,0,.,.,1,0,0,.,.,.,.,.,.,0,.,.,0,.,.,0,.,.,1,.,.,.,.,.,.,.,.,.,.,0,.,.,0,1,.,.,.,.,.,.,.,1,1,.,.,.,.,0,.,0,.,1,.,1,1,.,0,.,0,.,.,.,1,.,0,.,.,.,1,.,1,.,1,.,0,.,1,.,0,.,.,.,.,0,.,.,.,.,1,.,0,.,1,.,0,.,.,.,1,.,1,.,.,.,0,.,0,1,.,.,.,.,.,0,0,.,.,0,.,0,0,1,.,1,.,.,.,.,.,0,.,0,.,.,.");
 
 			Console.WriteLine("Original:");
@@ -227,8 +223,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void GetDeltaFieldCountForKill_Test()
 		{
-			Board.InitializeFieldCountChanges();
-
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var nextGeneration = board.NextGeneration;
 
@@ -256,7 +250,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void GetDeltaFieldCountForBirth_Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var nextGeneration = board.NextGeneration;
 
@@ -299,7 +292,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_FieldCounts_Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			board.ValidateFieldCounts(true);
 			board.NextGeneration.ValidateFieldCounts(true);
@@ -312,7 +304,6 @@ namespace RiddlesHackaton2017.Test.Models
 		[TestMethod]
 		public void NextGeneration_FieldCounts_Round65()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 65);
 			board.ValidateFieldCounts(true);
 			board.NextGeneration.ValidateFieldCounts(true);

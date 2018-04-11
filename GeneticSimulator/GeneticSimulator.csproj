@@ -50,6 +50,7 @@
     <Compile Include="Analysis\EndGameAnalysis.cs" />
     <Compile Include="Analysis\FromFileAnalysis.cs" />
     <Compile Include="Analysis\OpponentAnalysis.cs" />
+    <Compile Include="Analysis\TimingAnalysis.cs" />
     <Compile Include="GameResult.cs" />
     <Compile Include="GameResults.cs" />
     <Compile Include="GameRunner.cs" />

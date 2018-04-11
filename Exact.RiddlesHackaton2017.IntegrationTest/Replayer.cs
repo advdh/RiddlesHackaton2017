@@ -46,10 +46,10 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			//Play as red: "edb3825c-6629-4c2b-90cb-7c1e0aa71de9"
 			//Play as blue: "97273128-a1da-4d3f-8b6c-3e187daa4709";
-			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";
+			string gameId = "97273128-a1da-4d3f-8b6c-3e187daa4709";
 			var parms = MonteCarloParameters.Life;
 			parms.UseMoveGenerator2ForRed = true;
-			parms.UseMoveGenerator2ForBlue = true;
+			parms.UseMoveGenerator2ForBlue = false;
 			parms.LogLevel = 0;
 			parms.MoveGeneratorGenerationCount = 8;
 			//parms.Throttle = 4;
@@ -205,7 +205,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		private void DoReplayLines(string[] lines, bool differenceOnly, 
 			Action<Board, BaseBot, TimeSpan> action, int[] rounds, BaseBot bot)
 		{
-			Board.InitializeFieldCountChanges();
 			var board = new Board();
 			Move originalMove;
 			Move newMove = new NullMove();

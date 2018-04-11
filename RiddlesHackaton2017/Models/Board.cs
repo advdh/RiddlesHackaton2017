@@ -129,6 +129,11 @@ namespace RiddlesHackaton2017.Models
 
 		#region Constructors and next generation
 
+		static Board()
+		{
+			InitializeFieldCountChanges();
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Board()
 		{

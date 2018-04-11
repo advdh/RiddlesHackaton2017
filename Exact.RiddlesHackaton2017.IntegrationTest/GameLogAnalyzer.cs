@@ -54,7 +54,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 			{
 				database.Connect();
 				var opponents = new Dictionary<string, Statistics>();
-				var games = database.GetMyGames().Where(g => g.PlayedDate > new DateTime(2017, 12, 12, 14, 0, 0));
+				var games = database.GetMyGames().Where(g => g.PlayedDate > new DateTime(2018, 4, 1, 14, 0, 0));
 				foreach (var game in games)
 				{
 					var log = game.Log;
@@ -75,7 +75,9 @@ namespace RiddlesHackaton2017.IntegrationTest
 					stats.TotalUsedMs += result[2];
 				}
 
-				foreach (var de in opponents.Where(s => s.Value.TotalUsedMs > 0))
+				foreach (var de in opponents
+					.Where(s => s.Value.TotalUsedMs > 0)
+					.OrderByDescending(s => s.Value.GameCount))
 				{
 					var opponent = de.Key;
 					var stats = de.Value;

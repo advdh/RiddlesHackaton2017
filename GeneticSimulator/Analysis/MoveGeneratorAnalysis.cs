@@ -59,7 +59,6 @@ namespace GeneticSimulator.Analysis
 
 		private void AnalyzeMoves(IEnumerable<Game> games, int version, bool verboseLogging = false)
 		{
-			Board.InitializeFieldCountChanges();
 			var results = new List<GameReplayResult>();
 			foreach (var game in games.Take(100))
 			{

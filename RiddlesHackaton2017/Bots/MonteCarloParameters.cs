@@ -175,7 +175,7 @@ namespace RiddlesHackaton2017.Bots
 			get { return Debug ? TimeSpan.FromDays(1) : _MaxDuration; }
 			set { _MaxDuration = value; }
 		}
-		private TimeSpan _MaxDuration = TimeSpan.FromMilliseconds(400);
+		private TimeSpan _MaxDuration = TimeSpan.FromMilliseconds(300);
 
 		/// <summary>
 		/// MaxDuration in milliseconds: only for serialization purposes
@@ -396,10 +396,10 @@ namespace RiddlesHackaton2017.Bots
 		#region MoveGenerator2 properties
 
 		/// <summary>Use MoveGenerator2 for Player1 (Red)</summary>
-		public bool UseMoveGenerator2ForRed { get; set; } = true;
+		public bool UseMoveGenerator2ForRed { get; set; } = false;
 
 		/// <summary>Use MoveGenerator2 for Player2 (Blue)</summary>
-		public bool UseMoveGenerator2ForBlue { get; set; } = true;
+		public bool UseMoveGenerator2ForBlue { get; set; } = false;
 
 		/// <summary>Generation count in MoveGenerator: for births, kills and moves</summary>
 		public int MoveGeneratorGenerationCount { get; set; } = 8;

@@ -12,7 +12,6 @@ namespace GeneticSimulator
 			BaseSimulator simulator = null;
 			int populationSize;
 			int simulationCount;
-			Board.InitializeFieldCountChanges();
 
 			//Read console
 			Console.Write(">");

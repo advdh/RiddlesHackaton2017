@@ -68,7 +68,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void CompareBirths()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoardFromDatabase("84f2e021-78df-4c1b-80bc-ae62ca233ac3", 4, Player.Player1);
 			var birthPosition = new Position(5, 9);
 			var killPosition1 = new Position(10, 6);
@@ -105,7 +104,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void CompareBirths2()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoardFromDatabase("84f2e021-78df-4c1b-80bc-ae62ca233ac3", 4, Player.Player1);
 			int generationCount = 16;
 
@@ -143,7 +141,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void CompareKills()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoardFromDatabase("84f2e021-78df-4c1b-80bc-ae62ca233ac3", 4, Player.Player1);
 			var birthPosition = new Position(5, 9);
 			var killPosition1 = new Position(10, 6);
@@ -178,7 +175,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void CompareKills2()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoardFromDatabase("84f2e021-78df-4c1b-80bc-ae62ca233ac3", 4, Player.Player1);
 			int generationCount = 16;
 

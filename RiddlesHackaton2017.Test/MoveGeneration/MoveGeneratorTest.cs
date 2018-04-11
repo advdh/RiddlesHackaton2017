@@ -15,7 +15,6 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 		[TestMethod]
 		public void Test()
 		{
-			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var board1 = board.NextGeneration;
 			var board2 = board1.NextGeneration;
@@ -38,19 +37,10 @@ namespace RiddlesHackaton2017.Test.MoveGeneration
 		}
 
 		[TestMethod]
-		public void Test_oI0_Game()
-		{
-			Board.InitializeFieldCountChanges();
-			var board = GetBoard("84f2e021-78df-4c1b-80bc-ae62ca233ac3", 4);
-		}
-
-
-		[TestMethod]
 		public void PerformancTest()
 		{
 			int n = 100;
 
-			Board.InitializeFieldCountChanges();
 			var board = GetBoard("edb3825c-6629-4c2b-90cb-7c1e0aa71de9", 1);
 			var generator = new MoveGenerator(board, MonteCarloParameters.Life);
 

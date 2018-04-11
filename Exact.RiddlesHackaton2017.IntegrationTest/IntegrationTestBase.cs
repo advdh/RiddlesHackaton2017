@@ -9,7 +9,6 @@ namespace RiddlesHackaton2017.IntegrationTest
 	{
 		protected Board GetBoardFromDatabase(string gameId, int round, Player player)
 		{
-			Board.InitializeFieldCountChanges();
 			using (var database = new Database())
 			{
 				database.Connect();

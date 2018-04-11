@@ -19,7 +19,7 @@ namespace GeneticSimulator.Analysis
 		[TestMethod]
 		public void AggregateScores_All()
 		{
-			var games = GetAllGames(new DateTime(2018, 2, 15), 5);
+			var games = GetAllGames(new DateTime(2018, 4, 1), topPlayerCount: 10);
 
 			var players = games.Select(g => g.Player0).Distinct().ToList();
 
@@ -77,7 +77,7 @@ namespace GeneticSimulator.Analysis
 		[TestMethod]
 		public void AggregateScores_Anila8()
 		{
-			var games = GetMyGames(new DateTime(2018, 2, 15));
+			var games = GetMyGames(new DateTime(2018, 4, 1));
 
 			var opponents = games.Select(g => g.Opponent).Distinct().ToList();
 			var myVersions = games.Select(g => g.Version).Distinct().ToList();
@@ -193,11 +193,11 @@ namespace GeneticSimulator.Analysis
 		/// <summary>
 		/// Returns top count games that player0 (red) won, ordered by played date desc
 		/// </summary>
-		private IEnumerable<Game> GetAllGames(DateTime minDate, int top)
+		private IEnumerable<Game> GetAllGames(DateTime minDate, int topPlayerCount)
 		{
 			string where = $"PlayedDate >= '{minDate:yyyy-MM-dd}' " +
-				$"AND Player0 IN (SELECT TOP {top} BotName FROM LeaderBoard ORDER BY Rank) " +
-				$"AND Player1 IN (SELECT TOP {top} BotName FROM LeaderBoard ORDER BY Rank)";
+				$"AND Player0 IN (SELECT TOP {topPlayerCount} BotName FROM LeaderBoard ORDER BY Rank) " +
+				$"AND Player1 IN (SELECT TOP {topPlayerCount} BotName FROM LeaderBoard ORDER BY Rank)";
 			string orderBy = "(SELECT Rank FROM LeaderBoard WHERE BotName = Player0)";
 
 			using (var database = new Database())
