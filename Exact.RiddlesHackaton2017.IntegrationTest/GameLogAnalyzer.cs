@@ -76,7 +76,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 				}
 
 				foreach (var de in opponents
-					.Where(s => s.Value.TotalUsedMs > 0)
+					.Where(s => s.Value.GameCount >= 2 && s.Value.TotalUsedMs > 0)
 					.OrderByDescending(s => s.Value.GameCount))
 				{
 					var opponent = de.Key;
