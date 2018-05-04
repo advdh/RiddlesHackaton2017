@@ -2,10 +2,12 @@
 using RiddlesHackaton2017.Bots;
 using RiddlesHackaton2017.Models;
 using RiddlesHackaton2017.MonteCarlo;
+using RiddlesHackaton2017.MoveGeneration;
 using RiddlesHackaton2017.Moves;
 using RiddlesHackaton2017.Output;
 using RiddlesHackaton2017.RandomGeneration;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -26,6 +28,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 
 			var parms = MonteCarloParameters.Life;
 			parms.Debug = false;
+			parms.StartSimulationCount = 50;
 
 			DoReplay(gameId, differenceOnly: false
 				, rounds: new[] { 63, 64, 65, 66 }
@@ -46,22 +49,40 @@ namespace RiddlesHackaton2017.IntegrationTest
 		{
 			//Play as red: "edb3825c-6629-4c2b-90cb-7c1e0aa71de9"
 			//Play as blue: "97273128-a1da-4d3f-8b6c-3e187daa4709";
-			string gameId = "97273128-a1da-4d3f-8b6c-3e187daa4709";
+			string gameId = "edb3825c-6629-4c2b-90cb-7c1e0aa71de9";
 			var parms = MonteCarloParameters.Life;
-			parms.UseMoveGenerator2ForRed = true;
-			parms.UseMoveGenerator2ForBlue = false;
-			parms.LogLevel = 0;
-			parms.MoveGeneratorGenerationCount = 8;
-			//parms.Throttle = 4;
+			parms.LogLevel = 1;
+			parms.Throttle = 4;
 
 			DoReplay(gameId, differenceOnly: false
-				, rounds: new[] { 1 }
-				//, action: Replay_OwnKillMoves
+				//, rounds: new[] { 1 }
+				//, action: CompareMoveGenerators
 				, bot: new Anila8Bot(new TheConsole())
 				{
 					Parameters = parms
 				},
 				source: LogSource.File);
+		}
+
+		private void CompareMoveGenerators(Board board, BaseBot baseBot, TimeSpan timespan)
+		{
+			var bot = (Anila8Bot)baseBot;
+			bot.Board = board;
+			bot.TimeLimit = timespan;
+			var parameters = MonteCarloParameters.Life;
+			parameters.UseMoveGenerator2ForRed = true;
+			parameters.UseMoveGenerator2ForBlue = true;
+			parameters.StartSimulationCount = 50;
+
+			var moveGenerator = new MoveGenerator(board, parameters);
+			var candidates1 = moveGenerator.GetCandidateMoves(100).ToArray();
+			var best1 = bot.GetSimulationStatistic(candidates1, null);
+
+			var moveGenerator2 = new MoveGenerator2(board, parameters);
+			var candidates2 = moveGenerator2.GetMoves().ToArray();
+			var best2 = bot.GetSimulationStatistic(candidates2, null);
+
+			Console.WriteLine($"Round {board.Round}: \r\n   best1 = {best1}, \r\n   best2 = {best2}");
 		}
 
 		[TestMethod]

@@ -48,7 +48,7 @@ namespace RiddlesHackaton2017.IntegrationTest
 		[TestMethod]
 		public void AnalyzeOpponentsStealingTime()
 		{
-			int maxRound = 10;
+			int maxRound = 1;
 
 			using (var database = new Database())
 			{
@@ -77,7 +77,8 @@ namespace RiddlesHackaton2017.IntegrationTest
 
 				foreach (var de in opponents
 					.Where(s => s.Value.GameCount >= 2 && s.Value.TotalUsedMs > 0)
-					.OrderByDescending(s => s.Value.GameCount))
+					.OrderByDescending(s => s.Value.GameCount)
+					.Take(15))
 				{
 					var opponent = de.Key;
 					var stats = de.Value;

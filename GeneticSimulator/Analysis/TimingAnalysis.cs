@@ -21,8 +21,8 @@ namespace GeneticSimulator.Analysis
 			{
 				database.Connect();
 
-				var games = database.GetMyGames(@"Log IS NOT NULL AND Log != '' AND Version = 54
-					AND Opponent IN(SELECT BotName FROM LeaderBoard WHERE Rank <= 10 OR BotName = 'Wapper')");
+				var games = database.GetMyGames(@"Log IS NOT NULL AND Log != '' AND Version = 59
+					AND Opponent IN(SELECT BotName FROM LeaderBoard WHERE Rank <= 13 OR BotName = 'Wapper')");
 				AnalyzeTimings(games);
 			}
 		}

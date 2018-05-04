@@ -82,3 +82,4 @@ V56 07-04-2018, 13:00	V54 and V55 turned out to have UseMoveGenerator2 = false a
 V57 08-04-2018, 00:51	New parameter MoveGenerator2MinimumTimebank = 2500 ms
 V58 08-04-2018, 21:48	Bugfix UseMoveGenerator2 for blue, UseMoveGenerator2ForBlue = true
 V59	11-04-2018, 22:12	MaxDuration = 300 ms, UseMoveGenerator2ForRed = false, UseMoveGenerator2ForBlue = false
+V62	04-05-2018, 22:38	RelativeMaxDuration depends on speed index: minimum 0.067 (UnmanagedCode), maximum 0.33 (most other)
